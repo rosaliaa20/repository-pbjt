@@ -2,280 +2,147 @@
 
 Sistem Informasi Repositori Institusi berbasis web yang dirancang untuk mengelola, menyimpan, dan mempublikasikan karya ilmiah serta dokumen akademik secara digital, terstruktur, dan aman.
 
-Aplikasi ini dikembangkan untuk membantu proses digitalisasi dokumen kampus agar lebih modern, efisien, dan mudah diakses oleh civitas akademika.
+Aplikasi ini dikembangkan untuk membantu proses digitalisasi dokumen kampus agar lebih modern, efisien, dan mudah diakses oleh civitas akademika Politeknik Baja Tegal.
 
 ---
 
-# ✨ Fitur Utama
+## ✨ Fitur Utama
 
 Aplikasi dirancang dengan antarmuka modern dan dilengkapi berbagai fitur pengelolaan serta keamanan dokumen digital.
 
----
-
-## 🛡️ Proteksi Dokumen Cerdas
-
-Menggunakan sistem viewer dokumen khusus yang dilengkapi fitur:
-
-- Anti Klik Kanan
-- Anti Copy
+### 🛡️ Proteksi Dokumen Cerdas
+Menggunakan sistem *viewer* dokumen khusus yang dilengkapi fitur:
+- Anti Klik Kanan (Disable Right-Click)
+- Anti Copy Text
 - Watermark Otomatis pada PDF
+*(Fitur ini diterapkan menggunakan library `pdf-lib` untuk membantu mengurangi risiko penyalahgunaan dan pencurian hak cipta dokumen akademik).*
 
-Fitur ini diterapkan menggunakan library `pdf-lib` untuk membantu mengurangi risiko penyalahgunaan dan pencurian hak cipta dokumen akademik.
+### 📧 Sistem Pemulihan Akun (Auto-Email)
+- Fitur **Lupa Password** mandiri bagi pengguna.
+- Sistem akan mengirimkan link reset sandi aman berbasis token (*Expired* dalam 15 menit) langsung ke kotak masuk email pengguna.
 
----
+### 👥 Manajemen Pengguna Kompleks
+Sistem mendukung pengelolaan pengguna secara terstruktur oleh Admin, termasuk:
+- Persetujuan (Approve) akun mahasiswa baru.
+- Penguncian akses pengguna (*Lock/Unlock* akun).
+- Hapus dan Edit Data Pengguna.
+- **Aksi Massal:** Mengunci/membuka akses berdasarkan tahun angkatan, serta aksi massal menggunakan *checkbox*.
 
-## 👥 Manajemen Pengguna Kompleks
+### 📊 Import Data Excel (Integrasi Cepat)
+Admin dapat melakukan pendaftaran mahasiswa secara massal menggunakan file Excel (`.xlsx`), sehingga proses sinkronisasi dengan data kampus (misal: GoFeeder) menjadi lebih praktis. Sistem dilengkapi:
+- Validasi deteksi NIM duplikat.
+- Otomatis menangkap data Nama, NIM, Email, Tanggal Lahir, dan Prodi.
 
-Sistem mendukung pengelolaan pengguna secara terstruktur, termasuk:
-
-- Persetujuan akun mahasiswa baru
-- Penguncian akses pengguna
-- Penghapusan akun
-- Aksi massal menggunakan checkbox
-
-Fitur ini membantu admin mengelola data pengguna dengan lebih cepat dan efisien.
-
----
-
-## 📊 Import Data Excel
-
-Admin dapat melakukan pendaftaran mahasiswa secara massal menggunakan file Excel (`.xlsx`) sehingga proses input data menjadi lebih praktis.
-
-Sistem juga dilengkapi validasi otomatis untuk mendeteksi:
-
-- NIM duplikat
-- Data pengguna ganda
-- Kesalahan format data
+### 🔔 Notifikasi Real-time
+Aplikasi menyediakan sistem notifikasi popup (*toast notification*) interaktif menggunakan `react-hot-toast` untuk peringatan unggah berhasil, error sistem, dan aktivitas pengguna.
 
 ---
 
-## 🔔 Notifikasi Real-time
+## 🛠️ Teknologi yang Digunakan
 
-Aplikasi menyediakan sistem notifikasi popup (*toast notification*) yang interaktif dan responsif.
+Aplikasi dibangun menggunakan teknologi modern berbasis JavaScript (MERN-like Stack) untuk mendukung performa, keamanan, dan pengalaman pengguna yang optimal.
 
-Notifikasi digunakan untuk:
-- Informasi upload berhasil
-- Peringatan kesalahan sistem
-- Persetujuan dokumen
-- Aktivitas pengguna terbaru
+### 🎨 Frontend
+- **React.js (Vite):** Membangun UI berbasis komponen yang super cepat.
+- **Tailwind CSS:** Framework CSS *utility-first* untuk desain responsif, elegan, dan mendukung Dark/Light Mode.
+- **Framer Motion:** Library animasi untuk menciptakan transisi halaman yang *smooth*.
+- **React Hot Toast:** Sistem notifikasi popup modern.
 
-Sistem juga mendukung audio alert untuk membantu admin memantau aktivitas penting secara real-time.
-
----
-
-## 🔐 Role-Based Access Control (RBAC)
-
-Sistem hak akses dirancang berdasarkan peran pengguna untuk menjaga keamanan dan pengelolaan sistem yang lebih terstruktur.
-
-### 👨‍💼 Admin
-Memiliki akses penuh terhadap sistem, termasuk:
-
-- Manajemen pengguna
-- Verifikasi akun
-- Persetujuan dokumen
-- Pengelolaan repository
-- Monitoring aktivitas sistem
-
-### 👨‍🏫 Dosen
-Dapat melakukan:
-
-- Pratinjau dokumen ber-watermark
-- Upload jurnal akademik
-- Upload hasil penelitian
-- Melihat riwayat dokumen
-
-### 👨‍🎓 Mahasiswa
-Dapat melakukan:
-
-- Upload tugas akhir
-- Upload laporan magang
-- Melihat riwayat dokumen
-- Memantau status persetujuan dokumen
+### ⚙️ Backend
+- **Node.js & Express.js:** Menangani server, REST API, *routing*, dan *middleware*.
+- **MySQL:** Database relasional untuk menyimpan data terstruktur (users, documents, logs).
+- **JSON Web Token (JWT):** Autentikasi keamanan sesi *login*.
+- **Bcrypt.js:** Mengenkripsi (hashing) *password* pengguna di database.
+- **Multer:** Menangani proses unggah (*upload*) file dokumen PDF.
+- **pdf-lib:** Memanipulasi dokumen PDF untuk menyisipkan *watermark* otomatis.
+- **Nodemailer:** Mengirimkan email otomatis menggunakan SMTP Gmail untuk pemulihan kata sandi.
 
 ---
 
-# 🛠️ Teknologi yang Digunakan
+## 🚀 Cara Instalasi & Menjalankan Aplikasi
 
-Aplikasi dibangun menggunakan teknologi modern berbasis JavaScript untuk mendukung performa, keamanan, dan pengalaman pengguna yang optimal.
+Ikuti langkah berikut untuk menjalankan aplikasi pada *localhost* (komputer lokal).
 
----
-
-## 🎨 Frontend
-
-### React.js (Vite)
-Digunakan untuk membangun antarmuka pengguna (*User Interface*) berbasis komponen agar aplikasi lebih interaktif, cepat, dan mudah dikembangkan.
-
-Vite digunakan sebagai build tool modern dengan performa development yang ringan dan cepat.
-
----
-
-### Tailwind CSS
-Framework CSS utility-first yang digunakan untuk mempercepat proses desain antarmuka responsif dengan tampilan modern, clean, dan mendukung Dark/Light Mode.
-
----
-
-### Framer Motion
-Library animasi React yang digunakan untuk menciptakan animasi dan transisi halaman yang halus sehingga meningkatkan pengalaman pengguna (*User Experience*).
-
----
-
-### React Hot Toast
-Digunakan untuk menampilkan notifikasi popup interaktif secara real-time seperti notifikasi login, upload dokumen, maupun peringatan sistem.
-
----
-
-## ⚙️ Backend
-
-### Node.js
-Runtime JavaScript berbasis server yang digunakan untuk menjalankan logika backend dan menangani request dari client secara efisien.
-
----
-
-### Express.js
-Framework backend pada Node.js yang digunakan untuk membangun REST API, routing, middleware, autentikasi, dan komunikasi dengan database.
-
----
-
-### MySQL
-Database relasional yang digunakan untuk menyimpan data pengguna, dokumen, notifikasi, dan data sistem lainnya secara terstruktur.
-
----
-
-### JSON Web Token (JWT)
-Digunakan sebagai sistem autentikasi berbasis token untuk menjaga keamanan sesi login pengguna.
-
----
-
-### Bcrypt
-Digunakan untuk mengenkripsi password pengguna sebelum disimpan ke database agar keamanan akun lebih terjamin.
-
----
-
-### Multer
-Middleware Node.js yang digunakan untuk menangani proses upload file dokumen seperti PDF tugas akhir, laporan magang, dan jurnal akademik.
-
----
-
-### pdf-lib
-Library pemrosesan PDF yang digunakan untuk menambahkan watermark otomatis pada dokumen sebagai bentuk perlindungan hak cipta digital.
-
----
-
-# 🚀 Cara Instalasi & Menjalankan Aplikasi
-
-Ikuti langkah berikut untuk menjalankan aplikasi pada localhost.
-
----
-
-## 1️⃣ Prasyarat
-
-Pastikan sudah menginstal:
-
+### 1️⃣ Prasyarat
+Pastikan komputer Anda sudah terinstal:
 - Node.js
-- XAMPP / MySQL Server
-- Git (Opsional)
+- XAMPP (Apache & MySQL)
+- Git
 
----
+### 2️⃣ Setup Database
+1. Buka XAMPP, jalankan modul **Apache** dan **MySQL**.
+2. Buka `http://localhost/phpmyadmin`.
+3. Buat database baru dengan nama: `e_repository_kampus`
+4. Buat tabel-tabel yang dibutuhkan (`users`, `documents`, `system_logs`, dll) sesuai struktur *query* sistem, atau *import* file `.sql` jika tersedia. Pastikan tabel `users` memiliki kolom `email`, `reset_token`, dan `reset_expires`.
 
-## 2️⃣ Setup Database
-
-1. Buka phpMyAdmin atau tools database MySQL lainnya.
-2. Buat database baru, misalnya:
-
-```sql
-e_repository_db
-```
-
-3. Buat tabel yang dibutuhkan seperti:
-
-- users
-- documents
-- notifications
-
-sesuai struktur query pada backend.
-
----
-
-## 3️⃣ Setup Backend
-
-Buka terminal lalu jalankan:
+### 3️⃣ Setup Backend
+Buka terminal baru, arahkan ke folder `backend`, lalu jalankan:
 
 ```bash
-# Masuk ke folder backend
 cd backend
-
-# Install dependencies
 npm install
+
 ```
 
-Buat file `.env` pada folder backend:
+Buat file `.env` di dalam folder `backend` dan sesuaikan dengan konfigurasi ini:
 
 ```env
 DB_HOST=localhost
 DB_USER=root
 DB_PASS=
-DB_NAME=e_repository_db
-JWT_SECRET=your_secret_key
+DB_NAME=e_repository_kampus
+JWT_SECRET=rahasia_super_aman_anda
 PORT=5000
+
 ```
+
+*(Catatan: Untuk fitur pengiriman email, pastikan Anda telah mengatur akun Gmail dan App Password di file `authController.js` atau menambahkannya ke `.env`).*
 
 Jalankan server backend:
 
 ```bash
+npm start
+# atau
 npx nodemon server.js
+
 ```
 
----
+### 4️⃣ Setup Frontend
 
-## 4️⃣ Setup Frontend
-
-Buka terminal baru lalu jalankan:
+Buka terminal baru, arahkan ke folder `frontend`, lalu jalankan:
 
 ```bash
-# Masuk ke folder frontend
 cd frontend
-
-# Install dependencies
 npm install
-
-# Jalankan frontend
 npm run dev
+
 ```
 
 ---
 
-# 🌐 Akses Aplikasi
+## 🌐 Akses Aplikasi
 
-Frontend dapat diakses melalui browser pada:
-
-```bash
-http://localhost:5173
-```
-
-Backend berjalan pada:
-
-```bash
-http://localhost:5000
-```
+* **Frontend (Aplikasi Web):** `http://localhost:5173`
+* **Backend (API Server):** `http://localhost:5000`
 
 ---
 
-# 📌 Struktur Role Pengguna
+## 📌 Struktur Role Pengguna
 
 | Role | Hak Akses |
-|------|------------|
-| Admin | Mengelola seluruh sistem repository |
-| Dosen | Pratinjau dokumen dan unggah publikasi ilmiah |
-| Mahasiswa | Unggah karya tugas akhir/laporan magang dan pantau riwayat dokumen. |
+| --- | --- |
+| **Admin** | Memiliki akses penuh (Manajemen pengguna, verifikasi akun, kelola dokumen, pantau sistem). |
+| **Dosen** | Pratinjau dokumen *watermark*, unggah publikasi ilmiah/jurnal. |
+| **Mahasiswa** | Unggah tugas akhir/laporan magang, ubah sandi mandiri, pantau status persetujuan. |
 
 ---
 
-# 📄 Lisensi
+## 📄 Lisensi
 
-Project ini dikembangkan untuk kebutuhan akademik dan penelitian di lingkungan Politeknik Baja Tegal.
+Project ini dikembangkan secara eksklusif untuk kebutuhan akademik, penelitian, dan digitalisasi perpustakaan di lingkungan Politeknik Baja Tegal.
 
 ---
-
-# ❤️ Developer
 
 Developed with ❤️ by **Rosalia Indah Dwi P.**
+
+```
