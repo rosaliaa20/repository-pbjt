@@ -1,4 +1,3 @@
-
 # 🎓 E-Repository Politeknik Baja Tegal (PBJT)
 
 Sistem Informasi Repositori Institusi berbasis web yang dirancang untuk mengelola, menyimpan, dan mempublikasikan karya ilmiah serta dokumen akademik secara digital, terstruktur, dan aman.
@@ -13,6 +12,12 @@ Aplikasi dirancang dengan antarmuka modern dan dilengkapi berbagai fitur pengelo
 
 ### 📱 Progressive Web App (PWA) Ready
 Aplikasi dapat diinstal langsung ke layar utama perangkat (Desktop/Mobile) layaknya aplikasi *native*. Dilengkapi dengan *Service Worker* untuk memberikan performa *loading* yang super cepat dan dukungan *caching* pintar.
+
+### 💬 Notifikasi WhatsApp Otomatis (Bot)
+Terintegrasi dengan bot WhatsApp untuk mengirimkan pembaruan status secara *real-time* dan personal kepada mahasiswa.
+- Notifikasi saat karya ilmiah **Disetujui/Terbit**.
+- Notifikasi saat karya ilmiah **Ditolak/Revisi**, lengkap dengan catatan perbaikan dari Admin.
+- Teks pesan dinamis yang menyesuaikan dengan kategori dokumen (Tugas Akhir, Makalah, Jurnal, dll).
 
 ### 🛡️ Proteksi Dokumen Cerdas
 Menggunakan sistem *viewer* dokumen khusus yang dilengkapi fitur:
@@ -42,7 +47,7 @@ Admin dapat melakukan pendaftaran mahasiswa secara massal menggunakan file Excel
 - Otomatis menangkap data Nama, NIM, Email, Tanggal Lahir, dan Prodi.
 
 ### 🔔 Notifikasi Real-time
-Aplikasi menyediakan sistem notifikasi popup (*toast notification*) interaktif menggunakan `react-hot-toast` untuk peringatan unggah berhasil, error sistem, dan aktivitas pengguna.
+Aplikasi menyediakan sistem notifikasi popup (*toast notification*) interaktif menggunakan `react-hot-toast` untuk peringatan unggah berhasil, error sistem, dan aktivitas pengguna (seperti notifikasi khusus Admin saat mahasiswa mengirimkan revisi).
 
 ---
 
@@ -65,6 +70,7 @@ Aplikasi dibangun menggunakan teknologi modern berbasis JavaScript (MERN-like St
 - **Multer:** Menangani proses unggah (*upload*) file dokumen PDF.
 - **pdf-lib:** Memanipulasi dokumen PDF untuk menyisipkan *watermark* otomatis.
 - **Nodemailer:** Mengirimkan email otomatis menggunakan SMTP Gmail untuk pemulihan kata sandi.
+- **whatsapp-web.js & qrcode-terminal:** Mengintegrasikan bot WhatsApp Web untuk pengiriman notifikasi pesan otomatis melalui terminal.
 
 ---
 
@@ -82,7 +88,7 @@ Pastikan komputer Anda sudah terinstal:
 1. Buka XAMPP, jalankan modul **Apache** dan **MySQL**.
 2. Buka `http://localhost/phpmyadmin`.
 3. Buat database baru dengan nama: `e_repository_kampus`
-4. Buat tabel-tabel yang dibutuhkan (`users`, `documents`, `system_logs`, dll) sesuai struktur *query* sistem, atau *import* file `.sql` jika tersedia. Pastikan tabel `users` memiliki kolom `email`, `reset_token`, dan `reset_expires`.
+4. Buat tabel-tabel yang dibutuhkan (`users`, `documents`, `system_logs`, dll) sesuai struktur *query* sistem, atau *import* file `.sql` jika tersedia. Pastikan tabel `users` memiliki kolom `email`, `no_wa`, `reset_token`, dan `reset_expires`.
 
 ### 3️⃣ Setup Backend
 Buka terminal baru, arahkan ke folder `backend`, lalu jalankan:
@@ -115,6 +121,8 @@ npm start
 npx nodemon server.js
 
 ```
+
+*(💡 **Catatan WhatsApp Bot:** Saat server berjalan, terminal akan menampilkan QR Code. Scan menggunakan WhatsApp (opsi Tautkan Perangkat) untuk mengaktifkan Bot Notifikasi).*
 
 ### 4️⃣ Setup Frontend (Mode Development)
 
@@ -155,7 +163,7 @@ Buka link *preview* yang diberikan (biasanya `http://localhost:4173`). Ikon "Ins
 | --- | --- |
 | **Admin** | Memiliki akses penuh (Manajemen pengguna, verifikasi akun, kelola dokumen, pantau sistem). |
 | **Dosen** | Pratinjau dokumen *watermark*, unggah publikasi ilmiah/jurnal. |
-| **Mahasiswa** | Unggah tugas akhir/laporan magang, ubah sandi mandiri, pantau status persetujuan. |
+| **Mahasiswa** | Unggah tugas akhir/laporan magang, ubah sandi mandiri, pantau status persetujuan, menerima notif WA. |
 
 ---
 
