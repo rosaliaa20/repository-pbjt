@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
+require('./utils/waBot');
 
 const multer = require('multer'); // <-- TAMBAHKAN INI
 const upload = multer({ dest: 'uploads/' }); // <-- TAMBAHKAN INI

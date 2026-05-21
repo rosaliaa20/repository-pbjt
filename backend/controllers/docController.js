@@ -3,6 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const { PDFDocument, rgb, degrees } = require("pdf-lib");
 const notifController = require('./notifController');
+const { sendWAMessage } = require('../utils/waBot');
 
 // 1. Ambil SEMUA dokumen (Dengan Filter Tanggal & Urutan Terbaru)
 exports.getAllDocs = (req, res) => {
@@ -159,11 +160,10 @@ exports.deleteDoc = (req, res) => {
     });
 };
 
-// 7. Update Dokumen (Edit)
+// 7. Update Dokumen (Edit / Revisi Mahasiswa)
 exports.updateDoc = (req, res) => {
     const docId = req.params.id;
     
-    // 🔥 PENGAMAN: Jika ada data kosong, kasih default value biar MySQL gak crash
     const title = req.body.title || 'Tanpa Judul';
     const document_author = req.body.document_author || 'Anonim';
     const year = req.body.year || new Date().getFullYear();
@@ -178,7 +178,6 @@ exports.updateDoc = (req, res) => {
         db.query("SELECT file_path FROM documents WHERE id = ?", [docId], (err, results) => {
             if (!err && results.length > 0 && results[0].file_path) {
                 const oldFile = path.join(__dirname, "../", results[0].file_path);
-                // Try-catch agar server gak mati kalau file lama udah kehapus duluan
                 try { if (fs.existsSync(oldFile)) fs.unlinkSync(oldFile); } catch (e) { console.error("Abaikan: File lama tidak ada"); }
             }
             
@@ -186,6 +185,10 @@ exports.updateDoc = (req, res) => {
             
             db.query(sql, [title, document_author, year, category, department, abstract, newPath, external_url, docId], (updErr) => {
                 if (updErr) return res.status(500).json({ message: "Gagal update database." });
+                
+                // 🔥 NOTIFIKASI UNTUK ADMIN: MAHASISWA BARU SAJA REVISI 🔥
+                notifController.createNotification("Revisi Dokumen", `${document_author} baru saja mengirimkan revisi: "${title}"`, "doc");
+
                 res.json({ message: "Dokumen & File berhasil diperbarui!" });
             });
         });
@@ -194,6 +197,10 @@ exports.updateDoc = (req, res) => {
         
         db.query(sql, [title, document_author, year, category, department, abstract, external_url, docId], (updErr) => {
             if (updErr) return res.status(500).json({ message: "Gagal update database." });
+            
+            // 🔥 NOTIFIKASI UNTUK ADMIN: MAHASISWA BARU SAJA REVISI 🔥
+            notifController.createNotification("Revisi Dokumen", `${document_author} baru saja mengirimkan revisi teks: "${title}"`, "doc");
+
             res.json({ message: "Data berhasil diperbarui!" });
         });
     }
@@ -207,12 +214,12 @@ exports.addView = (req, res) => {
     });
 };
 
-// 9. Update Status & Simpan Bukti Gambar Dokumentasi
+// 9. Update Status & Kirim WA (Dinamis Sesuai Kategori Dokumen)
 exports.updateStatus = (req, res) => {
     const docId = req.params.id;
     const { status, rejection_reason } = req.body;
     
-    // 🔥 Jika ada file gambar yang diunggah oleh Admin
+    // Jika ada file gambar yang diunggah oleh Admin
     const rejection_assets = req.file ? `uploads/${req.file.filename}` : null;
 
     const query = "UPDATE documents SET status = ?, rejection_reason = ?, rejection_assets = ? WHERE id = ?";
@@ -220,6 +227,39 @@ exports.updateStatus = (req, res) => {
 
     db.query(query, values, (err) => {
         if (err) return res.status(500).json({ message: "Gagal update status" });
+
+        // 🔥 PERBAIKAN: Ambil juga kolom d.category dari database 🔥
+        const queryWA = `
+            SELECT d.title, d.document_author, d.category, u.no_wa 
+            FROM documents d 
+            JOIN users u ON d.document_author = u.full_name 
+            WHERE d.id = ?
+        `;
+        
+        db.query(queryWA, [docId], (errUser, results) => {
+            if (!errUser && results.length > 0) {
+                const { title, document_author, category, no_wa } = results[0];
+
+                if (no_wa) { 
+                    let pesanWA = '';
+                    const loginLink = 'http://localhost:5173/login'; 
+
+                    // Jika kategori kosong, fallback ke kata 'dokumen'
+                    const jenisDokumen = category || 'dokumen';
+
+                    if (status === 'Terbit' || status === 'Disetujui') {
+                        pesanWA = `Halo *${document_author}*, 👋\n\nKami ingin menginformasikan bahwa *${jenisDokumen}* Anda yang berjudul:\n_"${title}"_\n\nTelah selesai ditinjau dan saat ini berstatus *✅ DISETUJUI / TERBIT* di E-Repository PBJT. 🎉\n\nTerima kasih banyak atas kontribusi Anda!\nAnda dapat meninjau dokumen tersebut melalui tautan berikut:\n🔗 ${loginLink}\n\n_(Pesan ini dikirim secara otomatis oleh sistem, mohon untuk tidak membalas)_`;
+                    } else if (status === 'Ditolak' || status === 'Revisi') {
+                        pesanWA = `Halo *${document_author}*, 👋\n\nKami ingin menyampaikan pembaruan terkait *${jenisDokumen}* Anda yang berjudul:\n_"${title}"_\n\nSaat ini dokumen Anda berstatus: *⚠️ ${status.toUpperCase()}*.\n\n*📝 Catatan dari Admin:*\n_${rejection_reason || 'Tidak ada catatan tambahan'}_\n\nMohon kesediaannya untuk melakukan penyesuaian sesuai catatan di atas. Anda dapat mengunggah ulang dokumen revisi dengan masuk ke akun E-Repository melalui tautan berikut:\n🔗 ${loginLink}\n\nTerima kasih dan selamat melanjutkan revisi! 💪\n\n_(Pesan ini dikirim secara otomatis oleh sistem, mohon untuk tidak membalas)_`;
+                    }
+
+                    if (pesanWA !== '') {
+                        sendWAMessage(no_wa, pesanWA);
+                    }
+                }
+            }
+        });
+
         res.status(200).json({ message: `Status menjadi ${status}`, file: rejection_assets });
     });
 };
