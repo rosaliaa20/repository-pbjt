@@ -173,6 +173,4 @@ Project ini dikembangkan secara eksklusif untuk kebutuhan akademik, penelitian, 
 
 ---
 
-Developed with ❤️ by **Rosalia Indah Dwi P.**
-
-```
+Developed by **Rosalia Indah Dwi P.**
