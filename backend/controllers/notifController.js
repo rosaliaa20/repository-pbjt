@@ -26,7 +26,7 @@ exports.createNotification = (title, description, type) => {
     });
 };
 
-// 4. Tandai SATU Notifikasi Sudah Dibaca (Berdasarkan ID) 🔥 BARU DITAMBAHKAN 🔥
+// 4. Tandai SATU Notifikasi Sudah Dibaca (Berdasarkan ID)
 exports.markSingleAsRead = (req, res) => {
     const { id } = req.params;
     const query = 'UPDATE notifications SET is_read = TRUE WHERE id = ?';

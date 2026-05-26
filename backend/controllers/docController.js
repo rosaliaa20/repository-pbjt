@@ -3,7 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const { PDFDocument, rgb, degrees } = require("pdf-lib");
 const notifController = require('./notifController');
-const { sendWAMessage } = require('../utils/waBot');
+const { sendWAMessage } = require('../utils/waBot'); // Pastikan path ini sesuai dengan lokasi file bot WA kamu
 
 // 1. Ambil SEMUA dokumen (Dengan Filter Tanggal & Urutan Terbaru)
 exports.getAllDocs = (req, res) => {
@@ -108,7 +108,7 @@ exports.uploadDoc = (req, res) => {
         const finalTitle = title || "Tanpa Judul";
         const finalAuthor = document_author || "Anonim";
         const filePath = `uploads/${req.file.filename}`;
-        // 🔥 TAMBAHKAN BARIS INI UNTUK MELACAK FILE 🔥
+        
         console.log("📁 File baru sukses tersimpan di:", req.file.path);
 
         const query = `INSERT INTO documents (title, document_author, abstract, category, department, year, file_path, external_url, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
@@ -125,7 +125,7 @@ exports.uploadDoc = (req, res) => {
     }
 };
 
-// 6. Hapus Dokumen (Database + File Fisik) 🔥 REVISI 🔥
+// 6. Hapus Dokumen (Database + File Fisik)
 exports.deleteDoc = (req, res) => {
     const docId = req.params.id;
 
@@ -142,7 +142,7 @@ exports.deleteDoc = (req, res) => {
         db.query("DELETE FROM documents WHERE id = ?", [docId], (deleteErr) => {
             if (deleteErr) return res.status(500).json({ message: "Gagal menghapus data di database." });
 
-            // 3. Hapus file fisik secara SYNCHRONOUS (Lebih Agresif & Pasti)
+            // 3. Hapus file fisik secara SYNCHRONOUS
             try {
                 if (fs.existsSync(filePath)) {
                     fs.unlinkSync(filePath);
@@ -186,7 +186,7 @@ exports.updateDoc = (req, res) => {
             db.query(sql, [title, document_author, year, category, department, abstract, newPath, external_url, docId], (updErr) => {
                 if (updErr) return res.status(500).json({ message: "Gagal update database." });
                 
-                // 🔥 NOTIFIKASI UNTUK ADMIN: MAHASISWA BARU SAJA REVISI 🔥
+                // Notifikasi Admin: Mahasiswa baru saja revisi dokumen
                 notifController.createNotification("Revisi Dokumen", `${document_author} baru saja mengirimkan revisi: "${title}"`, "doc");
 
                 res.json({ message: "Dokumen & File berhasil diperbarui!" });
@@ -198,7 +198,7 @@ exports.updateDoc = (req, res) => {
         db.query(sql, [title, document_author, year, category, department, abstract, external_url, docId], (updErr) => {
             if (updErr) return res.status(500).json({ message: "Gagal update database." });
             
-            // 🔥 NOTIFIKASI UNTUK ADMIN: MAHASISWA BARU SAJA REVISI 🔥
+            // Notifikasi Admin: Mahasiswa baru saja revisi teks dokumen
             notifController.createNotification("Revisi Dokumen", `${document_author} baru saja mengirimkan revisi teks: "${title}"`, "doc");
 
             res.json({ message: "Data berhasil diperbarui!" });
@@ -228,7 +228,6 @@ exports.updateStatus = (req, res) => {
     db.query(query, values, (err) => {
         if (err) return res.status(500).json({ message: "Gagal update status" });
 
-        // 🔥 PERBAIKAN: Ambil juga kolom d.category dari database 🔥
         const queryWA = `
             SELECT d.title, d.document_author, d.category, u.no_wa 
             FROM documents d 
