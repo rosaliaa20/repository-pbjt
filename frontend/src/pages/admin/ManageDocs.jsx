@@ -15,15 +15,18 @@ const ManageDocs = () => {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
-  // 🔥 STATE POPUP KONFIRMASI YANG BARU & DIPERBAIKI 🔥
+  // 🔥 STATE BARU: Mencegah Double-Click saat memproses data 🔥
+  const [actionLoading, setActionLoading] = useState(false);
+
+  // STATE POPUP KONFIRMASI 
   const [modal, setModal] = useState({
     isOpen: false,
     type: 'warning', 
     title: '',
     message: '',
     showInput: false,
-    action: '',      // Menyimpan jenis aksi (approve, reject, delete)
-    targetId: null   // Menyimpan ID dokumen yang dipilih
+    action: '',      
+    targetId: null   
   });
 
   // STATE POPUP EXPORT LAPORAN
@@ -86,7 +89,7 @@ const ManageDocs = () => {
   });
 
   // ========================================================
-  // 🔥 FUNGSI EXPORT LAPORAN KE CSV
+  // FUNGSI EXPORT LAPORAN KE CSV
   // ========================================================
   const executeExport = () => {
     setIsExportModalOpen(false);
@@ -123,14 +126,12 @@ const ManageDocs = () => {
       ];
     });
 
-    // Gunakan sep=; agar Excel otomatis membagi kolom
     const csvContent = "sep=;\n" + [headers.join(';'), ...csvRows.map(row => row.join(';'))].join('\n');
     
     const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     
-    // Format nama file menggunakan tanggal yang sudah diubah formatnya
     const fileNameDate = startDate && endDate 
       ? `${formatDateDisplay(startDate)}_sd_${formatDateDisplay(endDate)}` 
       : 'Semua_Waktu';
@@ -144,7 +145,7 @@ const ManageDocs = () => {
   };
 
   // ========================================================
-  // 🔥 FUNGSI VALIDASI & HAPUS DENGAN FEEDBACK 🔥
+  // FUNGSI VALIDASI & HAPUS DENGAN FEEDBACK
   // ========================================================
   const handleApproveClick = (id) => {
     setModal({
@@ -155,7 +156,7 @@ const ManageDocs = () => {
   };
 
   const handleRejectClick = (id) => {
-    setRejectReason(""); // Kosongkan form teks setiap kali popup dibuka
+    setRejectReason(""); 
     setModal({
       isOpen: true, type: 'warning', title: 'Tolak & Beri Revisi',
       message: 'Berikan catatan/alasan agar mahasiswa tahu bagian mana yang harus diperbaiki:',
@@ -171,7 +172,6 @@ const ManageDocs = () => {
     });
   };
 
-  // Fungsi jembatan untuk mengeksekusi aksi dari dalam Modal
   const handleConfirmModal = () => {
     if (modal.action === 'approve') {
       executeStatusChange(modal.targetId, 'Terbit');
@@ -180,35 +180,43 @@ const ManageDocs = () => {
     } else if (modal.action === 'delete') {
       executeDelete(modal.targetId); 
     } else {
-      closePopup(); // Untuk popup peringatan biasa (seperti Data Kosong)
+      closePopup(); 
     }
   };
 
-const executeStatusChange = async (id, newStatus) => {
+  const executeStatusChange = async (id, newStatus) => {
     if (newStatus === 'Ditolak' && !rejectReason.trim()) {
       alert("Mohon isi catatan revisi!");
       return;
     }
 
+    setActionLoading(true); // 🔥 KUNCI TOMBOL SAAT PROSES DIMULAI 🔥
     const formData = new FormData();
     formData.append('status', newStatus);
     formData.append('rejection_reason', rejectReason);
-    if (rejectFile) formData.append('document_file', rejectFile); // Nama field samakan dengan multer di backend
+    if (rejectFile) formData.append('document_file', rejectFile); 
 
     try {
       await axios.put(`http://localhost:5000/api/documents/${id}/status`, formData);
       fetchDocuments();
       closePopup();
-    } catch (error) { console.error(error); }
-};
+    } catch (error) { 
+      console.error(error); 
+    } finally {
+      setActionLoading(false); // 🔥 BUKA KUNCI TOMBOL SETELAH SELESAI 🔥
+    }
+  };
 
   const executeDelete = async (id) => {
-    closePopup();
+    setActionLoading(true); // 🔥 KUNCI TOMBOL SAAT MENGHAPUS 🔥
     try {
       await axios.delete(`http://localhost:5000/api/documents/${id}`);
       setDocuments(documents.filter(doc => doc.id !== id));
+      closePopup();
     } catch (error) {
       console.error("Gagal menghapus:", error);
+    } finally {
+      setActionLoading(false); // 🔥 BUKA KUNCI TOMBOL 🔥
     }
   };
 
@@ -327,7 +335,7 @@ const executeStatusChange = async (id, newStatus) => {
         </div>
       </div>
 
-{/* POPUP STANDAR UNTUK APPROVE, REJECT, DELETE */}
+      {/* POPUP STANDAR UNTUK APPROVE, REJECT, DELETE */}
       {modal.isOpen && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white dark:bg-[#131C31] border border-slate-200 dark:border-slate-700 rounded-[2rem] p-6 w-full max-w-sm shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col items-center text-center">
@@ -339,7 +347,6 @@ const executeStatusChange = async (id, newStatus) => {
             <h3 className="text-lg font-black text-slate-900 dark:text-white mb-2">{modal.title}</h3>
             <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-6 px-2">{modal.message}</p>
             
-            {/* 🔥 BAGIAN REVISI: TEXTAREA + INPUT FILE GAMBAR 🔥 */}
             {modal.showInput && (
               <div className="w-full text-left mb-6">
                 <textarea 
@@ -350,7 +357,6 @@ const executeStatusChange = async (id, newStatus) => {
                   onChange={(e) => setRejectReason(e.target.value)}
                 ></textarea>
                 
-                {/* Kotak Upload File Gambar */}
                 <div className="p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl">
                   <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 block">
                     Unggah Bukti Gambar (Opsional)
@@ -370,18 +376,21 @@ const executeStatusChange = async (id, newStatus) => {
                 <>
                   <button 
                     onClick={closePopup} 
-                    className="flex-1 py-3 rounded-xl font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                    disabled={actionLoading}
+                    className="flex-1 py-3 rounded-xl font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 disabled:opacity-50 transition-colors"
                   >
                     Batal
                   </button>
+                  {/* 🔥 TOMBOL "YA LANJUTKAN" YANG SUDAH DILINDUNGI 🔥 */}
                   <button 
                     onClick={handleConfirmModal} 
-                    className={`flex-1 py-3 rounded-xl font-bold text-white transition-all 
+                    disabled={actionLoading}
+                    className={`flex-1 py-3 rounded-xl font-bold text-white transition-all disabled:opacity-70 disabled:cursor-not-allowed
                       ${modal.type === 'error' ? 'bg-rose-600 hover:bg-rose-700 shadow-rose-600/20' : 
                         modal.type === 'success' ? 'bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/20' :
                         'bg-amber-500 hover:bg-amber-600 shadow-amber-500/20'} shadow-lg`}
                   >
-                    Ya, Lanjutkan
+                    {actionLoading ? 'Memproses...' : 'Ya, Lanjutkan'}
                   </button>
                 </>
               ) : (
