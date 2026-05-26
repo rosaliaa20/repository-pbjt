@@ -70,10 +70,11 @@ exports.login = (req, res) => {
 };
 
 // ========================================================
-// 2. FUNGSI REGISTER MANDIRI (Dengan Email)
+// 2. FUNGSI REGISTER MANDIRI (Dengan Email & WA)
 // ========================================================
 exports.register = async (req, res) => {
-    const { name, nim, email, tanggal_lahir, password, department } = req.body;
+    // 🔥 PERBAIKAN: Menangkap no_wa dari request body 🔥
+    const { name, nim, email, no_wa, tanggal_lahir, password, department } = req.body;
     const ipAddress = req.ip || req.connection.remoteAddress || 'Unknown IP';
 
     if (!name || !nim || !email || !password || !tanggal_lahir) {
@@ -95,8 +96,10 @@ exports.register = async (req, res) => {
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(password, salt);
 
-            const insertQuery = 'INSERT INTO users (full_name, username, nim, email, tanggal_lahir, password, role, department, approval_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
-            const values = [name, nim, nim, email, tanggal_lahir, hashedPassword, 'user', department || null, 'pending'];
+            // 🔥 PERBAIKAN: Menambahkan no_wa ke dalam query INSERT 🔥
+            const insertQuery = 'INSERT INTO users (full_name, username, nim, email, no_wa, tanggal_lahir, password, role, department, approval_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            const finalNoWa = no_wa ? no_wa : null; // Jika WA dikosongkan, jadikan null
+            const values = [name, nim, nim, email, finalNoWa, tanggal_lahir, hashedPassword, 'user', department || null, 'pending'];
 
             db.query(insertQuery, values, (insertErr) => {
                 if (insertErr) {
@@ -119,8 +122,8 @@ exports.register = async (req, res) => {
 // 3. MENGAMBIL SEMUA DATA PENGGUNA
 // ========================================================
 exports.getAllUsers = (req, res) => {
-    // 🔥 PERBAIKAN: Memanggil kolom email asli, bukan lagi username AS email 🔥
-    const query = 'SELECT id, full_name AS name, email, username, nim AS nim_nidn, role, is_locked, approval_status, created_at FROM users ORDER BY id DESC';
+    // 🔥 PERBAIKAN: Menambahkan pemanggilan kolom no_wa untuk tabel Admin 🔥
+    const query = 'SELECT id, full_name AS name, email, no_wa, username, nim AS nim_nidn, role, is_locked, approval_status, created_at FROM users ORDER BY id DESC';
 
     db.query(query, (err, results) => {
         if (err) return res.status(500).json({ message: 'Terjadi kesalahan pada server.' });
@@ -133,8 +136,8 @@ exports.getAllUsers = (req, res) => {
 // ========================================================
 exports.getUserById = (req, res) => {
     const userId = req.params.id;
-    // 🔥 PERBAIKAN: Tambahkan pemanggilan kolom 'username' sebagai pencadangan (fallback)
-    const sql = "SELECT id, full_name AS name, nim, username, email, role, department FROM users WHERE id = ?";
+    // 🔥 PERBAIKAN: Menambahkan pemanggilan kolom no_wa agar form edit otomatis terisi 🔥
+    const sql = "SELECT id, full_name AS name, nim, username, email, no_wa, role, department FROM users WHERE id = ?";
     
     db.query(sql, [userId], (err, result) => {
       if (err) {
@@ -217,7 +220,9 @@ exports.deleteUser = (req, res) => {
 // ========================================================
 exports.updateUser = async (req, res) => {
     const userId = req.params.id;
-    const { password, name, nim, email, role, department } = req.body;
+    
+    // 🔥 PERBAIKAN: Menangkap variabel no_wa dari form frontend 🔥
+    const { password, name, nim, email, no_wa, role, department } = req.body;
 
     // 1. Jika request berisi password (Reset Sandi dari Admin)
     if (password) {
@@ -234,7 +239,7 @@ exports.updateUser = async (req, res) => {
             return res.status(500).json({ message: 'Gagal memproses enkripsi sandi baru.' });
         }
     } 
-    // 2. Jika Update Profil (Nama, Email, Department, dll)
+    // 2. Jika Update Profil (Nama, Email, WA, Department, dll)
     else if (name) {
         // Langkah A: Ambil nama lama dari database untuk dicari di tabel documents
         db.query('SELECT full_name FROM users WHERE id = ?', [userId], (err, results) => {
@@ -242,10 +247,11 @@ exports.updateUser = async (req, res) => {
             
             const oldName = results[0].full_name; // Nama lama
             const finalEmail = email ? email : null;
+            const finalNoWa = no_wa ? no_wa : null; // 🔥 Cegah string kosong merusak DB 🔥
 
-            // Langkah B: Update di tabel users (Termasuk Department)
-            const queryUser = 'UPDATE users SET full_name = ?, nim = ?, username = ?, email = ?, role = ?, department = ? WHERE id = ?';
-            db.query(queryUser, [name, nim, nim, finalEmail, role, department, userId], (err) => {
+            // Langkah B: Update di tabel users (Sekarang Memasukkan no_wa)
+            const queryUser = 'UPDATE users SET full_name = ?, nim = ?, username = ?, email = ?, no_wa = ?, role = ?, department = ? WHERE id = ?';
+            db.query(queryUser, [name, nim, nim, finalEmail, finalNoWa, role, department, userId], (err) => {
                 if (err) {
                     console.error("Error Update User:", err);
                     return res.status(500).json({ message: 'Gagal update profil.' });
@@ -316,8 +322,9 @@ exports.changePassword = async (req, res) => {
         return res.status(500).json({ message: 'Terjadi kesalahan sistem keamanan.' });
     }
 };
+
 // ========================================================
-// 9. IMPORT MAHASISWA DARI EXCEL (Skenario GoFeeder)
+// 9. IMPORT MAHASISWA DARI EXCEL (Skenario GoFeeder + WA)
 // ========================================================
 exports.importUsersExcel = async (req, res) => {
     try {
@@ -333,8 +340,8 @@ exports.importUsersExcel = async (req, res) => {
         let failedList = []; 
 
         for (const row of data) {
-            // 🔥 PERBAIKAN: Tangkap juga kolom 'email' dari Excel 🔥
-            const { nama, nim, email, tanggal_lahir, prodi } = row;
+            // 🔥 PERBAIKAN: Tangkap juga kolom 'no_wa' dari baris Excel 🔥
+            const { nama, nim, email, no_wa, tanggal_lahir, prodi } = row;
 
             if (!nama || !nim || !tanggal_lahir) {
                 failedList.push(`Data Kosong: ${nama || 'Tanpa Nama'} - ${nim || 'Tanpa NIM'}`);
@@ -343,22 +350,22 @@ exports.importUsersExcel = async (req, res) => {
 
             const nimStr = String(nim).trim();
             const passwordStr = String(tanggal_lahir).replace(/[-/]/g, '');
-            // Jika di Excel emailnya kosong, kita set jadi null
             const emailStr = email ? String(email).trim() : null; 
+            const noWaStr = no_wa ? String(no_wa).trim() : null; // 🔥 Ambil nomor WA jika ada 🔥
             
             try {
                 const salt = await bcrypt.genSalt(10);
                 const hashedPassword = await bcrypt.hash(passwordStr, salt);
 
-                // 🔥 PERBAIKAN: Masukkan email ke query database 🔥
+                // 🔥 PERBAIKAN: Masukkan kolom no_wa ke dalam query INSERT 🔥
                 const sql = `
                     INSERT IGNORE INTO users 
-                    (full_name, username, nim, email, password, tanggal_lahir, department, role, approval_status) 
-                    VALUES (?, ?, ?, ?, ?, ?, ?, 'user', 'approved')
+                    (full_name, username, nim, email, no_wa, password, tanggal_lahir, department, role, approval_status) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'user', 'approved')
                 `;
                 
                 await new Promise((resolve, reject) => {
-                    db.query(sql, [nama, nimStr, nimStr, emailStr, hashedPassword, tanggal_lahir, prodi], (err, result) => {
+                    db.query(sql, [nama, nimStr, nimStr, emailStr, noWaStr, hashedPassword, tanggal_lahir, prodi], (err, result) => {
                         if (err) reject(err);
                         else if (result.affectedRows === 0) reject(new Error('Duplikat')); 
                         else resolve(result);

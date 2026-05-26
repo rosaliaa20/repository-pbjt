@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { FiUser, FiCreditCard, FiMail, FiBookOpen, FiShield, FiSave, FiArrowLeft, FiAlertCircle } from "react-icons/fi";
+import { FiUser, FiCreditCard, FiMail, FiBookOpen, FiShield, FiSave, FiArrowLeft, FiAlertCircle, FiPhone } from "react-icons/fi";
 import axios from "axios";
 
 const EditUser = () => {
@@ -11,6 +11,7 @@ const EditUser = () => {
     name: '',
     nim: '',
     email: '',
+    no_wa: '', // Tambahan untuk menampung WA
     department: '',
     role: ''
   });
@@ -29,6 +30,7 @@ const EditUser = () => {
           name: userData.name || '',
           nim: userData.nim || userData.username || '', 
           email: userData.email || '',
+          no_wa: userData.no_wa || '', // Menarik data WA dari DB
           department: userData.department || '',
           role: userData.role || 'user' 
         });
@@ -102,24 +104,13 @@ const EditUser = () => {
                   className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-xl focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-sm font-medium text-slate-800 dark:text-slate-200 transition-all" />
               </div>
             </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 ml-1">Email Pemulihan</label>
-              <div className="relative">
-                <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Ketik email aktif di sini..."
-                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-xl focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-sm font-medium text-slate-800 dark:text-slate-200 transition-all" />
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
             <div>
               <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 ml-1">Program Studi / Bagian</label>
               <div className="relative">
                 <FiBookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10" />
                 <select name="department" value={formData.department} onChange={handleChange}
                   className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-xl focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-sm font-bold text-slate-800 dark:text-slate-200 appearance-none cursor-pointer relative z-0">
-                  {/* 🔥 PERBAIKAN: Value D3 disamakan dengan teks, warna dark mode diatur 🔥 */}
                   <option className="bg-white dark:bg-slate-800" value="">-- Pilih Bagian --</option>
                   <option className="bg-white dark:bg-slate-800" value="D3 Teknik Informatika">D3 Teknik Informatika</option>
                   <option className="bg-white dark:bg-slate-800" value="D3 Teknik Mesin">D3 Teknik Mesin</option>
@@ -131,17 +122,38 @@ const EditUser = () => {
                 </select>
               </div>
             </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 ml-1">Hak Akses (Role)</label>
+              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 ml-1">Email Pemulihan</label>
               <div className="relative">
-                <FiShield className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10" />
-                <select name="role" value={formData.role} onChange={handleChange} required
-                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-xl focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-sm font-bold text-slate-800 dark:text-slate-200 appearance-none cursor-pointer relative z-0">
-                  <option className="bg-white dark:bg-slate-800" value="user">Mahasiswa</option>
-                  <option className="bg-white dark:bg-slate-800" value="dosen">Dosen</option>
-                  <option className="bg-white dark:bg-slate-800" value="admin">Administrator (Perpus)</option>
-                </select>
+                <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder="Ketik email aktif..."
+                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-xl focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-sm font-medium text-slate-800 dark:text-slate-200 transition-all" />
               </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 ml-1">Nomor WhatsApp</label>
+              <div className="relative">
+                <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input type="text" name="no_wa" value={formData.no_wa} onChange={handleChange} placeholder="Contoh: 08123456789"
+                  className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-xl focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none text-sm font-medium text-slate-800 dark:text-slate-200 transition-all" />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 ml-1">Hak Akses (Role)</label>
+            <div className="relative">
+              <FiShield className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10" />
+              <select name="role" value={formData.role} onChange={handleChange} required
+                className="w-full pl-11 pr-4 py-3.5 bg-slate-50 dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-xl focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none text-sm font-bold text-slate-800 dark:text-slate-200 appearance-none cursor-pointer relative z-0">
+                <option className="bg-white dark:bg-slate-800" value="user">Mahasiswa</option>
+                <option className="bg-white dark:bg-slate-800" value="dosen">Dosen</option>
+                <option className="bg-white dark:bg-slate-800" value="admin">Administrator (Perpus)</option>
+              </select>
             </div>
           </div>
 

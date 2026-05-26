@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
   FiUser, FiLock, FiShield, FiCheckCircle, 
-  FiSave, FiAlertCircle, FiEye, FiEyeOff, FiMail 
+  FiSave, FiAlertCircle, FiEye, FiEyeOff, FiMail, FiPhone
 } from 'react-icons/fi';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -16,8 +16,9 @@ const Profile = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // State untuk form ganti email
+  // State untuk form kontak (Email & WA)
   const [email, setEmail] = useState('');
+  const [noWa, setNoWa] = useState('');
   const [isEmailLoading, setIsEmailLoading] = useState(false);
 
   const [showOldPassword, setShowOldPassword] = useState(false);
@@ -33,6 +34,7 @@ const Profile = () => {
       axios.get(`http://localhost:5000/api/auth/users/${parsedUser.id}`)
         .then(res => {
           setEmail(res.data.email || '');
+          setNoWa(res.data.no_wa || '');
           setFullUserData(res.data);
         })
         .catch(err => console.error("Gagal mengambil data profil:", err));
@@ -89,7 +91,7 @@ const Profile = () => {
     }
   };
 
-  const handleUpdateEmail = async (e) => {
+  const handleUpdateContact = async (e) => {
     e.preventDefault();
     if (!fullUserData) return;
 
@@ -97,26 +99,26 @@ const Profile = () => {
     try {
       await axios.put(`http://localhost:5000/api/auth/users/${user.id}`, {
         name: fullUserData.name,
-        // 🔥 PERBAIKAN KRUSIAL: Jaring Pengaman NIM agar username tidak hilang 🔥
         nim: fullUserData.nim || fullUserData.username,
         role: fullUserData.role,
         department: fullUserData.department,
-        email: email
+        email: email,
+        no_wa: noWa // Mengirim data WA ke backend
       });
 
       Swal.fire({
         icon: 'success', title: 'Berhasil!',
-        text: 'Email pemulihan Anda berhasil diperbarui.',
+        text: 'Informasi kontak Anda berhasil diperbarui.',
         background: document.documentElement.classList.contains('dark') ? '#1E293B' : '#fff',
         color: document.documentElement.classList.contains('dark') ? '#fff' : '#1E293B'
       });
       
-      setFullUserData({ ...fullUserData, email: email });
+      setFullUserData({ ...fullUserData, email: email, no_wa: noWa });
 
     } catch (error) {
       Swal.fire({
         icon: 'error', title: 'Gagal',
-        text: error.response?.data?.message || 'Terjadi kesalahan saat menyimpan email.',
+        text: error.response?.data?.message || 'Terjadi kesalahan saat menyimpan data kontak.',
         background: document.documentElement.classList.contains('dark') ? '#1E293B' : '#fff',
         color: document.documentElement.classList.contains('dark') ? '#fff' : '#1E293B'
       });
@@ -147,7 +149,6 @@ const Profile = () => {
             
             <h2 className="text-base font-bold text-slate-900 dark:text-white text-center leading-tight">{user.name}</h2>
             
-            {/* 🔥 PERBAIKAN TAMPILAN: Menarik NIM dari Database agar tidak strip (-) 🔥 */}
             <p className="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5 mb-3">
               {fullUserData ? (fullUserData.nim || fullUserData.username) : '-'}
             </p>
@@ -197,7 +198,6 @@ const Profile = () => {
 
             <form onSubmit={handleChangePassword} className="space-y-4">
               
-              {/* Sandi Lama */}
               <div>
                 <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Sandi Saat Ini</label>
                 <div className="relative mt-1.5">
@@ -219,10 +219,7 @@ const Profile = () => {
                 </div>
               </div>
 
-              {/* GRID 2 KOLOM UNTUK SANDI BARU & KONFIRMASI */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                {/* Sandi Baru */}
                 <div>
                   <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Sandi Baru</label>
                   <div className="relative mt-1.5">
@@ -244,7 +241,6 @@ const Profile = () => {
                   </div>
                 </div>
 
-                {/* Konfirmasi Sandi Baru */}
                 <div>
                   <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Ulangi Sandi Baru</label>
                   <div className="relative mt-1.5">
@@ -265,7 +261,6 @@ const Profile = () => {
                     </button>
                   </div>
                 </div>
-
               </div>
 
               <div className="pt-3 flex justify-end">
@@ -282,7 +277,7 @@ const Profile = () => {
 
           </div>
 
-          {/* KARTU 2: FORM INFORMASI KONTAK (EMAIL) */}
+          {/* KARTU 2: FORM INFORMASI KONTAK (EMAIL & WA) */}
           <div className="bg-white dark:bg-[#131C31] p-5 md:p-7 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
             
             <div className="w-full border-b border-slate-100 dark:border-slate-800 pb-3 mb-5 flex items-center justify-start gap-2">
@@ -290,23 +285,43 @@ const Profile = () => {
               <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest">Informasi Kontak</h3>
             </div>
 
-            <form onSubmit={handleUpdateEmail} className="space-y-4">
-              <div>
-                <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Email Pemulihan</label>
-                <div className="relative mt-1.5">
-                  <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
-                  <input 
-                    type="email" 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} required
-                    placeholder="nama@email.com"
-                    className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-lg focus:border-blue-500 outline-none dark:text-white transition-all text-sm font-medium"
-                  />
+            <form onSubmit={handleUpdateContact} className="space-y-4">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Kolom Email */}
+                <div>
+                  <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Email Pemulihan</label>
+                  <div className="relative mt-1.5">
+                    <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+                    <input 
+                      type="email" 
+                      value={email} 
+                      onChange={(e) => setEmail(e.target.value)} required
+                      placeholder="nama@email.com"
+                      className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-lg focus:border-blue-500 outline-none dark:text-white transition-all text-sm font-medium"
+                    />
+                  </div>
                 </div>
-                <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-2 ml-1">
-                  Pastikan email ini aktif. Link reset sandi akan dikirimkan ke alamat ini jika Anda lupa kata sandi.
-                </p>
+
+                {/* Kolom WA */}
+                <div>
+                  <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Nomor WhatsApp</label>
+                  <div className="relative mt-1.5">
+                    <FiPhone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+                    <input 
+                      type="text" 
+                      value={noWa} 
+                      onChange={(e) => setNoWa(e.target.value)} 
+                      placeholder="Contoh: 08123456789"
+                      className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-lg focus:border-green-500 outline-none dark:text-white transition-all text-sm font-medium"
+                    />
+                  </div>
+                </div>
               </div>
+
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-2 ml-1">
+                Pastikan email aktif untuk pemulihan sandi. Nomor WhatsApp digunakan untuk menerima notifikasi status dokumen (Opsional).
+              </p>
 
               <div className="pt-3 flex justify-end">
                 <button 
@@ -314,7 +329,7 @@ const Profile = () => {
                   disabled={isEmailLoading || !fullUserData}
                   className="bg-blue-600 hover:bg-blue-700 disabled:opacity-70 text-white px-6 py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-blue-500/20"
                 >
-                  {isEmailLoading ? 'Menyimpan...' : <><FiSave size={14}/> Perbarui Email</>}
+                  {isEmailLoading ? 'Menyimpan...' : <><FiSave size={14}/> Perbarui Kontak</>}
                 </button>
               </div>
             </form>

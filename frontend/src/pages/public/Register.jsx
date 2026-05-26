@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   FiUser, FiCalendar, FiBookOpen, 
-  FiCreditCard, FiArrowLeft, FiCheckCircle, FiArrowRight, FiAlertCircle, FiMail
+  FiCreditCard, FiArrowLeft, FiCheckCircle, FiArrowRight, FiAlertCircle, FiMail, FiPhone
 } from 'react-icons/fi';
 import axios from 'axios';
 import { motion } from 'framer-motion';
@@ -13,9 +13,10 @@ const Register = () => {
     name: '',
     nim: '',
     email: '', 
+    no_wa: '', // 🔥 TAMBAHAN: State untuk menangkap Nomor WA
     tanggal_lahir: '',
     password: '',
-    department: '' // 🔥 PERBAIKAN: Dikosongkan agar tidak ada default
+    department: '' 
   });
   
   const [loading, setLoading] = useState(false);
@@ -49,6 +50,7 @@ const Register = () => {
         name: formData.name,
         nim: formData.nim, 
         email: formData.email, 
+        no_wa: formData.no_wa, // 🔥 TAMBAHAN: Mengirim WA ke Backend
         tanggal_lahir: formData.tanggal_lahir,
         password: formattedPassword, 
         department: formData.department
@@ -142,7 +144,7 @@ const Register = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 
                 {/* NIM */}
                 <div>
@@ -152,6 +154,8 @@ const Register = () => {
                     <input type="text" name="nim" value={formData.nim} onChange={handleChange} required placeholder="Misal: 23.1.9.0042" 
                       className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/60 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-yellow-400 outline-none text-sm text-slate-800 dark:text-white transition-colors" />
                   </div>
+                  {/* Teks dipindah ke sini agar rapi */}
+                  <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 mt-1.5 ml-2">*NIM akan menjadi Username</p>
                 </div>
 
                 {/* TANGGAL LAHIR */}
@@ -162,34 +166,54 @@ const Register = () => {
                     <input type="date" name="tanggal_lahir" value={formData.tanggal_lahir} onChange={handleChange} required 
                       className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/60 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-yellow-400 outline-none text-sm text-slate-800 dark:text-white transition-colors cursor-pointer" />
                   </div>
+                  {/* Teks dipindah ke sini agar rapi */}
+                  <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 mt-1.5 ml-2">*Tgl Lahir menjadi Password</p>
                 </div>
 
               </div>
 
-              {/* INFO TAMBAHAN BAWAH INPUT NIM & TGL LAHIR */}
-              <div className="flex flex-col sm:flex-row sm:justify-between px-3 -mt-2 gap-1">
-                <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500">*NIM akan menjadi Username</p>
-                <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 sm:text-right">*Tgl Lahir akan menjadi Password</p>
-              </div>
-
-              {/* EMAIL */}
-              <div>
-                <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-3">Email Aktif</label>
-                <div className="relative mt-1">
-                  <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
-                  <input 
-                    type="email" 
-                    name="email" 
-                    required 
-                    placeholder="Contoh: issabella@gmail.com"
-                    value={formData.email} 
-                    onChange={handleChange} 
-                    className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/60 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-yellow-400 outline-none text-sm text-slate-800 dark:text-white transition-colors" 
-                  />
+              {/* 🔥 PERBAIKAN: GRID UNTUK EMAIL DAN WHATSAPP 🔥 */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                
+                {/* EMAIL */}
+                <div>
+                  <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-3">Email Aktif</label>
+                  <div className="relative mt-1">
+                    <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+                    <input 
+                      type="email" 
+                      name="email" 
+                      required 
+                      placeholder="Contoh: nama@gmail.com"
+                      value={formData.email} 
+                      onChange={handleChange} 
+                      className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/60 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-yellow-400 outline-none text-sm text-slate-800 dark:text-white transition-colors" 
+                    />
+                  </div>
+                  {/* Teks dipindah ke sini */}
+                  <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 mt-1.5 ml-2">*Email untuk pemulihan sandi</p>
                 </div>
-                <p className="text-[9px] text-slate-400 mt-1.5 ml-2 font-medium">*Pastikan email aktif untuk pemulihan password jika lupa.</p>
-              </div>
 
+                {/* WHATSAPP */}
+                <div>
+                  <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-3">No. WhatsApp</label>
+                  <div className="relative mt-1">
+                    <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
+                    <input 
+                      type="text" 
+                      name="no_wa" 
+                      placeholder="081234..."
+                      value={formData.no_wa} 
+                      onChange={handleChange} 
+                      className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/60 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-yellow-400 outline-none text-sm text-slate-800 dark:text-white transition-colors" 
+                    />
+                  </div>
+                  {/* Teks dipindah ke sini */}
+                  <p className="text-[9px] font-bold text-slate-400 dark:text-slate-500 mt-1.5 ml-2">*WA untuk info status dokumen</p>
+                </div>
+
+              </div>
+              
               {/* PROGRAM STUDI */}
               <div className="pt-1">
                 <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-3">Program Studi</label>
@@ -198,7 +222,6 @@ const Register = () => {
                   <select name="department" value={formData.department} onChange={handleChange} required
                     className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/60 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-yellow-400 outline-none text-sm font-bold text-slate-800 dark:text-white appearance-none cursor-pointer relative z-0">
                     
-                    {/* 🔥 PERBAIKAN: Menambahkan class bg & text pada setiap option 🔥 */}
                     <option value="" disabled className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">-- Pilih Program Studi --</option>
                     <option value="Teknik Informatika" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">D3 Informatika</option>
                     <option value="Teknik Mesin" className="bg-white dark:bg-slate-800 text-slate-900 dark:text-white">D3 Mesin</option>
