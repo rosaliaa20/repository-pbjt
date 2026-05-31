@@ -106,7 +106,15 @@ jobs:
       cancel-in-progress: false
 
     steps:
-      - name: Deploy to production
+      # LANGKAH MUTLAK: Memasukkan Runner ke jaringan Proxmox Anda
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v2
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+          version: 1.66.4
+
+      # LANGKAH EKSEKUSI: Baru lakukan SSH setelah Runner terhubung
+      - name: Execute Deployment over SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.SSH_HOST }}
