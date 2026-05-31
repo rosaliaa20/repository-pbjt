@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FiUploadCloud, FiFile, FiX, FiCheckCircle, FiLink } from 'react-icons/fi';
-import api from '../../api/axiosConfig';
+import axios from 'axios';
 
 const EditDoc = () => {
   const { id } = useParams(); 
@@ -25,7 +25,7 @@ const EditDoc = () => {
   useEffect(() => {
     const fetchDoc = async () => {
       try {
-        const response = await api.get(`/documents/${id}`);
+        const response = await axios.get(`/api/documents/${id}`);
         const doc = response.data;
         
         let extractedAbstract = doc.abstract || '';
@@ -88,7 +88,7 @@ const EditDoc = () => {
     updateData.append('external_link', formData.external_link); // Menyimpan link eksternal
 
     try {
-      await api.put(`/documents/${id}`, updateData, {
+      await axios.put(`/api/documents/${id}`, updateData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setSuccess(true);

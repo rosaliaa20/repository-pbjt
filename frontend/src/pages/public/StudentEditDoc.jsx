@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FiUploadCloud, FiFile, FiX, FiCheckCircle, FiUser, FiLink, FiArrowLeft, FiAlertCircle } from 'react-icons/fi';
-import api from '../../api/axiosConfig'; 
+import axios from 'axios';
 
 const StudentEditDoc = () => {
   const { id } = useParams(); 
@@ -9,6 +9,7 @@ const StudentEditDoc = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
   const [error, setError] = useState('');
   
   const [file, setFile] = useState(null);
@@ -51,7 +52,7 @@ useEffect(() => {
 
     const fetchDoc = async () => {
       try {
-        const response = await api.get(`/documents/${id}`);
+        const response = await axios.get(`/api/documents/${id}`);
         const doc = response.data;
         
         let extractedAbstract = doc.abstract || '';
@@ -136,7 +137,7 @@ useEffect(() => {
     updateData.append('external_url', formData.external_url); 
 
     try {
-      await api.put(`/documents/${id}`, updateData, {
+      await axios.put(`/api/documents/${id}`, updateData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       
