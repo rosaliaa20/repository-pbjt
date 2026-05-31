@@ -31,7 +31,7 @@ const Home = () => {
 
     const fetchPublicData = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/documents');
+        const response = await axios.get('/api/documents');
         const allDocs = response.data || [];
         
         const docs = allDocs.filter(d => d.status && d.status.toLowerCase() === 'terbit');

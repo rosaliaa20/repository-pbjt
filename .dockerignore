@@ -1,0 +1,15 @@
+# Frontend build
+dist/
+node_modules/
+
+# Backend
+backend/node_modules/
+backend/uploads/
+backend/.wwebjs_auth/
+backend/.env
+
+# Misc
+.git
+.github
+*.log
+.env

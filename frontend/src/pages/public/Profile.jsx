@@ -31,7 +31,7 @@ const Profile = () => {
       const parsedUser = JSON.parse(storedUser);
       setUser(parsedUser);
 
-      axios.get(`http://localhost:5000/api/auth/users/${parsedUser.id}`)
+      axios.get(`/api/auth/users/${parsedUser.id}`)
         .then(res => {
           setEmail(res.data.email || '');
           setNoWa(res.data.no_wa || '');
@@ -65,7 +65,7 @@ const Profile = () => {
     setIsLoading(true);
 
     try {
-      await axios.put(`http://localhost:5000/api/auth/change-password/${user.id}`, {
+      await axios.put(`/api/auth/change-password/${user.id}`, {
         oldPassword, newPassword
       });
 
@@ -97,7 +97,7 @@ const Profile = () => {
 
     setIsEmailLoading(true);
     try {
-      await axios.put(`http://localhost:5000/api/auth/users/${user.id}`, {
+      await axios.put(`/api/auth/users/${user.id}`, {
         name: fullUserData.name,
         nim: fullUserData.nim || fullUserData.username,
         role: fullUserData.role,

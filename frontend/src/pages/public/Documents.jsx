@@ -26,7 +26,7 @@ const Documents = () => {
     window.scrollTo(0, 0);
     const fetchDocuments = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/documents');
+        const response = await axios.get('/api/documents');
         const docs = response.data || [];
         
         // FILTER: Hanya ambil dokumen yang statusnya 'Terbit'

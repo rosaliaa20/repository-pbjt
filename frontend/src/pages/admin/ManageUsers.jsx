@@ -38,7 +38,7 @@ const ManageUsers = () => {
   const fetchUsers = async () => {
     try {
       // 🔥 KODE AJAIB: Menambahkan timestamp agar browser TIDAK BISA pakai cache lama 🔥
-      const response = await axios.get(`http://localhost:5000/api/auth/users?t=${new Date().getTime()}`);
+      const response = await axios.get(`/api/auth/users?t=${new Date().getTime()}`);
       setUsers(response.data);
     } catch (error) {
       console.error("Gagal mengambil data pengguna:", error);
@@ -96,7 +96,7 @@ const ManageUsers = () => {
     formData.append('excel_file', excelFile);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/users/import", formData, {
+      const response = await axios.post("/api/auth/users/import", formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
@@ -163,7 +163,7 @@ const ManageUsers = () => {
       isOpen: true, type: 'success', title: 'Setujui Mahasiswa?', message: `Setujui ${selectedUsers.length} akun agar bisa login?`, isAlert: false,
       onConfirm: async () => {
         try {
-          const res = await axios.put("http://localhost:5000/api/auth/users/approve", { ids: selectedUsers });
+          const res = await axios.put("/api/auth/users/approve", { ids: selectedUsers });
           setSelectedUsers([]); fetchUsers(); 
           setModal({ isOpen: true, type: 'success', title: 'Berhasil Disetujui!', message: res.data.message, isAlert: true, onConfirm: closePopup });
         } catch (error) {
@@ -179,7 +179,7 @@ const ManageUsers = () => {
       isOpen: true, type: 'danger', title: 'Tolak & Hapus Pendaftar?', message: `Anda akan menolak dan menghapus permanen ${selectedUsers.length} akun yang menunggu persetujuan ini. Tindakan ini tidak dapat dibatalkan. Lanjutkan?`, isAlert: false,
       onConfirm: async () => {
         try {
-          await Promise.all(selectedUsers.map(id => axios.delete(`http://localhost:5000/api/auth/users/${id}`)));
+          await Promise.all(selectedUsers.map(id => axios.delete(`/api/auth/users/${id}`)));
           setSelectedUsers([]); fetchUsers(); 
           setModal({ isOpen: true, type: 'success', title: 'Berhasil Dihapus!', message: `${selectedUsers.length} pendaftar berhasil ditolak dan dihapus.`, isAlert: true, onConfirm: closePopup });
         } catch (error) {
@@ -196,7 +196,7 @@ const ManageUsers = () => {
       message: `Anda akan ${isLock ? 'mengunci' : 'membuka kunci'} ${selectedUsers.length} pengguna. Lanjutkan?`, isAlert: false,
       onConfirm: async () => {
         try {
-          await Promise.all(selectedUsers.map(id => axios.put(`http://localhost:5000/api/auth/users/${id}/toggle-lock`, { is_locked: isLock })));
+          await Promise.all(selectedUsers.map(id => axios.put(`/api/auth/users/${id}/toggle-lock`, { is_locked: isLock })));
           setSelectedUsers([]); fetchUsers();
           setModal({ isOpen: true, type: 'success', title: 'Berhasil!', message: `Status ${selectedUsers.length} akun berhasil diperbarui.`, isAlert: true, onConfirm: closePopup });
         } catch (error) {
@@ -216,7 +216,7 @@ const ManageUsers = () => {
       message: `Tindakan ini akan ${isLock ? 'mengunci' : 'membuka'} SELURUH akun mahasiswa angkatan 20${selectedAngkatan}. Yakin?`, isAlert: false,
       onConfirm: async () => {
         try {
-          const res = await axios.put(`http://localhost:5000/api/auth/users/mass-lock`, { angkatan: selectedAngkatan, is_locked: isLock });
+          const res = await axios.put(`/api/auth/users/mass-lock`, { angkatan: selectedAngkatan, is_locked: isLock });
           fetchUsers();
           setModal({ isOpen: true, type: 'success', title: 'Berhasil', message: res.data.message, isAlert: true, onConfirm: closePopup });
         } catch (error) { console.error(error); }
@@ -232,7 +232,7 @@ const ManageUsers = () => {
       isOpen: true, type: 'warning', title: 'Reset Sandi?', message: `Kembalikan sandi "${name}" menjadi "pbjt123"?`, isAlert: false,
       onConfirm: async () => {
         try {
-          await axios.put(`http://localhost:5000/api/auth/users/${id}`, { password: 'pbjt123' });
+          await axios.put(`/api/auth/users/${id}`, { password: 'pbjt123' });
           setModal({ isOpen: true, type: 'success', title: 'Direset!', message: `Sandi dikembalikan ke pbjt123.`, isAlert: true, onConfirm: closePopup });
         } catch (error) { console.error(error); }
       }
@@ -246,7 +246,7 @@ const ManageUsers = () => {
       message: isCurrentlyLocked ? "Pengguna dapat login kembali." : "Pengguna tidak akan bisa login.", isAlert: false,
       onConfirm: async () => {
         try {
-          await axios.put(`http://localhost:5000/api/auth/users/${id}/toggle-lock`, { is_locked: !isCurrentlyLocked });
+          await axios.put(`/api/auth/users/${id}/toggle-lock`, { is_locked: !isCurrentlyLocked });
           fetchUsers(); closePopup();
         } catch (error) { console.error(error); }
       }
@@ -258,7 +258,7 @@ const ManageUsers = () => {
       isOpen: true, type: 'danger', title: 'Hapus Pengguna?', message: 'Data akan hilang permanen.', isAlert: false,
       onConfirm: async () => {
         try {
-          await axios.delete(`http://localhost:5000/api/auth/users/${id}`);
+          await axios.delete(`/api/auth/users/${id}`);
           fetchUsers(); closePopup();
         } catch (error) { console.error(error); }
       }

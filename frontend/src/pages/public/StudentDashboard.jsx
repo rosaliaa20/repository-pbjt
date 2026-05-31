@@ -38,7 +38,7 @@ const StudentDashboard = () => {
         
         // 1. Sinkronisasi Profil dengan "Cache Buster"
         try {
-          const userRes = await axios.get(`http://localhost:5000/api/auth/users/${initialUser.id}?t=${new Date().getTime()}`);
+          const userRes = await axios.get(`/api/auth/users/${initialUser.id}?t=${new Date().getTime()}`);
           const freshUser = userRes.data;
           activeUser = { ...initialUser, name: freshUser.name, role: freshUser.role, department: freshUser.department };
           
@@ -50,7 +50,7 @@ const StudentDashboard = () => {
         setUser(activeUser); // Update UI Profil secara live!
 
         // 2. Sinkronisasi Dokumen dengan "Cache Buster"
-        const docRes = await axios.get(`http://localhost:5000/api/documents?t=${new Date().getTime()}`);
+        const docRes = await axios.get(`/api/documents?t=${new Date().getTime()}`);
         const allDocs = docRes.data;
         
         const filteredUploads = allDocs.filter(doc => doc.document_author === activeUser.name);
@@ -354,7 +354,7 @@ return (
                     <div className="mt-4 pt-4 border-t border-amber-200/50 dark:border-amber-500/20">
                       <p className="text-[10px] font-black text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-2">Dokumentasi Kesalahan:</p>
                       <a 
-                        href={`http://localhost:5000/${reviewModal.doc.rejection_assets}`} 
+                        href={`/${reviewModal.doc.rejection_assets}`} 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg transition-all shadow-md shadow-indigo-500/20 group w-max"

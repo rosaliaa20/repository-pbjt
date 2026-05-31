@@ -34,7 +34,7 @@ const AdminLayout = () => {
 
 const fetchNotifications = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/notifications");
+      const response = await axios.get("/api/notifications");
       const newNotifs = response.data;
 
       if (newNotifs.length > 0) {
@@ -100,7 +100,7 @@ const fetchNotifications = async () => {
 
   const markAllAsRead = async () => {
     try {
-      await axios.put("http://localhost:5000/api/notifications/read");
+      await axios.put("/api/notifications/read");
       setNotifications(notifications.map(n => ({ ...n, is_read: 1 })));
     } catch (error) {
       console.error("Gagal menandai dibaca:", error);
@@ -117,7 +117,7 @@ const handleNotifClick = async (notif) => {
 
     // 2. Beritahu database di latar belakang (tanpa perlu ditunggu)
     try {
-      await axios.put(`http://localhost:5000/api/notifications/${notif.id}/read`);
+      await axios.put(`/api/notifications/${notif.id}/read`);
       // Kita hapus fetchNotifications() di sini supaya tidak bentrok
     } catch (err) {
       console.error("Gagal update read status:", err);
@@ -147,6 +147,7 @@ const handleNotifClick = async (notif) => {
   const executeLogout = () => {
     closePopup();
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
     navigate('/login');
   };
 

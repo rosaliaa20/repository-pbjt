@@ -2,80 +2,104 @@ const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
+// ============================================================
+// CONSTANTS: Semua konfigurasi diambil dari environment variables.
+// TIDAK ADA hardcoded paths atau credentials.
+// ============================================================
+const DB_HOST = process.env.DB_HOST || 'localhost';
+const DB_USER = process.env.DB_USER || 'root';
+const DB_PASS = process.env.DB_PASS || '';
+const DB_NAME = process.env.DB_NAME || 'e_repository_kampus';
+
+// Di Docker: mysqldump tersedia di PATH via image mysql.
+// Di lokal (Laragon/XAMPP): override via env MYSQLDUMP_PATH.
+const MYSQLDUMP_BIN = process.env.MYSQLDUMP_PATH || 'mysqldump';
+const MYSQL_BIN = process.env.MYSQL_PATH || 'mysql';
+
+/**
+ * Mengekspor database sebagai file .sql (backup penuh).
+ * Kompatibel dengan Docker (network-aware) dan lokal (via env override).
+ */
 exports.exportDatabase = (req, res) => {
-    // Nama database kamu
-    const dbName = 'e_repository_kampus'; 
-    const date = new Date().toISOString().slice(0,10);
-    const fileName = `Backup_${dbName}_${date}.sql`;
-    
-    // Pastikan folder uploads ada untuk menampung file sementara
+    const date = new Date().toISOString().slice(0, 10);
+    const fileName = `Backup_${DB_NAME}_${date}.sql`;
+
     const uploadDir = path.join(__dirname, '../uploads');
     if (!fs.existsSync(uploadDir)) {
-        fs.mkdirSync(uploadDir);
+        fs.mkdirSync(uploadDir, { recursive: true });
     }
-    
+
     const filePath = path.join(uploadDir, fileName);
+    const passArg = DB_PASS ? `-p${DB_PASS}` : '';
 
-    // 🔥 JALUR LARAGON KAMU 🔥
-    // Kita gunakan tanda kutip ganda dan double backslash agar Windows tidak bingung
-    const mysqldumpPath = '"C:\\laragon\\bin\\mysql\\mysql-8.0.30-winx64\\bin\\mysqldump.exe"';
+    // Perintah mysqldump yang kompatibel dengan Docker (menggunakan DB_HOST untuk koneksi jaringan)
+    const command = `${MYSQLDUMP_BIN} -h ${DB_HOST} -u ${DB_USER} ${passArg} ${DB_NAME}`;
 
-    // Perintah eksekusi
-    const command = `${mysqldumpPath} -u root ${dbName} > "${filePath}"`;
+    console.log(`🗄️ Memulai backup database [${DB_NAME}] dari host [${DB_HOST}]...`);
 
-    console.log("Memulai backup dengan perintah:", command);
+    const child = exec(command, { maxBuffer: 50 * 1024 * 1024 }); // 50MB buffer
+    const writeStream = fs.createWriteStream(filePath);
 
-    exec(command, (error, stdout, stderr) => {
-        if (error) {
-            console.error("❌ Backup Laragon Gagal:", error.message);
-            return res.status(500).json({ 
-                message: "Gagal melakukan backup database.",
-                error: error.message 
+    child.stdout.pipe(writeStream);
+
+    let stderrOutput = '';
+    child.stderr.on('data', (data) => {
+        stderrOutput += data;
+    });
+
+    child.on('close', (code) => {
+        if (code !== 0) {
+            console.error(`❌ Backup Gagal (exit code ${code}):`, stderrOutput);
+            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+            return res.status(500).json({
+                error: {
+                    code: 'BACKUP_FAILED',
+                    message: 'Gagal melakukan backup database. Pastikan mysqldump tersedia dan kredensial DB benar.',
+                }
             });
         }
-        
-        // Kirim file ke browser
-        res.download(filePath, fileName, (err) => {
-            if (err) {
-                console.error("Gagal mengirim file:", err);
-            }
-            // Hapus file sementara setelah didownload
-            if (fs.existsSync(filePath)) {
-                fs.unlinkSync(filePath);
-            }
+
+        console.log(`✅ Backup database berhasil: ${fileName}`);
+        res.download(filePath, `Backup_${DB_NAME}_${date}.sql`, (err) => {
+            if (err) console.error('Gagal mengirim file backup:', err.message);
+            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
         });
     });
-
-    
 };
 
+/**
+ * Memulihkan database dari file .sql yang di-upload.
+ * Kompatibel dengan Docker (network-aware) dan lokal (via env override).
+ */
 exports.restoreDatabase = (req, res) => {
     if (!req.file) {
-        return res.status(400).json({ message: "File backup (.sql) tidak ditemukan." });
+        return res.status(400).json({
+            error: { code: 'NO_FILE', message: 'File backup (.sql) tidak ditemukan dalam request.' }
+        });
     }
 
-    const dbName = 'e_repository_kampus';
-    const filePath = req.file.path; // Path file yang baru saja di-upload oleh Multer
+    const filePath = req.file.path;
+    const passArg = DB_PASS ? `-p${DB_PASS}` : '';
 
-    // Jalur ke program mysql.exe di Laragon kamu (sama dengan mysqldump, tapi ini mysql.exe)
-    const mysqlPath = '"C:\\laragon\\bin\\mysql\\mysql-8.0.30-winx64\\bin\\mysql.exe"';
-    
-    // Perintah eksekusi restore (perhatikan tanda kurung sudut < )
-    const command = `${mysqlPath} -u root ${dbName} < "${filePath}"`;
+    const command = `${MYSQL_BIN} -h ${DB_HOST} -u ${DB_USER} ${passArg} ${DB_NAME} < "${filePath}"`;
 
-    console.log("Memulai restore dengan perintah:", command);
+    console.log(`🔄 Memulai restore database [${DB_NAME}] dari host [${DB_HOST}]...`);
 
     exec(command, (error, stdout, stderr) => {
-        // Hapus file .sql sementara dari folder uploads agar tidak menumpuk
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-        }
+        // Selalu hapus file sementara setelah diproses
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
 
         if (error) {
-            console.error("❌ Restore Gagal:", error.message);
-            return res.status(500).json({ message: "Gagal memulihkan database.", error: error.message });
+            console.error('❌ Restore Gagal:', error.message);
+            return res.status(500).json({
+                error: {
+                    code: 'RESTORE_FAILED',
+                    message: 'Gagal memulihkan database.',
+                }
+            });
         }
-        
-        res.json({ message: "Database berhasil dipulihkan ke versi cadangan!" });
+
+        console.log('✅ Database berhasil dipulihkan.');
+        res.json({ message: 'Database berhasil dipulihkan ke versi cadangan!' });
     });
- };   
+};

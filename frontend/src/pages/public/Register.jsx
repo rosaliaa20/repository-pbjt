@@ -56,7 +56,7 @@ const Register = () => {
         department: formData.department
       };
 
-      const response = await axios.post('http://localhost:5000/api/auth/register', dataToSubmit);
+      const response = await axios.post('/api/auth/register', dataToSubmit);
       
       if (response.status === 201) {
         setLoading(false);

@@ -49,7 +49,7 @@ const ManageDocs = () => {
   // Fungsi ambil data dari backend
   const fetchDocuments = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/documents", {
+      const response = await axios.get("/api/documents", {
         params: {
           startDate: startDate || undefined,
           endDate: endDate || undefined,
@@ -197,7 +197,7 @@ const ManageDocs = () => {
     if (rejectFile) formData.append('document_file', rejectFile); 
 
     try {
-      await axios.put(`http://localhost:5000/api/documents/${id}/status`, formData);
+      await axios.put(`/api/documents/${id}/status`, formData);
       fetchDocuments();
       closePopup();
     } catch (error) { 
@@ -210,7 +210,7 @@ const ManageDocs = () => {
   const executeDelete = async (id) => {
     setActionLoading(true); // 🔥 KUNCI TOMBOL SAAT MENGHAPUS 🔥
     try {
-      await axios.delete(`http://localhost:5000/api/documents/${id}`);
+      await axios.delete(`/api/documents/${id}`);
       setDocuments(documents.filter(doc => doc.id !== id));
       closePopup();
     } catch (error) {

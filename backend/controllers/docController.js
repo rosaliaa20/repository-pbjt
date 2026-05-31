@@ -241,7 +241,8 @@ exports.updateStatus = (req, res) => {
 
                 if (no_wa) { 
                     let pesanWA = '';
-                    const loginLink = 'http://localhost:5173/login'; 
+                    const appUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+                    const loginLink = `${appUrl}/login`; 
 
                     // Jika kategori kosong, fallback ke kata 'dokumen'
                     const jenisDokumen = category || 'dokumen';

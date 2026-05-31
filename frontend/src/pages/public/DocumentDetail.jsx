@@ -20,7 +20,7 @@ const DocumentDetail = () => {
 
     const fetchDocumentDetail = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/documents/${id}`);
+        const response = await axios.get(`/api/documents/${id}`);
         let currentDocData = response.data;
 
         const viewedDocs = JSON.parse(localStorage.getItem('viewed_docs')) || [];
@@ -31,7 +31,7 @@ const DocumentDetail = () => {
           viewedDocs.push(id);
           localStorage.setItem('viewed_docs', JSON.stringify(viewedDocs));
 
-          await axios.post(`http://localhost:5000/api/documents/${id}/view`).catch(e => console.log("Abaikan error API jika ada", e));
+          await axios.post(`/api/documents/${id}/view`).catch(e => console.log("Abaikan error API jika ada", e));
           
           currentDocData.views = (currentDocData.views || 0) + 1;
         }

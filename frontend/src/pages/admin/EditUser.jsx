@@ -23,7 +23,7 @@ const EditUser = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/auth/users/${id}`);
+        const response = await axios.get(`/api/auth/users/${id}`);
         const userData = response.data;
         
         setFormData({
@@ -54,7 +54,7 @@ const EditUser = () => {
     setError('');
 
     try {
-      await axios.put(`http://localhost:5000/api/auth/users/${id}`, formData);
+      await axios.put(`/api/auth/users/${id}`, formData);
       navigate('/admin/users', { state: { activeTab: 'approved' } });
     } catch (err) {
       setError(err.response?.data?.message || "Terjadi kesalahan saat menyimpan data.");

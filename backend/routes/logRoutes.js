@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db'); // Sesuaikan path ini dengan koneksi database-mu
+const { verifyToken, verifyAdmin } = require('../middlewares/auth');
 
 // ==========================================
 // 1. MENGAMBIL LOG SISTEM UNTUK DASHBOARD
 // ==========================================
-router.get('/', (req, res) => {
+router.get('/', verifyToken, verifyAdmin, (req, res) => {
   // Ambil 20 aktivitas terbaru
   const sql = "SELECT * FROM system_logs ORDER BY created_at DESC LIMIT 20";
   
@@ -21,7 +22,7 @@ router.get('/', (req, res) => {
 // ==========================================
 // 2. MENAMBAH LOG BARU (Dipanggil oleh sistem)
 // ==========================================
-router.post('/', (req, res) => {
+router.post('/', verifyToken, verifyAdmin, (req, res) => {
   const { type, user_name, description, ip_address } = req.body;
   
   const sql = "INSERT INTO system_logs (type, user_name, description, ip_address) VALUES (?, ?, ?, ?)";

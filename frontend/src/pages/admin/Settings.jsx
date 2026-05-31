@@ -1,9 +1,10 @@
 import { useState, useRef } from 'react';
 import { 
   FiDatabase, FiDownloadCloud, FiShield, FiAlertTriangle, 
-  FiUploadCloud, FiCheckCircle, FiXCircle, FiInfo 
+  FiUploadCloud, FiCheckCircle, FiXCircle, FiInfo, FiSmartphone 
 } from 'react-icons/fi';
 import axios from 'axios';
+import { QRCodeSVG as QRCode } from 'qrcode.react';
 
 const Settings = () => {
   const [loading, setLoading] = useState(false);
@@ -23,8 +24,29 @@ const Settings = () => {
 
   const handleBackup = () => {
     setLoading(true);
-    window.location.href = 'http://localhost:5000/api/backup';
+    window.location.href = '/api/backup';
     setTimeout(() => setLoading(false), 2000); 
+  };
+
+  const [qrCodeData, setQrCodeData] = useState(null);
+  const [loadingQr, setLoadingQr] = useState(false);
+
+  const fetchQrCode = async () => {
+    setLoadingQr(true);
+    try {
+      const res = await axios.get('/api/system/wa-qr');
+      setQrCodeData(res.data.qr);
+    } catch (err) {
+      setModal({
+        isOpen: true,
+        type: 'warning',
+        title: 'QR Code Tidak Tersedia',
+        message: err.response?.data?.message || 'Bot WhatsApp sudah terhubung atau masih memuat.',
+        onConfirm: closePopup
+      });
+    } finally {
+      setLoadingQr(false);
+    }
   };
 
   const handleRestoreClick = () => {
@@ -68,7 +90,7 @@ const Settings = () => {
     formData.append('database_file', file);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/restore', formData, {
+      const response = await axios.post('/api/restore', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
@@ -169,6 +191,39 @@ const Settings = () => {
           </div>
         </div>
 
+      </div>
+
+      {/* WHATSAPP BOT QR SECTION */}
+      <div className="mt-6 bg-white dark:bg-[#131C31] rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors duration-300">
+        <div className="p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="flex-1">
+            <div className="w-14 h-14 bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400 rounded-2xl flex items-center justify-center mb-6">
+              <FiSmartphone className="text-3xl" />
+            </div>
+            <h2 className="text-lg font-bold text-slate-800 dark:text-white mb-2">WhatsApp Bot Status</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4">
+              Tampilkan QR Code untuk menghubungkan WhatsApp ke sistem bot. Jika QR Code tidak muncul, kemungkinan bot sudah terhubung dengan nomor WhatsApp admin.
+            </p>
+            <button 
+              onClick={fetchQrCode}
+              disabled={loadingQr || qrCodeData}
+              className={`px-6 py-3 rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2 ${
+                qrCodeData 
+                  ? 'bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed'
+                  : 'bg-green-500 hover:bg-green-600 text-white'
+              }`}
+            >
+              {loadingQr ? 'Memuat QR...' : qrCodeData ? 'QR Code Ditampilkan' : 'Tampilkan QR Code'}
+            </button>
+          </div>
+          
+          {qrCodeData && (
+            <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm shrink-0 flex flex-col items-center">
+              <QRCode value={qrCodeData} size={180} />
+              <p className="text-xs text-slate-500 font-bold mt-3">Scan dengan WhatsApp Anda</p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* === KOMPONEN MODAL POPUP CUSTOM === */}

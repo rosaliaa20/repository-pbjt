@@ -3,6 +3,7 @@ const router = express.Router();
 
 // Import controller milikmu (sesuai nama file di foldermu)
 const notifController = require('../controllers/notifController');
+const { verifyToken } = require('../middlewares/auth');
 
 // ========================================================
 // === STATIC ROUTES (Tanpa Parameter :id) ===
@@ -10,16 +11,16 @@ const notifController = require('../controllers/notifController');
 // ========================================================
 
 // Mengambil semua notifikasi
-router.get('/', notifController.getNotifications);
+router.get('/', verifyToken, notifController.getNotifications);
 
 // Menandai semua notifikasi sudah dibaca
-router.put('/read', notifController.markAllAsRead);
+router.put('/read', verifyToken, notifController.markAllAsRead);
 
 // ========================================================
 // === DYNAMIC ROUTES (Pakai Parameter :id) ===
 // ========================================================
 
 // Menandai SATU notifikasi sudah dibaca berdasarkan ID
-router.put('/:id/read', notifController.markSingleAsRead);
+router.put('/:id/read', verifyToken, notifController.markSingleAsRead);
 
 module.exports = router;

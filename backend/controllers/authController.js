@@ -3,7 +3,12 @@ const bcrypt = require('bcryptjs');
 const notifController = require('./notifController');
 const xlsx = require('xlsx');
 const nodemailer = require('nodemailer');
-const crypto = require('crypto'); 
+const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
+
+// Resolve secret once at module load \u2014 consistent with auth middleware
+const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_key';
+
 
 // ========================================================
 // FUNGSI BANTUAN: Merekam Jejak Aktivitas ke system_logs
@@ -54,8 +59,16 @@ exports.login = (req, res) => {
 
             logSystemActivity('login_success', user.full_name, 'Login Berhasil', ipAddress);
 
+            // Generate JWT Token
+            const token = jwt.sign(
+                { id: user.id, role: user.role, name: user.full_name },
+                JWT_SECRET,
+                { expiresIn: '24h' }
+            );
+
             res.status(200).json({
                 message: 'Login Berhasil',
+                token: token,
                 user: { 
                     id: user.id, 
                     name: user.full_name, 
@@ -446,7 +459,8 @@ exports.forgotPassword = (req, res) => {
                 }
             });
 
-            const resetLink = `http://localhost:5173/reset-password/${resetToken}`;
+            const appUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+            const resetLink = `${appUrl}/reset-password/${resetToken}`;
 
             const mailOptions = {
                 from: '"E-Repository PBJT" <no-reply@poltekbaja.ac.id>',

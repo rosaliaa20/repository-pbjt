@@ -39,14 +39,14 @@ const PdfViewer = () => {
   useEffect(() => {
     const fetchDocDetail = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/documents/${id}`);
+        const response = await axios.get(`/api/documents/${id}`);
         setDocDetail(response.data);
       } catch (error) {
         console.error("Gagal memuat detail dokumen:", error);
       }
     };
     fetchDocDetail();
-    setPdfUrl(`http://localhost:5000/api/documents/preview/${id}`);
+    setPdfUrl(`/api/documents/preview/${id}`);
 
     if (userId) {
       const savedBookmarks = JSON.parse(localStorage.getItem(`bookmarks_${userId}`)) || [];

@@ -3,6 +3,7 @@ const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const db = require('../config/db'); // Sesuaikan path ini jika beda
+const waBot = require('../utils/waBot');
 
 // 1. Fungsi Mengambil Data CPU & RAM Server
 exports.getSystemStats = (req, res) => {
@@ -80,31 +81,15 @@ exports.exportData = (req, res) => {
   });
 };
 
-// 4. FUNGSI BARU: Backup Database ke .sql
-exports.backupDatabase = (req, res) => {
-  // PENTING: Sesuaikan dengan nama databasemu di phpMyAdmin!
-  const dbUser = 'root'; 
-  const dbPassword = ''; // Kosongkan jika pakai XAMPP default
-  const dbName = 'e_repository_kampus'; // Ganti jika nama databasemu berbeda
+// NOTE: Database backup is handled by backupController.js
+// which uses environment variables and is Docker-compatible.
 
-  // Nama file sementara
-  const fileName = `Backup_PBJT_${Date.now()}.sql`;
-  const filePath = path.join(__dirname, '../', fileName);
 
-  // Perintah terminal untuk export database
-    const dumpCommand = `"C:\\laragon\\bin\\mysql\\mysql-8.0.30-winx64\\bin\\mysqldump.exe" -u ${dbUser} ${dbPassword ? `-p${dbPassword}` : ''} ${dbName} > "${filePath}"`;
-  exec(dumpCommand, (error) => {
-    if (error) {
-      console.error(`Backup error: ${error}`);
-      return res.status(500).json({ message: "Gagal melakukan backup. Pastikan mysqldump tersedia." });
-    }
-
-    // Download file ke browser pengguna
-    res.download(filePath, `Backup_Database_PBJT_${new Date().toISOString().split('T')[0]}.sql`, (err) => {
-      // Hapus file dari server setelah didownload agar tidak menuhin harddisk
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath); 
-      }
-    });
-  });
+// 5. Fungsi Mengambil QR Code WA
+exports.getWaQr = (req, res) => {
+  const qr = waBot.getLatestQR();
+  if (!qr) {
+    return res.status(404).json({ message: "QR Code belum tersedia atau bot sudah terhubung." });
+  }
+  res.status(200).json({ qr });
 };

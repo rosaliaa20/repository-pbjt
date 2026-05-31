@@ -20,8 +20,8 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/documents");
-      const logResponse = await axios.get("http://localhost:5000/api/logs");
+      const response = await axios.get("/api/documents");
+      const logResponse = await axios.get("/api/logs");
       
       setSystemLogs(logResponse.data);
 

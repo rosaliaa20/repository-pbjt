@@ -20,7 +20,7 @@ const ForgotPassword = () => {
     setMessage({ type: "", text: "" });
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/forgot-password", { email });
+      const response = await axios.post("/api/auth/forgot-password", { email });
       setMessage({ type: "success", text: response.data.message });
       setEmail("");
     } catch (error) {
