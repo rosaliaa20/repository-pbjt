@@ -21,8 +21,7 @@ services:
       - MYSQLDUMP_PATH=mysqldump
       - MYSQL_PATH=mysql
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     volumes:
       - backend_uploads:/app/backend/uploads
       - backend_wwebjs:/app/backend/.wwebjs_auth
