@@ -40,7 +40,8 @@ export default defineConfig({
       workbox: {
         globPatterns: ["**/*.{js,css,html,png,svg,ico,json}"],
         globIgnores: ["**/wallpaper.png"],
-        navigateFallback: "/offline.html",
+        navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/^\/api\//, /^\/uploads\//],
         runtimeCaching: [
           {
             urlPattern:
