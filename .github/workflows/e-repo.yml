@@ -162,11 +162,8 @@ jobs:
 
             export IMAGE_TAG="${{ needs.build.outputs.image-tag }}"
 
-            echo "📥 Pulling new backend image..."
-            docker compose pull backend
-
-            echo "🔄 Updating backend container..."
-            docker compose up -d --no-deps backend
+            echo "📥 Deploying to Docker Swarm Cluster..."
+            docker stack deploy -c docker-compose.yml e-repository --with-registry-auth
 
             echo "✅ Deployment successful!"
             
