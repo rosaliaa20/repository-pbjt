@@ -14,9 +14,9 @@ services:
       - PORT=5000
       - DB_HOST=db
       - DB_USER=root
-      - DB_PASS=${DB_PASS:-Rafly19}
+      - DB_PASS=${DB_PASS}
       - DB_NAME=e_repository_kampus
-      - JWT_SECRET=1a67df53762a168e082334ecb9c7d44cbb330e45bf3c69969971d92e0d169e5892babad6c22545af7bda1ebf7dd7e0fa40498a2fa70e854def22043b2a935f79
+      - JWT_SECRET=${JWT_SECRET}
       - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
       - MYSQLDUMP_PATH=mysqldump
       - MYSQL_PATH=mysql
@@ -35,7 +35,7 @@ services:
     container_name: e-repository-kampus-db
     restart: unless-stopped
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASS:-Rafly19}
+      - MYSQL_ROOT_PASSWORD=${DB_PASS}
       - MYSQL_DATABASE=e_repository_kampus
     ports:
       - "3306:3306"

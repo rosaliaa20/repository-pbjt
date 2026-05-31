@@ -161,6 +161,8 @@ jobs:
             fi
 
             export IMAGE_TAG="${{ needs.build.outputs.image-tag }}"
+            export JWT_SECRET="${{ secrets.JWT_SECRET }}"
+            export DB_PASS="${{ secrets.DB_PASS }}"
 
             echo "📥 Deploying to Docker Swarm Cluster..."
             docker stack deploy -c docker-compose.yml erepo_stack --with-registry-auth
