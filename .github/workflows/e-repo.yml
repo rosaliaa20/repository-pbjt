@@ -163,7 +163,7 @@ jobs:
             export IMAGE_TAG="${{ needs.build.outputs.image-tag }}"
 
             echo "📥 Deploying to Docker Swarm Cluster..."
-            docker stack deploy -c docker-compose.yml e-repository --with-registry-auth
+            docker stack deploy -c docker-compose.yml erepo_stack --with-registry-auth
 
             echo "✅ Deployment successful!"
             
