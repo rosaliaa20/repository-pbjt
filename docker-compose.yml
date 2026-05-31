@@ -16,7 +16,7 @@ services:
       - DB_USER=root
       - DB_PASS=${DB_PASS:-Rafly19}
       - DB_NAME=e_repository_kampus
-      - JWT_SECRET=${JWT_SECRET:-your_super_secret_key}
+      - JWT_SECRET=1a67df53762a168e082334ecb9c7d44cbb330e45bf3c69969971d92e0d169e5892babad6c22545af7bda1ebf7dd7e0fa40498a2fa70e854def22043b2a935f79
       - PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
       - MYSQLDUMP_PATH=mysqldump
       - MYSQL_PATH=mysql
