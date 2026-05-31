@@ -125,6 +125,9 @@ jobs:
             set -e
 
             DEPLOY_PATH="${{ env.DEPLOY_PATH }}"
+            
+            # Buat folder jika belum ada agar tidak error "No such file or directory"
+            mkdir -p "$DEPLOY_PATH"
             cd "$DEPLOY_PATH"
 
             # Login to GHCR
