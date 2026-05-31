@@ -127,7 +127,7 @@ jobs:
           script: |
             mkdir -p "${{ env.DEPLOY_PATH }}"
 
-      # LANGKAH EKSEKUSI 2: Copy file docker-compose.yml ke server
+      # LANGKAH EKSEKUSI 2: Copy file konfigurasi ke server
       - name: Copy Docker Compose
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -135,7 +135,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
-          source: "docker-compose.yml"
+          source: "docker-compose.yml,e_repository_kampus.sql"
           target: "${{ env.DEPLOY_PATH }}"
 
       # LANGKAH EKSEKUSI 3: Baru lakukan proses Docker setelah file ada

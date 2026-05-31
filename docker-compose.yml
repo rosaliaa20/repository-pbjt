@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   backend:
+    image: ghcr.io/rosaliaa20/repository-pbjt:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: Dockerfile
