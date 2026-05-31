@@ -113,7 +113,29 @@ jobs:
           authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
           version: 1.66.4
 
-      # LANGKAH EKSEKUSI: Baru lakukan SSH setelah Runner terhubung
+      # LANGKAH EKSEKUSI 1: Buat folder di server
+      - name: Prepare Server Directory
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            mkdir -p "${{ env.DEPLOY_PATH }}"
+
+      # LANGKAH EKSEKUSI 2: Copy file docker-compose.yml ke server
+      - name: Copy Docker Compose
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          source: "docker-compose.yml"
+          target: "${{ env.DEPLOY_PATH }}"
+
+      # LANGKAH EKSEKUSI 3: Baru lakukan proses Docker setelah file ada
       - name: Execute Deployment over SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -125,9 +147,6 @@ jobs:
             set -e
 
             DEPLOY_PATH="${{ env.DEPLOY_PATH }}"
-            
-            # Buat folder jika belum ada agar tidak error "No such file or directory"
-            mkdir -p "$DEPLOY_PATH"
             cd "$DEPLOY_PATH"
 
             # Login to GHCR
