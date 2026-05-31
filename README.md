@@ -54,16 +54,17 @@ Sistem notifikasi menggunakan `react-hot-toast` untuk aktivitas pengguna dan pro
 - React Hot Toast
 - Vite PWA Plugin
 
-### Backend
-- Node.js
-- Express.js
-- MySQL
-- JWT Authentication
+### Backend & Infrastructure
+- Node.js & Express.js (Monolithic Architecture)
+- MySQL 8.0 (Connection Pooling)
+- JWT Authentication (Hardened Security)
 - Bcrypt.js
-- Multer
-- pdf-lib
+- Multer & pdf-lib
 - Nodemailer
-- whatsapp-web.js
+- whatsapp-web.js (Robust Session Management)
+- Docker & Docker Swarm
+- GitHub Actions CI/CD
+- Tailscale VPN (For Secure Proxmox Deployment)
 
 ---
 
@@ -96,7 +97,9 @@ e_repository_kampus
 
 ---
 
-## Backend Setup
+## Local Development Setup (Manual)
+
+### Backend Setup
 
 Masuk ke folder backend:
 
@@ -108,29 +111,24 @@ npm install
 Buat file `.env`:
 
 ```env
+PORT=5000
 DB_HOST=localhost
 DB_USER=root
 DB_PASS=
 DB_NAME=e_repository_kampus
-JWT_SECRET=your_secret_key
-PORT=5000
+JWT_SECRET=your_super_secret_key_64_bytes
+PUPPETEER_EXECUTABLE_PATH=
+MYSQLDUMP_PATH=mysqldump
+MYSQL_PATH=mysql
 ```
 
 Jalankan backend:
 
 ```bash
-npm start
+npm run dev
 ```
 
-atau
-
-```bash
-npx nodemon server.js
-```
-
----
-
-## Frontend Setup
+### Frontend Setup
 
 Masuk ke folder frontend:
 
@@ -142,23 +140,34 @@ npm run dev
 
 ---
 
-## PWA Build
+## Production Deployment (Docker Swarm & CI/CD)
 
-Untuk menjalankan versi production/PWA:
+Aplikasi ini menggunakan arsitektur **Monolith via Docker**. _Frontend_ di-_build_ dan disajikan secara statis oleh server Express.js di _Backend_.
+
+### Menjalankan via Docker Compose
 
 ```bash
-npm run build
-npm run preview
+docker compose up -d --build
 ```
+
+### GitHub Actions CI/CD
+Proyek ini sudah dilengkapi dengan _workflow_ GitHub Actions (`.github/workflows/e-repo.yml`) yang secara otomatis mem-build image Docker dan men-_deploy_ ke server VPS/Proxmox Anda setiap kali ada *push* ke *branch* `main`.
+
+Secret yang dibutuhkan di GitHub:
+- `SSH_HOST`, `SSH_USER`, `SSH_PRIVATE_KEY`
+- `DEPLOY_PATH` (contoh: `/opt/e-repository-kampus`)
+- `DB_PASS`, `JWT_SECRET`
+- `APP_URL` (contoh: `https://repo.kampus.ac.id`)
+- `TAILSCALE_AUTHKEY` (Opsional, untuk keamanan jaringan internal)
 
 ---
 
-## Application Access
+## Application Access (Development)
 
 | Service | URL |
 |---|---|
 | Frontend | http://localhost:5173 |
-| Backend | http://localhost:5000 |
+| Backend API | http://localhost:5000/api |
 
 ---
 
