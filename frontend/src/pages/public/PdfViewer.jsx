@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { FiZoomIn, FiZoomOut, FiArrowLeft, FiLock, FiDownload, FiBookmark, FiShield, FiSearch } from 'react-icons/fi';
 import { Document, Page, pdfjs } from 'react-pdf';
@@ -7,6 +7,68 @@ import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
+
+// --- KOMPONEN LAZY PAGE UNTUK MENGHEMAT MEMORI DI IOS ---
+const LazyPage = ({ pageNumber, scale, pdfWidth }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // Jika halaman masuk ke dalam viewport (terlihat di layar) atau mendekatinya
+        setIsVisible(entry.isIntersecting);
+      },
+      // rootMargin 800px berarti halaman mulai di-render 800px sebelum benar-benar muncul di layar
+      { rootMargin: '800px 0px' } 
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    return () => observer.disconnect();
+  }, []);
+
+  // Estimasi tinggi halaman (A4 ratio = 1.414) untuk mencegah loncatan scrollbar saat kanvas dihancurkan
+  const estimatedHeight = pdfWidth ? pdfWidth * 1.414 : 800;
+
+  return (
+    <div 
+      ref={containerRef} 
+      id={`pdf-page-${pageNumber}`} 
+      className="shadow-[0_2px_5px_rgba(0,0,0,0.3)] bg-white relative overflow-hidden flex justify-center items-center"
+      style={{ minHeight: `${estimatedHeight}px`, width: pdfWidth ? `${pdfWidth}px` : '100%' }}
+    >
+      {isVisible ? (
+        <Page 
+          pageNumber={pageNumber} 
+          scale={scale} 
+          width={pdfWidth} 
+          renderTextLayer={false} 
+          renderAnnotationLayer={false} 
+          loading={<div className="animate-pulse text-slate-400 font-mono text-sm py-20">Memuat Hal {pageNumber}...</div>}
+        />
+      ) : (
+        <div className="text-slate-300 font-mono text-xs py-20">Menunggu Render Hal {pageNumber}</div>
+      )}
+
+      {/* WATERMARK */}
+      <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+        <img src="/logo.png" alt="Logo PBT" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] md:w-[70%] max-w-[600px] h-auto object-contain grayscale opacity-[0.05]" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <svg viewBox="0 0 1500 1500" className="w-full h-full opacity-[0.16]" preserveAspectRatio="xMidYMid meet">
+            <g transform="translate(750, 750) rotate(-45)">
+              <text textAnchor="middle" y="-80" fontSize="110" className="font-black uppercase fill-slate-950" style={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Politeknik Baja Tegal</text>
+              <text textAnchor="middle" y="20" fontSize="65" className="font-bold uppercase fill-slate-900" style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>Repository Digital</text>
+              <text textAnchor="middle" y="140" fontSize="90" className="font-extrabold uppercase fill-rose-900" style={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.25em' }}>View Only</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 
 const PdfViewer = () => {
   const { id } = useParams();
@@ -189,35 +251,12 @@ const PdfViewer = () => {
                 loading=""
               >
                 {Array.from(new Array(numPages), (el, index) => (
-                  <div 
-                    key={`page-${index + 1}`} 
-                    id={`pdf-page-${index + 1}`} 
-                    className="shadow-[0_2px_5px_rgba(0,0,0,0.3)] bg-white relative overflow-hidden"
-                  >
-                    <Page 
-                       pageNumber={index + 1} 
-                       scale={scale} 
-                       width={pdfWidth} 
-                       renderTextLayer={false} 
-                       renderAnnotationLayer={false} 
-                    />
-
-                    {/* 🔥 WATERMARK DIKEMBALIKAN KE VERSI AWAL 🔥 */}
-                    <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
-                      <img src="/logo.png" alt="Logo PBT" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] md:w-[70%] max-w-[600px] h-auto object-contain grayscale opacity-[0.05]" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <svg viewBox="0 0 1500 1500" className="w-full h-full opacity-[0.16]" preserveAspectRatio="xMidYMid meet">
-                          <g transform="translate(750, 750) rotate(-45)">
-                            <text textAnchor="middle" y="-80" fontSize="110" className="font-black uppercase fill-slate-950" style={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Politeknik Baja Tegal</text>
-                            <text textAnchor="middle" y="20" fontSize="65" className="font-bold uppercase fill-slate-900" style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>Repository Digital</text>
-                            <text textAnchor="middle" y="140" fontSize="90" className="font-extrabold uppercase fill-rose-900" style={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.25em' }}>View Only</text>
-                          </g>
-                        </svg>
-                      </div>
-                    </div>
-                    {/* AKHIR WATERMARK */}
-
-                  </div>
+                  <LazyPage 
+                    key={`lazy-page-${index + 1}`}
+                    pageNumber={index + 1}
+                    scale={scale}
+                    pdfWidth={pdfWidth}
+                  />
                 ))}
               </Document>
             )}
