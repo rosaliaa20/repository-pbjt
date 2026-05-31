@@ -41,8 +41,9 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
-      # Auto-import initial database structure if database is empty
-      - ./e_repository_kampus.sql:/docker-entrypoint-initdb.d/e_repository_kampus.sql:ro
+    configs:
+      - source: db_init
+        target: /docker-entrypoint-initdb.d/e_repository_kampus.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -57,3 +58,7 @@ volumes:
   db_data:
   backend_uploads:
   backend_wwebjs:
+
+configs:
+  db_init:
+    file: ./e_repository_kampus.sql
