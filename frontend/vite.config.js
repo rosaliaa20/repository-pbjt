@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
+import legacy from "@vitejs/plugin-legacy";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -12,6 +13,10 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    legacy({
+      targets: ['defaults', 'safari >= 12', 'ios >= 12'],
+      additionalLegacyPolyfills: ['regenerator-runtime/runtime']
+    }),
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["favicon.svg", "logo.png", "icons.svg", "offline.html"],
