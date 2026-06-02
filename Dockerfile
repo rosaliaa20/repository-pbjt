@@ -3,7 +3,7 @@ FROM node:20-bookworm-slim AS frontend-builder
 WORKDIR /app/frontend
 
 COPY frontend/package*.json ./
-RUN npm ci
+RUN npm ci --legacy-peer-deps
 
 COPY frontend/ ./
 # Build the Vite project into dist/
@@ -28,7 +28,7 @@ WORKDIR /app/backend
 
 # Install backend dependencies
 COPY backend/package*.json ./
-RUN npm ci --only=production
+RUN npm ci --only=production --legacy-peer-deps
 
 # Copy backend source code
 COPY backend/ ./
