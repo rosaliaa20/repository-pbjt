@@ -90,7 +90,9 @@ const PdfViewer = () => {
   // Dual-Viewer State
   const [viewerMode, setViewerMode] = useState('native'); // 'native' | 'google'
   const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  const fullPublicPdfUrl = `${window.location.origin}/api/documents/preview/${id}`;
+  // Menambahkan .pdf agar Google Docs Viewer dapat mendeteksi file dengan benar
+  const fullPublicPdfUrl = `${window.location.origin}/api/documents/preview/${id}/document.pdf`;
+  const [iframeKey, setIframeKey] = useState(0); // Untuk memaksa muat ulang iframe
 
   const [scale, setScale] = useState(window.innerWidth < 768 ? 1 : 1.3); 
   const [pdfWidth, setPdfWidth] = useState(window.innerWidth < 768 ? window.innerWidth - 32 : null);
@@ -278,10 +280,19 @@ const PdfViewer = () => {
                 </Document>
               )
             ) : (
-               <div className="relative w-full h-[85vh] md:h-[90vh] shadow-[0_2px_15px_rgba(0,0,0,0.5)] bg-white mt-4 max-w-5xl">
+               <div className="relative w-full h-[85vh] md:h-[90vh] shadow-[0_2px_15px_rgba(0,0,0,0.5)] bg-white mt-4 max-w-5xl flex flex-col">
+                 <div className="w-full bg-slate-100 p-2 flex justify-between items-center text-xs text-slate-500 border-b z-20 relative">
+                   <span>Menggunakan Google Docs Viewer</span>
+                   <div className="flex gap-3">
+                     <button onClick={() => setIframeKey(k => k + 1)} className="hover:text-blue-600 font-bold transition">Muat Ulang Viewer</button>
+                     <span>|</span>
+                     <a href={`https://docs.google.com/gview?url=${encodeURIComponent(fullPublicPdfUrl)}`} target="_blank" rel="noreferrer" className="hover:text-blue-600 font-bold transition">Buka Layar Penuh</a>
+                   </div>
+                 </div>
                  <iframe 
+                   key={iframeKey}
                    src={`https://docs.google.com/gview?url=${encodeURIComponent(fullPublicPdfUrl)}&embedded=true`} 
-                   className="w-full h-full border-0"
+                   className="w-full flex-1 border-0"
                    title="Google Docs Viewer"
                  />
                  

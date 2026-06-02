@@ -25,6 +25,7 @@ const upload = multer({
 router.get('/', docController.getAllDocs);
 router.get('/:id', docController.getDocumentById);
 router.get('/preview/:id', docController.previewDoc);
+router.get('/preview/:id/:filename', docController.previewDoc);
 router.get('/download/:id', docController.downloadDoc);
 router.post('/:id/view', docController.addView);
 router.delete('/:id', verifyToken, verifyAdmin, docController.deleteDoc);
