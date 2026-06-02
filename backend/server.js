@@ -28,7 +28,7 @@ const { verifyToken, verifyAdmin } = require('./middlewares/auth');
 // INISIALISASI WA BOT (Isolated: tidak crash Express jika gagal)
 // ============================================================
 try {
-    // require('./utils/waBot'); // TEMPORARILY DISABLED to prevent 502 Bad Gateway
+    require('./utils/waBot');
 } catch (err) {
     console.error('❌ Gagal memuat modul WA Bot:', err.message, '— Server tetap berjalan tanpa bot.');
 }
