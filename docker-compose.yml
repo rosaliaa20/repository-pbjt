@@ -8,8 +8,6 @@ services:
       dockerfile: Dockerfile
     container_name: e-repository-kampus-backend
     restart: unless-stopped
-    ports:
-      - "5000:5000"
     environment:
       - PORT=5000
       - DB_HOST=db
@@ -25,6 +23,9 @@ services:
     volumes:
       - backend_uploads:/app/backend/uploads
       - backend_wwebjs:/app/backend/.wwebjs_auth
+    networks:
+      - front-tier
+      - internal_db
     deploy:
       placement:
         constraints:
@@ -37,13 +38,13 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_PASS}
       - MYSQL_DATABASE=e_repository_kampus
-    ports:
-      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
     configs:
       - source: db_init
         target: /docker-entrypoint-initdb.d/e_repository_kampus.sql
+    networks:
+      - internal_db
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -62,3 +63,9 @@ volumes:
 configs:
   db_init:
     file: ./e_repository_kampus.sql
+
+networks:
+  front-tier:
+    external: true
+  internal_db:
+    driver: overlay
