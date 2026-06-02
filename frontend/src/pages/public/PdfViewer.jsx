@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { FiZoomIn, FiZoomOut, FiArrowLeft, FiLock, FiDownload, FiBookmark, FiShield, FiSearch } from 'react-icons/fi';
+import { FiZoomIn, FiZoomOut, FiArrowLeft, FiLock, FiDownload, FiBookmark, FiShield, FiSearch, FiGlobe, FiMonitor } from 'react-icons/fi';
 import { Document, Page, pdfjs } from 'react-pdf';
 import axios from 'axios';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
@@ -87,6 +87,11 @@ const PdfViewer = () => {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isProtected, setIsProtected] = useState(false);
   
+  // Dual-Viewer State
+  const [viewerMode, setViewerMode] = useState('native'); // 'native' | 'google'
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const fullPublicPdfUrl = `${window.location.origin}/api/documents/preview/${id}`;
+
   const [scale, setScale] = useState(window.innerWidth < 768 ? 1 : 1.3); 
   const [pdfWidth, setPdfWidth] = useState(window.innerWidth < 768 ? window.innerWidth - 32 : null);
 
@@ -219,6 +224,17 @@ const PdfViewer = () => {
 
         {/* TOMBOL AKSI */}
         <div className="flex items-center gap-2 md:gap-3 shrink-0">
+          {!isLocalhost && (
+            <button 
+              onClick={() => setViewerMode(viewerMode === 'native' ? 'google' : 'native')} 
+              className="bg-slate-700 hover:bg-slate-600 text-white text-[10px] md:text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors border border-white/10"
+              title="Ganti Mesin Pembaca (Native / Google Viewer)"
+            >
+              {viewerMode === 'native' ? <FiGlobe /> : <FiMonitor />}
+              <span className="hidden md:inline">{viewerMode === 'native' ? 'Google Viewer' : 'Native Viewer'}</span>
+            </button>
+          )}
+
           {user && (
             <button onClick={handleBookmark} className={`text-[10px] md:text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors ${isBookmarked ? 'bg-amber-500/20 text-amber-400' : 'bg-white/10 text-white/80 hover:bg-white/20'}`}>
               <FiBookmark className={isBookmarked ? "fill-current" : ""} /> <span className="hidden md:inline">{isBookmarked ? 'Tersimpan' : 'Simpan'}</span>
@@ -243,22 +259,46 @@ const PdfViewer = () => {
             </div>
           )}
           
-          <div className="relative w-fit mx-auto">
-            {pdfUrl && (
-              <Document
-                file={pdfUrl} 
-                onLoadSuccess={onDocumentLoadSuccess}
-                loading=""
-              >
-                {Array.from(new Array(numPages), (el, index) => (
-                  <LazyPage 
-                    key={`lazy-page-${index + 1}`}
-                    pageNumber={index + 1}
-                    scale={scale}
-                    pdfWidth={pdfWidth}
-                  />
-                ))}
-              </Document>
+          <div className="relative w-fit mx-auto h-full flex flex-col w-full">
+            {viewerMode === 'native' ? (
+              pdfUrl && (
+                <Document
+                  file={pdfUrl} 
+                  onLoadSuccess={onDocumentLoadSuccess}
+                  loading=""
+                >
+                  {Array.from(new Array(numPages), (el, index) => (
+                    <LazyPage 
+                      key={`lazy-page-${index + 1}`}
+                      pageNumber={index + 1}
+                      scale={scale}
+                      pdfWidth={pdfWidth}
+                    />
+                  ))}
+                </Document>
+              )
+            ) : (
+               <div className="relative w-full h-[85vh] md:h-[90vh] shadow-[0_2px_15px_rgba(0,0,0,0.5)] bg-white mt-4 max-w-5xl">
+                 <iframe 
+                   src={`https://docs.google.com/gview?url=${encodeURIComponent(fullPublicPdfUrl)}&embedded=true`} 
+                   className="w-full h-full border-0"
+                   title="Google Docs Viewer"
+                 />
+                 
+                 {/* WATERMARK OVERLAY FOR GOOGLE VIEWER */}
+                 <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+                    <img src="/logo.png" alt="Logo PBT" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] md:w-[70%] max-w-[600px] h-auto object-contain grayscale opacity-[0.05]" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <svg viewBox="0 0 1500 1500" className="w-full h-full opacity-[0.16]" preserveAspectRatio="xMidYMid meet">
+                        <g transform="translate(750, 750) rotate(-45)">
+                          <text textAnchor="middle" y="-80" fontSize="110" className="font-black uppercase fill-slate-950" style={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Politeknik Baja Tegal</text>
+                          <text textAnchor="middle" y="20" fontSize="65" className="font-bold uppercase fill-slate-900" style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>Repository Digital</text>
+                          <text textAnchor="middle" y="140" fontSize="90" className="font-extrabold uppercase fill-rose-900" style={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.25em' }}>View Only</text>
+                        </g>
+                      </svg>
+                    </div>
+                 </div>
+               </div>
             )}
           </div>
         </div>
