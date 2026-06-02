@@ -261,9 +261,10 @@ const PdfViewer = () => {
             </div>
           )}
           
-          <div className="relative w-fit mx-auto h-full flex flex-col w-full">
-            {viewerMode === 'native' ? (
-              pdfUrl && (
+          {/* PEMISAHAN WRAPPER: Native vs Google Viewer */}
+          {viewerMode === 'native' ? (
+            <div className="relative w-fit mx-auto h-full flex flex-col w-full">
+              {pdfUrl && (
                 <Document
                   file={pdfUrl} 
                   onLoadSuccess={onDocumentLoadSuccess}
@@ -278,29 +279,31 @@ const PdfViewer = () => {
                     />
                   ))}
                 </Document>
-              )
-            ) : (
-               <div className="relative w-full h-[85vh] md:h-[90vh] shadow-[0_2px_15px_rgba(0,0,0,0.5)] bg-white mt-4 max-w-5xl flex flex-col">
-                 <div className="w-full bg-slate-100 p-2 flex justify-between items-center text-xs text-slate-500 border-b z-20 relative">
-                   <span>Menggunakan Google Docs Viewer</span>
-                   <div className="flex gap-3">
+              )}
+            </div>
+          ) : (
+             <div className="relative w-full px-2 md:px-8 mx-auto max-w-[1400px] h-[calc(100vh-6rem)] flex flex-col items-center justify-center mt-2 pb-6">
+               <div className="relative w-full h-full shadow-[0_10px_40px_rgba(0,0,0,0.6)] bg-white flex flex-col rounded-xl overflow-hidden border border-slate-700/50">
+                 <div className="w-full bg-slate-100 p-2 md:px-4 flex justify-between items-center text-[10px] md:text-xs text-slate-500 border-b z-20 relative shrink-0">
+                   <span className="font-semibold text-slate-600">Menggunakan Google Docs Viewer</span>
+                   <div className="flex gap-2 md:gap-3">
                      <button onClick={() => setIframeKey(k => k + 1)} className="hover:text-blue-600 font-bold transition">Muat Ulang Viewer</button>
-                     <span>|</span>
-                     <a href={`https://docs.google.com/gview?url=${encodeURIComponent(fullPublicPdfUrl)}`} target="_blank" rel="noreferrer" className="hover:text-blue-600 font-bold transition">Buka Layar Penuh</a>
+                     <span className="text-slate-300">|</span>
+                     <a href={`https://docs.google.com/gview?url=${encodeURIComponent(fullPublicPdfUrl)}`} target="_blank" rel="noreferrer" className="hover:text-blue-600 font-bold transition flex items-center gap-1">Buka Layar Penuh <FiGlobe className="inline" /></a>
                    </div>
                  </div>
                  <iframe 
                    key={iframeKey}
                    src={`https://docs.google.com/gview?url=${encodeURIComponent(fullPublicPdfUrl)}&embedded=true`} 
-                   className="w-full flex-1 border-0"
+                   className="w-full flex-1 border-0 bg-slate-50"
                    title="Google Docs Viewer"
                  />
                  
                  {/* WATERMARK OVERLAY FOR GOOGLE VIEWER */}
                  <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
-                    <img src="/logo.png" alt="Logo PBT" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] md:w-[70%] max-w-[600px] h-auto object-contain grayscale opacity-[0.05]" />
+                    <img src="/logo.png" alt="Logo PBT" className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] md:w-[60%] max-w-[500px] h-auto object-contain grayscale opacity-[0.03]" />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <svg viewBox="0 0 1500 1500" className="w-full h-full opacity-[0.16]" preserveAspectRatio="xMidYMid meet">
+                      <svg viewBox="0 0 1500 1500" className="w-full h-full opacity-[0.12]" preserveAspectRatio="xMidYMid meet">
                         <g transform="translate(750, 750) rotate(-45)">
                           <text textAnchor="middle" y="-80" fontSize="110" className="font-black uppercase fill-slate-950" style={{ fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Politeknik Baja Tegal</text>
                           <text textAnchor="middle" y="20" fontSize="65" className="font-bold uppercase fill-slate-900" style={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>Repository Digital</text>
@@ -310,8 +313,8 @@ const PdfViewer = () => {
                     </div>
                  </div>
                </div>
-            )}
-          </div>
+             </div>
+          )}
         </div>
 
         {/* OVERLAY KEAMANAN */}
