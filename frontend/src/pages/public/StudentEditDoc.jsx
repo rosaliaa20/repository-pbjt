@@ -137,9 +137,7 @@ useEffect(() => {
     updateData.append('external_url', formData.external_url); 
 
     try {
-      await axios.put(`/api/documents/${id}`, updateData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      await axios.put(`/api/documents/${id}`, updateData);
       
       // Biarkan loading sebentar untuk memutar animasi cantik
       setTimeout(() => {

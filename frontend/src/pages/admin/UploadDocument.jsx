@@ -110,9 +110,7 @@ const UploadDocument = () => {
     submitData.append('document_file', file);
 
     try {
-      await axios.post('/api/documents/upload', submitData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      await axios.post('/api/documents/upload', submitData);
       
       setLoading(false);
       setSuccess(true);

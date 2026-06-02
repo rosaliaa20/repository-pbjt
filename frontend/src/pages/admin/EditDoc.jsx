@@ -88,9 +88,7 @@ const EditDoc = () => {
     updateData.append('external_link', formData.external_link); // Menyimpan link eksternal
 
     try {
-      await axios.put(`/api/documents/${id}`, updateData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      await axios.put(`/api/documents/${id}`, updateData);
       setSuccess(true);
       setTimeout(() => navigate('/admin/documents'), 2000);
     } catch (error) {
