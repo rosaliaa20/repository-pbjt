@@ -44,22 +44,77 @@ exports.getDocumentById = (req, res) => {
     });
 };
 
-// 3. Preview PDF (Untuk Viewer)
+// 3. Preview PDF (Dengan Watermark Dibakar ke Setiap Halaman via pdf-lib)
 exports.previewDoc = (req, res) => {
-    db.query("SELECT file_path FROM documents WHERE id = ?", [req.params.id], (err, results) => {
+    db.query("SELECT file_path FROM documents WHERE id = ?", [req.params.id], async (err, results) => {
         if (err || results.length === 0) {
             return res.status(404).send("File tidak ditemukan di database.");
         }
 
         const filePath = path.join(__dirname, "../", results[0].file_path);
 
-        if (fs.existsSync(filePath)) {
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).send("File fisik PDF tidak ditemukan di server.");
+        }
+
+        try {
+            const existingPdfBytes = fs.readFileSync(filePath);
+            const pdfDoc = await PDFDocument.load(existingPdfBytes, { ignoreEncryption: true });
+            const pages = pdfDoc.getPages();
+
+            const LINE_1 = "POLITEKNIK BAJA TEGAL";
+            const LINE_2 = "REPOSITORY DIGITAL";
+            const LINE_3 = "VIEW ONLY";
+
+            pages.forEach((page) => {
+                const { width, height } = page.getSize();
+                const cx = width / 2;
+                const cy = height / 2;
+
+                // Baris 1 — Nama Institusi
+                page.drawText(LINE_1, {
+                    x: cx - 190,
+                    y: cy + 60,
+                    size: 32,
+                    color: rgb(0.55, 0.55, 0.55),
+                    opacity: 0.18,
+                    rotate: degrees(-40),
+                });
+
+                // Baris 2 — Label Repository
+                page.drawText(LINE_2, {
+                    x: cx - 145,
+                    y: cy - 10,
+                    size: 24,
+                    color: rgb(0.55, 0.55, 0.55),
+                    opacity: 0.18,
+                    rotate: degrees(-40),
+                });
+
+                // Baris 3 — View Only (merah samar)
+                page.drawText(LINE_3, {
+                    x: cx - 100,
+                    y: cy - 70,
+                    size: 36,
+                    color: rgb(0.65, 0.10, 0.15),
+                    opacity: 0.18,
+                    rotate: degrees(-40),
+                });
+            });
+
+            const pdfBytes = await pdfDoc.save();
+            res.setHeader("Content-Type", "application/pdf");
+            // inline = tampil di browser, bukan trigger download
+            res.setHeader("Content-Disposition", "inline");
+            res.send(Buffer.from(pdfBytes));
+        } catch (error) {
+            console.error("❌ Gagal membakar watermark ke PDF:", error.message);
+            // Fallback: kirim file asli jika pdf-lib gagal (misal: PDF terenkripsi)
             res.sendFile(filePath);
-        } else {
-            res.status(404).send("File fisik PDF tidak ditemukan di server.");
         }
     });
 };
+
 
 // 4. Download Dokumen dengan Watermark
 exports.downloadDoc = (req, res) => {
