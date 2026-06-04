@@ -27,6 +27,7 @@ router.get('/:id', docController.getDocumentById);
 router.get('/preview/:id', docController.previewDoc);
 router.get('/preview/:id/:filename', docController.previewDoc);
 router.get('/download/:id', docController.downloadDoc);
+router.get('/download/original/:id', verifyToken, verifyAdmin, docController.downloadOriginalDoc); // VIP Route
 router.post('/:id/view', docController.addView);
 router.delete('/:id', verifyToken, verifyAdmin, docController.deleteDoc);
 

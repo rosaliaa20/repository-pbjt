@@ -129,6 +129,21 @@ exports.downloadDoc = (req, res) => {
     });
 };
 
+// 4b. Download Dokumen Murni (Khusus Admin - VIP)
+exports.downloadOriginalDoc = (req, res) => {
+    db.query("SELECT * FROM documents WHERE id = ?", [req.params.id], (err, results) => {
+        if (err || results.length === 0) return res.status(404).send("Dokumen tidak ditemukan.");
+
+        const doc = results[0];
+        const filePath = path.join(__dirname, "../", doc.file_path);
+
+        if (!fs.existsSync(filePath)) return res.status(404).send("File fisik tidak ditemukan.");
+
+        // Langsung kirim file asli tanpa proses PDF-lib
+        res.download(filePath, `${doc.title}.pdf`);
+    });
+};
+
 // 5. Upload Dokumen Baru (Sinkron Database)
 exports.uploadDoc = (req, res) => {
     try {

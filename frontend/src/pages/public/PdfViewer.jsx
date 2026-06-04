@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { FiZoomIn, FiZoomOut, FiArrowLeft, FiDownload, FiBookmark, FiShield, FiSearch } from 'react-icons/fi';
 import { Document, Page, pdfjs } from 'react-pdf';
 import axios from 'axios';
+import { toast } from 'react-hot-toast';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
@@ -189,6 +190,33 @@ const PdfViewer = () => {
     setJumpPage('');
   };
 
+  // Fungsi untuk mengunduh dokumen asli (khusus Admin)
+  const handleAdminDownload = async () => {
+    try {
+      const toastId = toast.loading('Mengunduh dokumen murni (tanpa watermark)...');
+      const response = await axios.get(`/api/documents/download/original/${id}`, {
+        responseType: 'blob', // Penting untuk menangani file biner
+        headers: {
+          Authorization: `Bearer ${user?.token}`
+        }
+      });
+      
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `${docDetail?.title || 'Dokumen'}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('Dokumen murni berhasil diunduh!', { id: toastId });
+    } catch (error) {
+      console.error('Gagal mengunduh dokumen:', error);
+      toast.error('Gagal mengunduh dokumen murni.');
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-[999] bg-[#323639] flex flex-col font-sans">
       <style>{`@media print { body { display: none !important; } }`}</style>
@@ -256,7 +284,7 @@ const PdfViewer = () => {
           )}
           {isAdmin && (
             <button
-              onClick={() => window.open(`/api/documents/download/${id}`, '_blank')}
+              onClick={handleAdminDownload}
               className="bg-blue-600 hover:bg-blue-500 text-white text-[10px] md:text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors"
             >
               <FiDownload />
