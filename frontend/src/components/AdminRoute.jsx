@@ -1,40 +1,57 @@
 import { Navigate, Outlet } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
 /**
- * AdminRoute: Pelindung halaman admin.
- * Memverifikasi keberadaan KEDUA token JWT DAN data user dengan role admin.
- * Jika token tidak ada, pengguna sudah pasti bukan sesi yang valid.
+ * AdminRoute: Pelindung halaman admin (Server-Side Verified).
+ * Memverifikasi token JWT secara langsung ke Backend untuk mencegah pemalsuan localStorage.
  */
 const AdminRoute = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(null); // null = loading
   const token = localStorage.getItem('token');
-  const userRaw = localStorage.getItem('user');
 
-  // Cek 1: Tidak ada token sama sekali → paksa login
-  if (!token) {
-    return <Navigate to="/login" replace />;
+  useEffect(() => {
+    const verifyAdminRole = async () => {
+      if (!token) {
+        setIsAuthenticated(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get('/api/auth/verify', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        // Pengecekan ganda: Token valid && Role adalah admin
+        if (response.data.valid && response.data.user.role === 'admin') {
+          setIsAuthenticated(true);
+        } else {
+          toast.error('Akses ditolak! Halaman khusus Admin.');
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error('Sesi tidak valid:', error);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setIsAuthenticated(false);
+      }
+    };
+
+    verifyAdminRole();
+  }, [token]);
+
+  // Tampilkan loading state saat masih memverifikasi ke server
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+        <span className="ml-3 font-semibold text-slate-600 animate-pulse">Memverifikasi Otoritas Keamanan...</span>
+      </div>
+    );
   }
 
-  // Cek 2: Data user tidak valid atau tidak ada → paksa login
-  let user = null;
-  try {
-    user = JSON.parse(userRaw);
-  } catch (_) {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    return <Navigate to="/login" replace />;
-  }
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Cek 3: User ada tapi bukan admin → kembalikan ke beranda
-  if (user.role !== 'admin') {
-    return <Navigate to="/" replace />;
-  }
-
-  // Semua cek lolos → izinkan akses
-  return <Outlet />;
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default AdminRoute;

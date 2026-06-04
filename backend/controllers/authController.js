@@ -83,6 +83,17 @@ exports.login = (req, res) => {
 };
 
 // ========================================================
+// 1b. FUNGSI VERIFY SESSION (Validasi Token via Backend)
+// ========================================================
+exports.verifySession = (req, res) => {
+    // Jika sampai di sini, artinya token sudah divalidasi oleh middleware verifyToken
+    res.status(200).json({
+        valid: true,
+        user: req.user // Berisi id, role, name hasil decode JWT
+    });
+};
+
+// ========================================================
 // 2. FUNGSI REGISTER MANDIRI (Dengan Email & WA)
 // ========================================================
 exports.register = async (req, res) => {

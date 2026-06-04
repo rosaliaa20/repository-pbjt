@@ -9,6 +9,7 @@ const uploadMemory = multer({ storage: multer.memoryStorage() });
 
 router.post('/login', authController.login);
 router.post('/register', authController.register);
+router.get('/verify', verifyToken, authController.verifySession);
 
 // ========================================================
 // === STATIC ROUTES (Tanpa Parameter :id) ===
