@@ -256,7 +256,7 @@ const PdfViewer = () => {
           )}
           {isAdmin && (
             <button
-              onClick={() => window.open(pdfUrl, '_blank')}
+              onClick={() => window.open(`/api/documents/download/${id}`, '_blank')}
               className="bg-blue-600 hover:bg-blue-500 text-white text-[10px] md:text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors"
             >
               <FiDownload />

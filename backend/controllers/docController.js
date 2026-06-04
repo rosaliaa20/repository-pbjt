@@ -44,18 +44,33 @@ exports.getDocumentById = (req, res) => {
     });
 };
 
-// 3. Preview PDF (Dengan Watermark Dibakar ke Setiap Halaman via pdf-lib)
+// 3. Preview PDF (Tanpa Watermark Bakaran - Disediakan Murni untuk Native Viewer + SVG Overlay)
 exports.previewDoc = (req, res) => {
-    db.query("SELECT file_path FROM documents WHERE id = ?", [req.params.id], async (err, results) => {
+    db.query("SELECT file_path FROM documents WHERE id = ?", [req.params.id], (err, results) => {
         if (err || results.length === 0) {
             return res.status(404).send("File tidak ditemukan di database.");
         }
 
         const filePath = path.join(__dirname, "../", results[0].file_path);
 
-        if (!fs.existsSync(filePath)) {
-            return res.status(404).send("File fisik PDF tidak ditemukan di server.");
+        if (fs.existsSync(filePath)) {
+            res.sendFile(filePath);
+        } else {
+            res.status(404).send("File fisik PDF tidak ditemukan di server.");
         }
+    });
+};
+
+
+// 4. Download Dokumen dengan Watermark Raksasa Dibakar
+exports.downloadDoc = (req, res) => {
+    db.query("SELECT * FROM documents WHERE id = ?", [req.params.id], async (err, results) => {
+        if (err || results.length === 0) return res.status(404).send("Dokumen tidak ditemukan.");
+
+        const doc = results[0];
+        const filePath = path.join(__dirname, "../", doc.file_path);
+
+        if (!fs.existsSync(filePath)) return res.status(404).send("File fisik tidak ditemukan.");
 
         try {
             const existingPdfBytes = fs.readFileSync(filePath);
@@ -71,31 +86,31 @@ exports.previewDoc = (req, res) => {
                 const cx = width / 2;
                 const cy = height / 2;
 
-                // Baris 1 — Nama Institusi
+                // Baris 1 — Nama Institusi (Raksasa)
                 page.drawText(LINE_1, {
-                    x: cx - 190,
-                    y: cy + 60,
-                    size: 32,
+                    x: cx - 270,
+                    y: cy + 90,
+                    size: 48,
                     color: rgb(0.55, 0.55, 0.55),
                     opacity: 0.18,
                     rotate: degrees(-40),
                 });
 
-                // Baris 2 — Label Repository
+                // Baris 2 — Label Repository (Sedang)
                 page.drawText(LINE_2, {
-                    x: cx - 145,
-                    y: cy - 10,
-                    size: 24,
+                    x: cx - 210,
+                    y: cy - 15,
+                    size: 36,
                     color: rgb(0.55, 0.55, 0.55),
                     opacity: 0.18,
                     rotate: degrees(-40),
                 });
 
-                // Baris 3 — View Only (merah samar)
+                // Baris 3 — View Only (Besar, merah samar)
                 page.drawText(LINE_3, {
-                    x: cx - 100,
-                    y: cy - 70,
-                    size: 36,
+                    x: cx - 140,
+                    y: cy - 100,
+                    size: 54,
                     color: rgb(0.65, 0.10, 0.15),
                     opacity: 0.18,
                     rotate: degrees(-40),
@@ -104,51 +119,12 @@ exports.previewDoc = (req, res) => {
 
             const pdfBytes = await pdfDoc.save();
             res.setHeader("Content-Type", "application/pdf");
-            // inline = tampil di browser, bukan trigger download
-            res.setHeader("Content-Disposition", "inline");
-            res.send(Buffer.from(pdfBytes));
-        } catch (error) {
-            console.error("❌ Gagal membakar watermark ke PDF:", error.message);
-            // Fallback: kirim file asli jika pdf-lib gagal (misal: PDF terenkripsi)
-            res.sendFile(filePath);
-        }
-    });
-};
-
-
-// 4. Download Dokumen dengan Watermark
-exports.downloadDoc = (req, res) => {
-    db.query("SELECT * FROM documents WHERE id = ?", [req.params.id], async (err, results) => {
-        if (err || results.length === 0) return res.status(404).send("Dokumen tidak ditemukan.");
-
-        const doc = results[0];
-        const filePath = path.join(__dirname, "../", doc.file_path);
-
-        if (!fs.existsSync(filePath)) return res.status(404).send("File fisik tidak ditemukan.");
-
-        try {
-            const existingPdfBytes = fs.readFileSync(filePath);
-            const pdfDoc = await PDFDocument.load(existingPdfBytes);
-            const pages = pdfDoc.getPages();
-
-            pages.forEach((page) => {
-                const { width, height } = page.getSize();
-                page.drawText("REPOSITORY DIGITAL - POLITEKNIK BAJA TEGAL", {
-                    x: width / 2 - 200,
-                    y: height / 2,
-                    size: 20,
-                    color: rgb(0.8, 0.8, 0.8),
-                    opacity: 0.4,
-                    rotate: degrees(-45),
-                });
-            });
-
-            const pdfBytes = await pdfDoc.save();
-            res.setHeader("Content-Type", "application/pdf");
             res.setHeader("Content-Disposition", `attachment; filename="${doc.title}.pdf"`);
             res.send(Buffer.from(pdfBytes));
         } catch (error) {
-            res.status(500).send("Gagal memproses watermark.");
+            console.error("❌ Gagal membakar watermark unduhan:", error.message);
+            // Fallback: biarkan terunduh mentah jika gagal (misal file terkunci)
+            res.download(filePath);
         }
     });
 };
