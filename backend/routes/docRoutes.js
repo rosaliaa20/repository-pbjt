@@ -5,17 +5,27 @@ const path = require('path');
 const docController = require('../controllers/docController'); 
 const { verifyToken, verifyAdmin } = require('../middlewares/auth');
 
-// 1. Konfigurasi Multer
+// 1. Konfigurasi Multer & Keamanan File Upload
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
+    cb(null, uniqueSuffix + path.extname(file.originalname).toLowerCase());
   }
 });
 
+const fileFilter = (req, file, cb) => {
+  // Hanya izinkan file PDF untuk mencegah upload script berbahaya (XSS/RCE)
+  if (file.mimetype === 'application/pdf' && path.extname(file.originalname).toLowerCase() === '.pdf') {
+    cb(null, true);
+  } else {
+    cb(new Error('Format file tidak didukung! Hanya diperbolehkan upload file PDF.'), false);
+  }
+};
+
 const upload = multer({ 
   storage: storage,
+  fileFilter: fileFilter,
   limits: { fileSize: 15 * 1024 * 1024 } // 15MB
 });
 

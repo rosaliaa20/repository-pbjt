@@ -1,13 +1,15 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 // ============================================================
 // STARTUP VALIDATION: Gagal fast jika secret tidak dikonfigurasi
 // ============================================================
 if (!process.env.JWT_SECRET) {
-    console.warn('⚠️  PERINGATAN: JWT_SECRET tidak ditemukan di .env! Menggunakan fallback — TIDAK AMAN untuk Production!');
+    console.error('❌ KRITIS: JWT_SECRET tidak ditemukan di .env! Server menolak berjalan demi keamanan.');
+    process.exit(1);
 }
 
 // ============================================================
@@ -36,20 +38,24 @@ try {
 const app = express();
 
 // ============================================================
-// MIDDLEWARE GLOBAL
+// MIDDLEWARE GLOBAL & SECURITY
 // ============================================================
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Akses publik ke folder uploads
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Rate Limiting khusus untuk jalur Autentikasi (Cegah Brute Force)
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 Menit
+    max: 20, // Maksimal 20x percobaan login/register per IP
+    message: { error: { code: 'TOO_MANY_REQUESTS', message: 'Terlalu banyak percobaan, silakan coba lagi setelah 15 menit.' } }
+});
 
 // ============================================================
 // ROUTES API
 // ============================================================
 app.use('/api/documents', docRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/logs', logRoutes);
 app.use('/api/system', systemRoutes);
 app.use('/api/notifications', notifRoutes);
