@@ -21,7 +21,14 @@ Integrasi bot WhatsApp untuk mengirim notifikasi status dokumen secara otomatis 
 Sistem viewer dokumen dilengkapi:
 - Disable right-click
 - Disable text copy
-- Watermark otomatis pada PDF menggunakan `pdf-lib`
+- Watermark otomatis pada PDF menggunakan `pdf-lib` (Pemisahan arsitektur *Preview* dan *Download*)
+
+### Enterprise-Grade Security 🛡️
+Sistem telah diperkuat dengan standar keamanan produksi (OWASP Compliant):
+- **Server-Side Token Verification**: Validasi ketat akses Admin dari sisi peladen (mencegah manipulasi *localStorage*).
+- **Anti Brute-Force Rate Limiting**: Membatasi percobaan *Login* dan *Register* beruntun.
+- **Strict File Filter**: Proteksi `multer` yang secara agresif menolak unggahan selain dokumen PDF untuk mencegah Stored XSS & eksekusi *malware*.
+- **Secret Management**: Tidak ada kredensial yang di-hardcode (*100% Environment Variables* & *GitHub Secrets*).
 
 ### Smart File Validation
 Validasi ukuran file PDF dilakukan secara dinamis berdasarkan kategori dokumen untuk membantu mengontrol penggunaan server.
@@ -117,6 +124,8 @@ DB_USER=root
 DB_PASS=
 DB_NAME=e_repository_kampus
 JWT_SECRET=your_super_secret_key_64_bytes
+EMAIL_USER=your_gmail_address@gmail.com
+EMAIL_PASS=your_gmail_app_password
 PUPPETEER_EXECUTABLE_PATH=
 MYSQLDUMP_PATH=mysqldump
 MYSQL_PATH=mysql
@@ -157,6 +166,8 @@ Secret yang dibutuhkan di GitHub:
 - `SSH_HOST`, `SSH_USER`, `SSH_PRIVATE_KEY`
 - `DEPLOY_PATH` (contoh: `/opt/e-repository-kampus`)
 - `DB_PASS`, `JWT_SECRET`
+- `EMAIL_USER`, `EMAIL_PASS` (Untuk fitur Lupa Password)
+- `GHCR_PAT` (Personal Access Token GitHub)
 - `APP_URL` (contoh: `https://repo.kampus.ac.id`)
 - `TAILSCALE_AUTHKEY` (Opsional, untuk keamanan jaringan internal)
 
