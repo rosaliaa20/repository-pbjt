@@ -95,7 +95,7 @@ app.use((err, req, res, next) => {
 // ============================================================
 // JALANKAN SERVER
 // ============================================================
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5151;
 app.listen(PORT, () => {
     console.log(`✅ Server Backend berjalan di port ${PORT}`);
 });

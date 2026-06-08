@@ -118,7 +118,7 @@ npm install
 Buat file `.env`:
 
 ```env
-PORT=5000
+PORT=5151
 DB_HOST=localhost
 DB_USER=root
 DB_PASS=
@@ -178,7 +178,7 @@ Secret yang dibutuhkan di GitHub:
 | Service | URL |
 |---|---|
 | Frontend | http://localhost:5173 |
-| Backend API | http://localhost:5000/api |
+| Backend API | http://localhost:5151/api |
 
 ---
 
