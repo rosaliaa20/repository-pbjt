@@ -206,50 +206,63 @@ exports.deleteDoc = (req, res) => {
     });
 };
 
-// 7. Update Dokumen (Edit / Revisi Mahasiswa)
+// 7. Update Dokumen (Edit / Revisi Mahasiswa & Admin)
 exports.updateDoc = (req, res) => {
     const docId = req.params.id;
-    
-    const title = req.body.title || 'Tanpa Judul';
-    const document_author = req.body.document_author || 'Anonim';
-    const year = req.body.year || new Date().getFullYear();
-    const category = req.body.category || 'Umum';
-    const department = req.body.department || 'Umum';
-    const abstract = req.body.abstract || '';
-    const external_url = req.body.external_url || req.body.external_link || null;
 
-    if (req.file) {
-        const newPath = `uploads/${req.file.filename}`;
+    // VALIDASI KEPEMILIKAN DOKUMEN (Mencegah IDOR)
+    db.query("SELECT * FROM documents WHERE id = ?", [docId], (err, results) => {
+        if (err) return res.status(500).json({ message: "Kesalahan Database saat memverifikasi kepemilikan." });
+        if (results.length === 0) return res.status(404).json({ message: "Dokumen tidak ditemukan." });
+
+        const existingDoc = results[0];
+
+        // Otorisasi: Harus Admin ATAU Pemilik Asli Dokumen
+        if (req.user.role !== 'admin' && req.user.name !== existingDoc.document_author) {
+            return res.status(403).json({ message: "Akses ditolak. Anda hanya dapat mengedit dokumen milik Anda sendiri." });
+        }
         
-        db.query("SELECT file_path FROM documents WHERE id = ?", [docId], (err, results) => {
-            if (!err && results.length > 0 && results[0].file_path) {
-                const oldFile = path.join(__dirname, "../", results[0].file_path);
+        const title = req.body.title || existingDoc.title;
+        const document_author = req.body.document_author || existingDoc.document_author;
+        const year = req.body.year || existingDoc.year;
+        const category = req.body.category || existingDoc.category;
+        const department = req.body.department || existingDoc.department;
+        const abstract = req.body.abstract || existingDoc.abstract;
+        const external_url = req.body.external_url || req.body.external_link || existingDoc.external_url;
+
+        // Logika Status: 
+        // Jika Mahasiswa revisi -> otomatis turun jadi 'Pending' agar Admin bisa meninjau ulang.
+        // Jika Admin revisi -> pertahankan status lama (atau ambil dari request).
+        const status = req.user.role === 'admin' ? (req.body.status || existingDoc.status) : 'Pending';
+
+        if (req.file) {
+            const newPath = `uploads/${req.file.filename}`;
+            
+            // Hapus file fisik lama jika ada
+            if (existingDoc.file_path) {
+                const oldFile = path.join(__dirname, "../", existingDoc.file_path);
                 try { if (fs.existsSync(oldFile)) fs.unlinkSync(oldFile); } catch (e) { console.error("Abaikan: File lama tidak ada"); }
             }
             
-            const sql = `UPDATE documents SET title=?, document_author=?, year=?, category=?, department=?, abstract=?, file_path=?, external_url=?, status='Pending' WHERE id=?`;
+            const sql = `UPDATE documents SET title=?, document_author=?, year=?, category=?, department=?, abstract=?, file_path=?, external_url=?, status=? WHERE id=?`;
             
-            db.query(sql, [title, document_author, year, category, department, abstract, newPath, external_url, docId], (updErr) => {
+            db.query(sql, [title, document_author, year, category, department, abstract, newPath, external_url, status, docId], (updErr) => {
                 if (updErr) return res.status(500).json({ message: "Gagal update database." });
                 
-                // Notifikasi Admin: Mahasiswa baru saja revisi dokumen
-                notifController.createNotification("Revisi Dokumen", `${document_author} baru saja mengirimkan revisi: "${title}"`, "doc");
-
+                notifController.createNotification("Revisi Dokumen", `${req.user.name} baru saja mengirimkan revisi file untuk: "${title}"`, "doc");
                 res.json({ message: "Dokumen & File berhasil diperbarui!" });
             });
-        });
-    } else {
-        const sql = `UPDATE documents SET title=?, document_author=?, year=?, category=?, department=?, abstract=?, external_url=?, status='Pending' WHERE id=?`;
-        
-        db.query(sql, [title, document_author, year, category, department, abstract, external_url, docId], (updErr) => {
-            if (updErr) return res.status(500).json({ message: "Gagal update database." });
+        } else {
+            const sql = `UPDATE documents SET title=?, document_author=?, year=?, category=?, department=?, abstract=?, external_url=?, status=? WHERE id=?`;
             
-            // Notifikasi Admin: Mahasiswa baru saja revisi teks dokumen
-            notifController.createNotification("Revisi Dokumen", `${document_author} baru saja mengirimkan revisi teks: "${title}"`, "doc");
-
-            res.json({ message: "Data berhasil diperbarui!" });
-        });
-    }
+            db.query(sql, [title, document_author, year, category, department, abstract, external_url, status, docId], (updErr) => {
+                if (updErr) return res.status(500).json({ message: "Gagal update database." });
+                
+                notifController.createNotification("Revisi Dokumen", `${req.user.name} baru saja mengirimkan revisi teks untuk: "${title}"`, "doc");
+                res.json({ message: "Data berhasil diperbarui!" });
+            });
+        }
+    });
 };
 
 // 8. Tambah View

@@ -56,7 +56,7 @@ router.put('/:id/status', verifyToken, verifyAdmin, (req, res) => {
   });
 });
 
-router.put('/:id', verifyToken, verifyAdmin, (req, res) => {
+router.put('/:id', verifyToken, (req, res) => {
   upload.single('document_file')(req, res, (err) => {
     if (err) return res.status(400).json({ message: err.message });
     docController.updateDoc(req, res);
