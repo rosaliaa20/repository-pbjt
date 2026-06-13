@@ -40,6 +40,9 @@ const app = express();
 // ============================================================
 // MIDDLEWARE GLOBAL & SECURITY
 // ============================================================
+// Mempercayai Ingress Nginx agar Rate Limiter mendapatkan IP asli pengguna, bukan IP Nginx
+app.set('trust proxy', 1);
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -12,7 +12,9 @@ const pool = mysql.createPool({
     database: process.env.DB_NAME || 'e_repository_kampus',
     waitForConnections: true,
     connectionLimit: 10,    // Maksimal 10 koneksi bersamaan
-    queueLimit: 0           // Tidak ada batas antrian request
+    queueLimit: 0,          // Tidak ada batas antrian request
+    enableKeepAlive: true,  // Mencegah error read ECONNRESET akibat Docker Swarm network timeout
+    keepAliveInitialDelay: 0
 });
 
 // Verifikasi koneksi saat startup
