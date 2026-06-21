@@ -348,7 +348,8 @@ exports.changePassword = async (req, res) => {
 };
 
 // ========================================================
-// 9. IMPORT MAHASISWA DARI EXCEL (Skenario GoFeeder + WA)
+// ========================================================
+// 9. IMPORT MAHASISWA DARI EXCEL (Smart Import: XLS Asli & HTML-XLS)
 // ========================================================
 exports.importUsersExcel = async (req, res) => {
     try {
@@ -356,32 +357,93 @@ exports.importUsersExcel = async (req, res) => {
             return res.status(400).json({ message: 'File Excel tidak ditemukan!' });
         }
 
-        const workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
-        const sheetName = workbook.SheetNames[0]; 
-        const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+        let workbook;
+        const fileString = req.file.buffer.toString('utf8').trim();
+
+        // 1. Smart File Reader: Cek apakah ini HTML berkedok XLS atau murni Excel
+        if (fileString.toLowerCase().startsWith('<html') || fileString.toLowerCase().startsWith('<!doctype')) {
+            workbook = xlsx.read(fileString, { type: 'string' });
+        } else {
+            workbook = xlsx.read(req.file.buffer, { type: 'buffer' });
+        }
+
+        // 2. Dynamic Sheet Finder: Cari Sheet (Tabel) yang memiliki baris terbanyak
+        let data = [];
+        for (let sheetName of workbook.SheetNames) {
+            const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+            if (sheetData.length > data.length) {
+                data = sheetData;
+            }
+        }
+
+        if (data.length === 0) {
+            return res.status(400).json({ message: 'Tidak menemukan data tabel yang valid di dalam file!' });
+        }
 
         let successCount = 0;
         let failedList = []; 
 
-        for (const row of data) {
-            // 🔥 PERBAIKAN: Tangkap juga kolom 'no_wa' dari baris Excel 🔥
-            const { nama, nim, email, no_wa, tanggal_lahir, prodi } = row;
+        // Kamus penerjemah bulan Indonesia ke Angka
+        const bulanMap = {
+            'januari': '01', 'februari': '02', 'maret': '03', 'april': '04',
+            'mei': '05', 'juni': '06', 'juli': '07', 'agustus': '08',
+            'september': '09', 'oktober': '10', 'november': '11', 'desember': '12'
+        };
 
-            if (!nama || !nim || !tanggal_lahir) {
-                failedList.push(`Data Kosong: ${nama || 'Tanpa Nama'} - ${nim || 'Tanpa NIM'}`);
-                continue;
+        for (const row of data) {
+            // Support fleksibilitas nama kolom (Nama / NAMA, dst)
+            const nama = String(row['Nama'] || row['nama'] || row['NAMA'] || '').trim();
+            const nim = String(row['NIM'] || row['nim'] || '').trim();
+            
+            if (!nama || !nim || nama === 'undefined' || nim === 'undefined') {
+                continue; // Abaikan baris kosong / header yang ikut masuk
             }
 
-            const nimStr = String(nim).trim();
-            const passwordStr = String(tanggal_lahir).replace(/[-/]/g, '');
-            const emailStr = email ? String(email).trim() : null; 
-            const noWaStr = no_wa ? String(no_wa).trim() : null; // 🔥 Ambil nomor WA jika ada 🔥
+            const emailStr = row['Email'] ? String(row['Email']).trim() : null; 
+            const noWaStr = row['Telepon'] ? String(row['Telepon']).trim() : null; 
+            const prodi = row['Program Studi'] || row['Prodi'] || 'Umum';
+            
+            // Jaring pengaman (Fallback): Jika format tanggal lahir hancur, password = NIM
+            let passwordStr = nim; 
+            let mysqlDate = null;     
+
+            // 3. Advanced Regex Parser: Mengekstrak Tempat, Tanggal Lahir (Misal: "Brebes, 2000 April 11")
+            const rawTTL = row['Tempat, Tanggal Lahir'] || row['Tanggal Lahir'] || row['tanggal_lahir'] || '';
+            if (rawTTL) {
+                const cleanTTL = String(rawTTL).toLowerCase();
+                // Mencari pola: 4 angka (tahun) + spasi + kata (bulan) + angka (tanggal)
+                const match = cleanTTL.match(/(\d{4})\s+([a-z]+)\s+(\d{1,2})/);
+                
+                if (match) {
+                    const yyyy = match[1];
+                    const namaBulan = match[2];
+                    const dd = match[3].padStart(2, '0');
+                    const mm = bulanMap[namaBulan]; 
+                    
+                    if (mm) {
+                        passwordStr = yyyy + mm + dd; // Password: YYYYMMDD
+                        mysqlDate = `${yyyy}-${mm}-${dd}`; // DB Format: YYYY-MM-DD
+                    }
+                } else {
+                    // Coba format standar DD/MM/YYYY atau YYYY-MM-DD
+                    const standardMatch = cleanTTL.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/); // YYYY-MM-DD
+                    if (standardMatch) {
+                        passwordStr = standardMatch[1] + standardMatch[2].padStart(2, '0') + standardMatch[3].padStart(2, '0');
+                        mysqlDate = `${standardMatch[1]}-${standardMatch[2].padStart(2, '0')}-${standardMatch[3].padStart(2, '0')}`;
+                    } else {
+                        const standardMatch2 = cleanTTL.match(/(\d{1,2})[-/](\d{1,2})[-/](\d{4})/); // DD-MM-YYYY
+                        if (standardMatch2) {
+                            passwordStr = standardMatch2[3] + standardMatch2[2].padStart(2, '0') + standardMatch2[1].padStart(2, '0');
+                            mysqlDate = `${standardMatch2[3]}-${standardMatch2[2].padStart(2, '0')}-${standardMatch2[1].padStart(2, '0')}`;
+                        }
+                    }
+                }
+            }
             
             try {
                 const salt = await bcrypt.genSalt(10);
                 const hashedPassword = await bcrypt.hash(passwordStr, salt);
 
-                // 🔥 PERBAIKAN: Masukkan kolom no_wa ke dalam query INSERT 🔥
                 const sql = `
                     INSERT IGNORE INTO users 
                     (full_name, username, nim, email, no_wa, password, tanggal_lahir, department, role, approval_status) 
@@ -389,7 +451,7 @@ exports.importUsersExcel = async (req, res) => {
                 `;
                 
                 await new Promise((resolve, reject) => {
-                    db.query(sql, [nama, nimStr, nimStr, emailStr, noWaStr, hashedPassword, tanggal_lahir, prodi], (err, result) => {
+                    db.query(sql, [nama, nim, nim, emailStr, noWaStr, hashedPassword, mysqlDate, prodi], (err, result) => {
                         if (err) reject(err);
                         else if (result.affectedRows === 0) reject(new Error('Duplikat')); 
                         else resolve(result);
@@ -399,15 +461,15 @@ exports.importUsersExcel = async (req, res) => {
                 successCount++;
             } catch (e) {
                 if (e.message === 'Duplikat') {
-                    failedList.push(`NIM ${nimStr} (${nama}) - Sudah Terdaftar`);
+                    failedList.push(`NIM ${nim} (${nama}) - Sudah Terdaftar`);
                 } else {
-                    failedList.push(`NIM ${nimStr} (${nama}) - Gagal Sistem`);
+                    failedList.push(`NIM ${nim} (${nama}) - Gagal Sistem`);
                 }
             }
         }
 
         const ipAddress = req.ip || req.connection.remoteAddress;
-        logSystemActivity('import_excel', 'Administrator', `Mengimport ${successCount} mahasiswa baru via Excel`, ipAddress);
+        logSystemActivity('import_excel', 'Administrator', `Mengimport ${successCount} mahasiswa baru via Smart Excel Import`, ipAddress);
 
         return res.status(200).json({ 
             message: `Import selesai! Berhasil: ${successCount} akun, Gagal/Duplikat: ${failedList.length} baris.`,
