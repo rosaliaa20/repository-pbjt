@@ -1,0 +1,1594 @@
+
+ <html>
+
+<head>
+	<title>Laporan Data Mahasiswa D3 - Teknik Informatika Angkatan 2023</title>
+	<meta http-equiv="content-type" content="text/html;charset=iso-8859-1">
+	<link href="https://siakad.pbjt.ac.id/application/assets/metronic/assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+	<link href="https://siakad.pbjt.ac.id/application/assets/metronic/assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+	<style>
+		body {
+			margin: 0 auto;
+		}
+
+		body,
+		td,
+		th {
+			font-family: 'Source Sans Pro', sans-serif;
+			font-size: 12px;
+		}
+
+		th {
+			text-align: center;
+		}
+
+		.nama_pt {
+			font-size: 20px;
+			font-weight: bold;
+			line-height: 1.1;
+			vertical-align: middle;
+			text-align: center;
+		}
+
+		.info_pt {
+			vertical-align: middle;
+			text-align: center;
+		}
+
+		.kop {
+			border-spacing: 0;
+			border-collapse: collapse;
+			border-bottom-style: double;
+		}
+
+		.side {
+			width: 8%;
+		}
+
+		.img {
+			width: 80px;
+		}
+
+		@media screen {
+			.kop-width {
+				width: 70%;
+			}
+		}
+
+		@media print {
+			.kop-width {
+				width: 100%;
+			}
+		}
+
+		@media screen {
+
+
+			.kop-logo {
+				width: 70%;
+				margin: 0 auto;
+			}
+
+			.kop-logo img {
+				width: 100%;
+			}
+			.custom-kop-html table{
+				width: 70% !important;
+				text-align: center !important;
+			}
+		}
+
+		@media print {
+
+			.kop-logo {
+				width: 100% !important;
+			}
+
+			.kop-logo img {
+				width: 100%;
+			}
+		}
+	</style>
+</head>
+
+<body>
+			<nav class="navbar navbar-default">
+			<div class="container">
+				<p class="navbar-brand">Laporan Data Mahasiswa D3 - Teknik Informatika Angkatan 2023</p>
+				<button type="button" class="btn btn-primary btn-flat navbar-btn navbar-right" onclick="window.print(); return false;"><i class="fa fa-print"></i> Cetak</button>
+			</div>
+		</nav>
+								<div class="custom-kop-html" align="center">
+				<table style="border-collapse: collapse; width: 100%; height: 60px;" border="1" data-mce-id="__mce">
+<tbody>
+<tr style="height: 37px;">
+<td style="width: 17.254%; height: 60px; border-style: hidden; text-align: center; vertical-align: middle;" rowspan="4"><span style="background-color: #ffffff; font-size: 10pt;"><img src="https://siakad.pbjt.ac.id/uploads/065026/1658370983.png" alt="" width="124" height="122" /></span></td>
+<td style="width: 67.1162%; height: 60px; border-style: hidden; text-align: center; vertical-align: middle;" rowspan="4">
+<p class="MsoNormal" style="margin-bottom: .0001pt; text-align: center; line-height: normal;" align="center"><span style="background-color: #ffffff; font-size: 10pt;"><strong><span lang="IN" style="font-family: &#039;Book Antiqua&#039;, &#039;serif&#039;; color: #0d0d0d;">YAYASAN</span></strong><strong><span lang="IN" style="font-family: &#039;Book Antiqua&#039;, &#039;serif&#039;; color: #0d0d0d;"> </span></strong><strong><span lang="IN" style="font-family: &#039;Book Antiqua&#039;, &#039;serif&#039;; color: #0d0d0d;">PENDIDIKAN BHAKTI PRAJA TEGAL</span></strong></span><br /><span style="font-size: 10pt; background-color: #ffffff;"><strong><span style="line-height: 115%; font-family: &#039;Book Antiqua&#039;, &#039;serif&#039;; color: #0d0d0d;">P</span><span style="line-height: 115%; font-family: &#039;Book Antiqua&#039;, &#039;serif&#039;; color: #0d0d0d;">OLITEKNIK BAJA TEGAL</span></strong></span><br /><span style="background-color: #ffffff; font-size: 10pt;"><strong><span lang="IN" style="font-family: &#039;Book Antiqua&#039;, &#039;serif&#039;; color: #0d0d0d;">TERAKREDITASI “BAIK” NO. 341/SK/BAN-PT/Akred/PT/VII/2022</span></strong></span><br /><span style="background-color: #ffffff; font-size: 10pt;"><span style="font-family: &#039;Book Antiqua&#039;, &#039;serif&#039;; color: #0d0d0d;">A</span><span style="font-family: &#039;Book Antiqua&#039;, &#039;serif&#039;;">lamat : Jl. Raya Barat Dukuhwaru, Jatibarang-Slawi Km. 7, Kab. Tegal</span></span><br /><span style="background-color: #ffffff; font-size: 10pt;"><span style="line-height: 115%; font-family: &#039;Book Antiqua&#039;, &#039;serif&#039;;">Telp. (0283) 6196309 - Website : www.pbjt.ac.id -</span><span style="line-height: 115%; font-family: &#039;Book Antiqua&#039;, &#039;serif&#039;;"> E-mail : info@pbjt.ac.id</span></span></p>
+</td>
+<td style="width: 15.6298%; height: 60px; border-style: hidden; text-align: center; vertical-align: middle;" rowspan="4"><span style="background-color: #ffffff; font-size: 10pt;"><img style="display: block; margin-left: auto; margin-right: auto;" src="https://siakad.pbjt.ac.id/uploads/065026/1658371069.png" alt="" width="102" height="133" /></span></td>
+</tr>
+</tbody>
+</table>
+<p> </p>			</div>
+			
+<style>
+    body {
+        margin: 0 auto;
+    }
+
+    body,
+    td,
+    th {
+        font-family: 'Source Sans Pro', sans-serif;
+        font-size: 12px;
+    }
+
+    th {
+        text-align: center;
+    }
+
+    .nama_pt {
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 1.1;
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .info_pt {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .kop {
+        border-spacing: 0;
+        border-collapse: collapse;
+        border-bottom-style: double;
+    }
+
+    .side {
+        width: 8%;
+    }
+
+    .img {
+        width: 80px;
+    }
+
+    @media screen {
+        .kop-width {
+            width: 100%;
+        }
+    }
+
+    @media print {
+        .kop-width {
+            width: 100%;
+        }
+    }
+    table tr th{
+        vertical-align: middle !important;
+    }
+    @media screen {
+        .table-bordereds {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .table-bordereds td,
+        .table-bordereds th {
+            border: 1px solid #000 !important;
+        }
+
+        .table-sign {
+            width: 50%;
+            margin-right: 15%;
+        }
+
+        .table-head {
+            width: 90%;
+        }
+
+        .batas {
+            width: 70%;
+            margin: auto;
+            font-style: italic;
+            font-size: 14px;
+        }
+    }
+
+    @media print {
+        @page {
+            size: A4 potrait landscape;
+        }
+
+        .table-bordereds {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .table-bordereds td,
+        .table-bordereds th {
+            border: 1px solid #000 !important;
+        }
+
+        .table-sign {
+            width: 55%;
+            margin-right: 0%;
+        }
+
+        .table-head {
+            width: 100%;
+        }
+
+        .batas {
+            width: 100%;
+            margin: auto;
+            font-style: italic;
+            font-size: 12px;
+        }
+
+        .page-break {
+            page-break-after: always;
+        }
+    }
+    .cap tr td{
+        padding:3px;
+    }
+</style>
+<br>
+
+<table class="table-head" align="center">
+    <tbody>
+        <tr>
+            <td align="center" colspan="8" style="font-size: 18px;">
+                <strong>DAFTAR MAHASISWA PERANGKATAN</strong>
+            </td>
+        </tr>
+        
+    </tbody>
+</table>
+<br>
+<table class="table-head cap" align="center">
+    <tbody>
+        <tr>
+            <td width="10%">
+              Program Studi
+            </td>
+            <td>:</td>
+            <td>D3 - Teknik Informatika</td>
+        </tr>
+        <tr>
+        <td>
+              Angkatan
+            </td>
+            <td>:</td>
+            <td>2023</td>
+        </tr>
+        <tr>
+        <td>
+              Status
+            </td>
+            <td>:</td>
+            <td>AKTIF</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+<table class="table table-bordereds" border="1|0" align="center" style=""> 
+    <thead>
+        <tr class="">
+            <th rowspan="" style="vertical-align:middle;" width="1%">No</th>
+            <th rowspan="" style="vertical-align:middle;" width="2%">NIM</th>
+            <th rowspan="" style="vertical-align:middle;" width="2%">NIK</th>
+            <th rowspan="" style="vertical-align:middle;" width="12%">Nama</th>
+            <th colspan="" style="text-align: center;" width="8%">Program Studi</th>
+            <th colspan="" style="text-align: center;" width="2%">Angkatan</th>
+            <th colspan="" style="text-align: center;" width="3%">Jenis Kelamin</th>
+            <th colspan="" style="text-align: center;" width="8%">Tempat, Tanggal Lahir</th>
+            <th colspan="" style="text-align: center;" width="2%">Agama</th>
+            <th colspan="" style="text-align: center;" width="2%">Telepon</th>
+            <th colspan="" style="text-align: center;" width="1%">Email</th>
+            <th rowspan="" style="vertical-align:middle; text-align: center;" width="12%">Alamat</th>
+        </tr>
+
+    </thead>
+    <tbody>
+                            <tr>
+                        <td>1</td>
+                        <td>
+                            23.1.9.0001                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3329151607000001                        </td>
+                        <td>AHMAD KHOERUL ANAM</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Brebes, 2000 April 11</td>
+                        <td>Islam</td>
+                        <td>085720728947</td>
+                                                <td style="text-align: left;font-size:8px;">khoirlanam11400@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>2</td>
+                        <td>
+                            23.1.9.0003                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328180602980001                        </td>
+                        <td>FIRMAN HIDAYATULLOH</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1998 Februari 06</td>
+                        <td>Islam</td>
+                        <td>085801122566</td>
+                                                <td style="text-align: left;font-size:8px;">firemansaja@gmail.com</td>
+                        <td>Jl. Gunung Slamet 1 No. 17</td>
+                    </tr>
+                                    <tr>
+                        <td>3</td>
+                        <td>
+                            23.1.9.0005                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3329102402040002                        </td>
+                        <td>M. HASAN NAFI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Brebes, 2004 Februari 24</td>
+                        <td>Islam</td>
+                        <td>083804794715</td>
+                                                <td style="text-align: left;font-size:8px;">mhasannafi09@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>4</td>
+                        <td>
+                            23.1.9.0007                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3329071906050004                        </td>
+                        <td>MOH HARUN AL RASYID</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Brebes, 2005 Juli 19</td>
+                        <td>Islam</td>
+                        <td>081901128080</td>
+                                                <td style="text-align: left;font-size:8px;">rasyiid873@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>5</td>
+                        <td>
+                            23.1.9.0008                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328096112040004                        </td>
+                        <td>ALFIAH</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2004 Desember 21</td>
+                        <td>Islam</td>
+                        <td>082224135912</td>
+                                                <td style="text-align: left;font-size:8px;">fanikanjeng@gmail.com</td>
+                        <td>Raya Bogares Lor</td>
+                    </tr>
+                                    <tr>
+                        <td>6</td>
+                        <td>
+                            23.1.9.0009                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328055606060002                        </td>
+                        <td>DEAWI GUNA PRATIWI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2006 Juni 16</td>
+                        <td>Islam</td>
+                        <td>083862817236</td>
+                                                <td style="text-align: left;font-size:10px;">deawigunapratiwi@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>7</td>
+                        <td>
+                            23.1.9.0010                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3329072710970001                        </td>
+                        <td>HARIS MAULANA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Brebes, 1997 Oktober 27</td>
+                        <td>Islam</td>
+                        <td>081310222844</td>
+                                                <td style="text-align: left;font-size:8px;">harismaulsss@gmail.com</td>
+                        <td>Jl KH Munadi</td>
+                    </tr>
+                                    <tr>
+                        <td>8</td>
+                        <td>
+                            23.1.9.0011                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328014909050007                        </td>
+                        <td>MELINDA EVIYANTI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 09-september-2005, 2005 September 09</td>
+                        <td>Islam</td>
+                        <td>087744373834</td>
+                                                <td style="text-align: left;font-size:8px;">melindaeviyanti@gmail.com</td>
+                        <td>Bima Sakti</td>
+                    </tr>
+                                    <tr>
+                        <td>9</td>
+                        <td>
+                            23.1.9.0012                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328116803040003                        </td>
+                        <td>NISRINA SALWA MUADZAH</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2004 Maret 28</td>
+                        <td>Islam</td>
+                        <td>085867438134</td>
+                                                <td style="text-align: left;font-size:10px;">nisrinasalwamuadzah@gmail.com</td>
+                        <td>Jalan Brawijaya</td>
+                    </tr>
+                                    <tr>
+                        <td>10</td>
+                        <td>
+                            23.1.9.0013                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3329141107000008                        </td>
+                        <td>RISAH RAPIQUL HUDA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Brebes, 2000 Juli 11</td>
+                        <td>Islam</td>
+                        <td>0859102707061</td>
+                                                <td style="text-align: left;font-size:8px;">rapikhuda@gmail.com</td>
+                        <td>Jl.sartimah1</td>
+                    </tr>
+                                    <tr>
+                        <td>11</td>
+                        <td>
+                            23.1.9.0014                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328095311040003                        </td>
+                        <td>FITROHTUN NISHA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2004 November 13</td>
+                        <td>Islam</td>
+                        <td>087822588064</td>
+                                                <td style="text-align: left;font-size:8px;">pipitfn675@gmail.com</td>
+                        <td>Jln.majlis Ta&#039;lim</td>
+                    </tr>
+                                    <tr>
+                        <td>12</td>
+                        <td>
+                            23.1.9.0015                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328012104000012                        </td>
+                        <td>YUDHIS ERLAS PERMANA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 2000 April 21</td>
+                        <td>Islam</td>
+                        <td>085727202578</td>
+                                                <td style="text-align: left;font-size:8px;">yudisdis7@gmail.com</td>
+                        <td>Cendrawasih</td>
+                    </tr>
+                                    <tr>
+                        <td>13</td>
+                        <td>
+                            23.1.9.0016                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328185005050004                        </td>
+                        <td>HENI MELITA ULFIANAH</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2005 Mei 11</td>
+                        <td>Islam</td>
+                        <td>083837331211</td>
+                                                <td style="text-align: left;font-size:8px;">melitasari565@gmail.com</td>
+                        <td>Jln.G.KRAKATAU</td>
+                    </tr>
+                                    <tr>
+                        <td>14</td>
+                        <td>
+                            23.1.9.0017                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328185805040002                        </td>
+                        <td>RATU VINDY SYAFIRA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Jakarta, 2004 Mei 18</td>
+                        <td>Islam</td>
+                        <td>085712352067</td>
+                                                <td style="text-align: left;font-size:10px;">ratuvindysyafira@gmail.com</td>
+                        <td>Jalan. Pramuka No. 14</td>
+                    </tr>
+                                    <tr>
+                        <td>15</td>
+                        <td>
+                            23.1.9.0019                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3329081001010010                        </td>
+                        <td>EGA PRASETIO</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Bogor, 2001 Januari 10</td>
+                        <td>Islam</td>
+                        <td>085786141308</td>
+                                                <td style="text-align: left;font-size:8px;">egaprasetyo1001@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>16</td>
+                        <td>
+                            23.1.9.0020                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328164905050003                        </td>
+                        <td>ZIDTIE MULQIYAS SALAMI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2005 Mei 09</td>
+                        <td>Islam</td>
+                        <td>087711710643</td>
+                                                <td style="text-align: left;font-size:8px;">zidtiemulqiyas@gmail.com</td>
+                        <td>Kertasari</td>
+                    </tr>
+                                    <tr>
+                        <td>17</td>
+                        <td>
+                            23.1.9.0021                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328052202005000                        </td>
+                        <td>ADAM YUDHISTIRA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 2005 Februari 22</td>
+                        <td>Islam</td>
+                        <td>082328241144</td>
+                                                <td style="text-align: left;font-size:10px;">adamyudhistira49@gmail.com</td>
+                        <td>Raya Randusari</td>
+                    </tr>
+                                    <tr>
+                        <td>18</td>
+                        <td>
+                            23.1.9.0022                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328042302030005                        </td>
+                        <td>MUHAMAD YOGI PRASETYO</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 2002 Februari 23</td>
+                        <td>Islam</td>
+                        <td>082326243521</td>
+                                                <td style="text-align: left;font-size:8px;">prasetyoyogi938@gmail.com</td>
+                        <td>Bugenfil</td>
+                    </tr>
+                                    <tr>
+                        <td>19</td>
+                        <td>
+                            23.1.9.0023                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3329090704030007                        </td>
+                        <td>NUR FAJRI HIDAYAT</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Brebes, 2003 April 07</td>
+                        <td>Islam</td>
+                        <td>087735387795</td>
+                                                <td style="text-align: left;font-size:8px;">fajrihidayat547@gmail.com</td>
+                        <td>Gg Srikaya/ Bidan Asih</td>
+                    </tr>
+                                    <tr>
+                        <td>20</td>
+                        <td>
+                            23.1.9.0024                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3329154205060003                        </td>
+                        <td>DIAJENG SALWA AULAN NI&#039;MAH</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Brebes, 2006 Mei 02</td>
+                        <td>Islam</td>
+                        <td>083188582739</td>
+                                                <td style="text-align: left;font-size:8px;">dsalwaan@gmail.com</td>
+                        <td>Dusun Penjalinbanyu</td>
+                    </tr>
+                                    <tr>
+                        <td>21</td>
+                        <td>
+                            23.1.9.0025                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328110511050006                        </td>
+                        <td>MADARAFI EL KAOSAR</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Brebes, 2005 November 05</td>
+                        <td>Islam</td>
+                        <td>085700194118</td>
+                                                <td style="text-align: left;font-size:10px;">madarafielkaosae@gmail.com</td>
+                        <td>Adiwerna</td>
+                    </tr>
+                                    <tr>
+                        <td>22</td>
+                        <td>
+                            23.1.9.0026                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3329097112040003                        </td>
+                        <td>AULIA ANNISA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Brebes, 2004 Desember 31</td>
+                        <td>Islam</td>
+                        <td>089514498909</td>
+                                                <td style="text-align: left;font-size:8px;">annisaakuu12@gmail.com</td>
+                        <td>Blenggong</td>
+                    </tr>
+                                    <tr>
+                        <td>23</td>
+                        <td>
+                            23.1.9.0027                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328185405050002                        </td>
+                        <td>MERLINA EKI WIDIYASARI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2005 Mei 14</td>
+                        <td>Islam</td>
+                        <td>085713278688</td>
+                                                <td style="text-align: left;font-size:8px;">merlinaeki006@gmail.com</td>
+                        <td>Jln Serayu</td>
+                    </tr>
+                                    <tr>
+                        <td>24</td>
+                        <td>
+                            23.1.9.0028                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>0332804211205000                        </td>
+                        <td>TEGUH PURWANTO</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 2005 Desember 21</td>
+                        <td>Islam</td>
+                        <td>081327677344</td>
+                                                <td style="text-align: left;font-size:10px;">purwantoteguh774@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>25</td>
+                        <td>
+                            23.1.9.0029                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3329105705040001                        </td>
+                        <td>RENY RISTANTY</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2004 Mei 17</td>
+                        <td>Islam</td>
+                        <td>085868861854</td>
+                                                <td style="text-align: left;font-size:8px;">renyristanty@gmail.com</td>
+                        <td>Surawijaya</td>
+                    </tr>
+                                    <tr>
+                        <td>26</td>
+                        <td>
+                            23.1.9.0031                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328115110000007                        </td>
+                        <td>ALISA FITRIANI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2000 Oktober 11</td>
+                        <td>Islam</td>
+                        <td>085743651718</td>
+                                                <td style="text-align: left;font-size:10px;">alisafitriani1010@gmail.com</td>
+                        <td>KH. Mansyur</td>
+                    </tr>
+                                    <tr>
+                        <td>27</td>
+                        <td>
+                            23.1.9.0032                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3376035102030002                        </td>
+                        <td>SEFVIA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2003 Februari 11</td>
+                        <td>Islam</td>
+                        <td>087737613486</td>
+                                                <td style="text-align: left;font-size:8px;">februarirose@gmail.com</td>
+                        <td>Jl Samadikun Gg. 34</td>
+                    </tr>
+                                    <tr>
+                        <td>28</td>
+                        <td>
+                            23.1.9.0033                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3376036203030001                        </td>
+                        <td>ADE LIA FARIZAH</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2003 Maret 22</td>
+                        <td>Islam</td>
+                        <td>089681997603</td>
+                                                <td style="text-align: left;font-size:8px;">deliafa220303@gmail.com</td>
+                        <td>Dewi Sartika</td>
+                    </tr>
+                                    <tr>
+                        <td>29</td>
+                        <td>
+                            23.1.9.0034                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3175062303020006                        </td>
+                        <td>BILLY HAEKAL FAHLEVY</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 2002 Maret 23</td>
+                        <td>Islam</td>
+                        <td>082325153226</td>
+                                                <td style="text-align: left;font-size:8px;">billyhaekal@gmail.com</td>
+                        <td>Jl. Raya Tonjong</td>
+                    </tr>
+                                    <tr>
+                        <td>30</td>
+                        <td>
+                            23.1.9.0035                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328081310050003                        </td>
+                        <td>SAHRUL FERDIANSAH</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 2005 Oktober 13</td>
+                        <td>Islam</td>
+                        <td>085328924518</td>
+                                                <td style="text-align: left;font-size:10px;">sahrulferdiansah404@gmail.com</td>
+                        <td>Gg.Muntreng</td>
+                    </tr>
+                                    <tr>
+                        <td>31</td>
+                        <td>
+                            23.1.9.0036                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328066004040007                        </td>
+                        <td>RATNA AMALIYAH MAHMUDAH</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2004 April 20</td>
+                        <td>Islam</td>
+                        <td>083837176256</td>
+                                                <td style="text-align: left;font-size:8px;">ratnaamaliyah20@gmail.com</td>
+                        <td>Kajenengan Indofood</td>
+                    </tr>
+                                    <tr>
+                        <td>32</td>
+                        <td>
+                            23.1.9.0037                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328095806040002                        </td>
+                        <td>ZAKIA NORMARISSA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2004 Juni 18</td>
+                        <td>Islam</td>
+                        <td>085866462980</td>
+                                                <td style="text-align: left;font-size:8px;">znormarissa@gmail.com</td>
+                        <td>Kendal Serut</td>
+                    </tr>
+                                    <tr>
+                        <td>33</td>
+                        <td>
+                            23.1.9.0039                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328056511050002                        </td>
+                        <td>ANISA FITRI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2005 November 25</td>
+                        <td>Islam</td>
+                        <td>083104995467</td>
+                                                <td style="text-align: left;font-size:8px;">annisaftri68@gmail.com</td>
+                        <td>Jalan Gang Donkal</td>
+                    </tr>
+                                    <tr>
+                        <td>34</td>
+                        <td>
+                            23.1.9.0041                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328106901040001                        </td>
+                        <td>FERDITA LUSIANA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2004 Januari 29</td>
+                        <td>Islam</td>
+                        <td>085228679660</td>
+                                                <td style="text-align: left;font-size:10px;">ferditalusiana09@gmail.com</td>
+                        <td>Jalan Lele No 06</td>
+                    </tr>
+                                    <tr>
+                        <td>35</td>
+                        <td>
+                            23.1.9.0042                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328116001030007                        </td>
+                        <td>ROSALIA INDAH DWI PUTRININGSIH</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2003 Januari 20</td>
+                        <td>Islam</td>
+                        <td>085640738893</td>
+                                                <td style="text-align: left;font-size:8px;">rosaliaindah236@gmail.com</td>
+                        <td>Kampung Tani</td>
+                    </tr>
+                                    <tr>
+                        <td>36</td>
+                        <td>
+                            23.1.9.0043                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328094803060001                        </td>
+                        <td>NABILA NURUL SYAFA&#039;AT</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2006 Maret 08</td>
+                        <td>Islam</td>
+                        <td>085813130093</td>
+                                                <td style="text-align: left;font-size:10px;">nabilanurulsyafaat@gmail.com</td>
+                        <td>Durian</td>
+                    </tr>
+                                    <tr>
+                        <td>37</td>
+                        <td>
+                            23.1.9.0045                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328044410040004                        </td>
+                        <td>FIRANI NUR ANJANI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2004 April 14</td>
+                        <td>Islam</td>
+                        <td>082130384132</td>
+                                                <td style="text-align: left;font-size:8px;">firaninuranjani@gmail.com</td>
+                        <td>Jl. Mushola Al-Muhajirin</td>
+                    </tr>
+                                    <tr>
+                        <td>38</td>
+                        <td>
+                            23.1.9.0046                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328051110050002                        </td>
+                        <td>MOHAMAD NAUFAL KISNOTO</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 2005 Oktober 11</td>
+                        <td>Islam</td>
+                        <td>085328937255</td>
+                                                <td style="text-align: left;font-size:8px;">naufalkisnoto56@gmail.com</td>
+                        <td>Jl.ramtamsari</td>
+                    </tr>
+                                    <tr>
+                        <td>39</td>
+                        <td>
+                            23.1.9.0047                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3329071912040001                        </td>
+                        <td>RIFQI MAULANA MABRURI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Brebes, 2004 Desember 19</td>
+                        <td>Islam</td>
+                        <td>085923731601</td>
+                                                <td style="text-align: left;font-size:8px;">masrifqi3@gmail.com</td>
+                        <td>Jl.Kasuari</td>
+                    </tr>
+                                    <tr>
+                        <td>40</td>
+                        <td>
+                            23.1.9.0049                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3174051905050004                        </td>
+                        <td>RAFLY ASHRAFFI RACHMAT</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Jakarta, 2005 Mei 19</td>
+                        <td>Islam</td>
+                        <td>08561173933</td>
+                                                <td style="text-align: left;font-size:8px;">raflypriyantoro@gmail.com</td>
+                        <td>Jl.Cempaka 5 No.36</td>
+                    </tr>
+                                    <tr>
+                        <td>41</td>
+                        <td>
+                            23.1.9.0050                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328036505050005                        </td>
+                        <td>ZELDA AMMARSA SAEFNA PUTRI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2005 Mei 25</td>
+                        <td>Islam</td>
+                        <td>085848116623</td>
+                                                <td style="text-align: left;font-size:8px;">zeldaammarsa48@gmail.com</td>
+                        <td>Jalan Raya Tuwel Guci</td>
+                    </tr>
+                                    <tr>
+                        <td>42</td>
+                        <td>
+                            23.1.9.0051                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328065409000002                        </td>
+                        <td>WINNA OKTAVIANA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Pemalang, 2000 Oktober 14</td>
+                        <td>Islam</td>
+                        <td>085775722704</td>
+                                                <td style="text-align: left;font-size:10px;">winnaoktaviana14@gmail.com</td>
+                        <td>Durian No 01</td>
+                    </tr>
+                                    <tr>
+                        <td>43</td>
+                        <td>
+                            23.1.9.0052                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328024601050002                        </td>
+                        <td>NAJIYATU KHASNA&#039;UL FAUZIYYAH</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2005 Januari 06</td>
+                        <td>Islam</td>
+                        <td>082134644510</td>
+                                                <td style="text-align: left;font-size:10px;">khasnaulfauziyyah@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>44</td>
+                        <td>
+                            23.1.9.0053                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3329072306040001                        </td>
+                        <td>URIP FATAHILAH</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Brebes, 2004 Juni 23</td>
+                        <td>Islam</td>
+                        <td>082287137871</td>
+                                                <td style="text-align: left;font-size:10px;">fatahillahjatibarang@gmail.com</td>
+                        <td>Penumbukan</td>
+                    </tr>
+                                    <tr>
+                        <td>45</td>
+                        <td>
+                            23.1.9.0054                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328066905040003                        </td>
+                        <td>KUINSI MANDA AULIA HUTASOIT</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2004 Mei 29</td>
+                        <td>Islam</td>
+                        <td>085601557068</td>
+                                                <td style="text-align: left;font-size:8px;">queencymanda@gmail.com</td>
+                        <td>Desa Dukuhdamu</td>
+                    </tr>
+                                    <tr>
+                        <td>46</td>
+                        <td>
+                            23.1.9.0056                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3216062301050017                        </td>
+                        <td>ARIYAN ANDRYAN ARYJA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Bekasi, 2005 Januari 23</td>
+                        <td>Islam</td>
+                        <td>085717394763</td>
+                                                <td style="text-align: left;font-size:8px;">ariyanandryan@gmail.com</td>
+                        <td>Jl. Raya Barat No. 42 Margasari</td>
+                    </tr>
+                                    <tr>
+                        <td>47</td>
+                        <td>
+                            23.1.9.0058                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328180508050005                        </td>
+                        <td>RANGGA DWI ADITYA SAPUTRA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 2005 Agustus 05</td>
+                        <td>Islam</td>
+                        <td>0895423002421</td>
+                                                <td style="text-align: left;font-size:8px;">ranggadwi783@gmail.com</td>
+                        <td>Sadewa</td>
+                    </tr>
+                                    <tr>
+                        <td>48</td>
+                        <td>
+                            23.1.9.0059                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3327100505030022                        </td>
+                        <td>AZAM MUAMAR ABDILAH</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Pemalang, 2003 Mei 05</td>
+                        <td>Islam</td>
+                        <td>083844028383</td>
+                                                <td style="text-align: left;font-size:8px;">azammuamar4@gmail.com</td>
+                        <td>Tamtama Gg. Dieng 1</td>
+                    </tr>
+                                    <tr>
+                        <td>49</td>
+                        <td>
+                            23.1.9.0060                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3327100706050024                        </td>
+                        <td>MUHAMMAD BAHIJ AQIL MADDANI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Pemalang, 2005 Juni 07</td>
+                        <td>Islam</td>
+                        <td>085225935522</td>
+                                                <td style="text-align: left;font-size:8px;">danipml62@gmail.com</td>
+                        <td>Jalan Raya Petarukan Barat</td>
+                    </tr>
+                                    <tr>
+                        <td>50</td>
+                        <td>
+                            23.1.9.0062                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3671062212040004                        </td>
+                        <td>IVAN RIFA&#039;AT ARUNDAYA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 2004 Desember 22</td>
+                        <td>Islam</td>
+                        <td>0895385030298</td>
+                                                <td style="text-align: left;font-size:8px;">ivrifaat21@gmail.com</td>
+                        <td>JL. MT. HARYONO</td>
+                    </tr>
+                                    <tr>
+                        <td>51</td>
+                        <td>
+                            23.1.9.0063                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328051005940003                        </td>
+                        <td>SLAMET</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1991 April 05</td>
+                        <td>Islam</td>
+                        <td>082328433550</td>
+                                                <td style="text-align: left;font-size:8px;">cnokk014@gmail.com</td>
+                        <td>RAJEGWESI</td>
+                    </tr>
+                                    <tr>
+                        <td>52</td>
+                        <td>
+                            23.1.9.0064                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328061110050004                        </td>
+                        <td>M. FAIZ MUBAROK</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 2005 Oktober 11</td>
+                        <td>Islam</td>
+                        <td>088239247057</td>
+                                                <td style="text-align: left;font-size:8px;">faizmubarok109@gmail.com</td>
+                        <td>Jln.masjid Al-hasan</td>
+                    </tr>
+                                    <tr>
+                        <td>53</td>
+                        <td>
+                            23.1.9.0065                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328092411040005                        </td>
+                        <td>GIBRAN YUDHA INIESTA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 2004 November 24</td>
+                        <td>Islam</td>
+                        <td>082314635553</td>
+                                                <td style="text-align: left;font-size:8px;">gibranyi8@gmail.com</td>
+                        <td>Jalan Penusupan</td>
+                    </tr>
+                                    <tr>
+                        <td>54</td>
+                        <td>
+                            23.1.9.0066                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328101201880002                        </td>
+                        <td>YUDI PRASETYO</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1988 Januari 12</td>
+                        <td>Islam</td>
+                        <td>085713279100</td>
+                                                <td style="text-align: left;font-size:8px;">stankgitar@gmail.com</td>
+                        <td>Jl. Sumbawa</td>
+                    </tr>
+                                    <tr>
+                        <td>55</td>
+                        <td>
+                            23.1.9.0067                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328054304960002                        </td>
+                        <td>SOPIAH APRIYANI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 1996 April 03</td>
+                        <td>Islam</td>
+                        <td>0895703032716</td>
+                                                <td style="text-align: left;font-size:10px;">sopiahapriyani96@gmail.com</td>
+                        <td>H. Rojali</td>
+                    </tr>
+                                    <tr>
+                        <td>56</td>
+                        <td>
+                            23.1.9.0068                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328114302050002                        </td>
+                        <td>ADELIA VICKA FEBRIAN</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 2005 Februari 03</td>
+                        <td>Islam</td>
+                        <td>088225107424</td>
+                                                <td style="text-align: left;font-size:8px;">vickaadelia33@gmail.com</td>
+                        <td>Jalan Jati Agung</td>
+                    </tr>
+                                    <tr>
+                        <td>57</td>
+                        <td>
+                            23.1.9.0069                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328101109860001                        </td>
+                        <td>SLAMET RISKI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1986 September 11</td>
+                        <td>Islam</td>
+                        <td>085742726625</td>
+                                                <td style="text-align: left;font-size:8px;">ariskempot07@gmail.com</td>
+                        <td>Desa Curug</td>
+                    </tr>
+                                    <tr>
+                        <td>58</td>
+                        <td>
+                            23.1.9.0070                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328101508730000                        </td>
+                        <td>AGUS KUNTORO</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1973 Agustus 15</td>
+                        <td>Islam</td>
+                        <td>085786870222</td>
+                                                <td style="text-align: left;font-size:8px;">jahidinsakti@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>59</td>
+                        <td>
+                            23.1.9.0071                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328092706840005                        </td>
+                        <td>ANDIH KUSWORO</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1984 Juni 27</td>
+                        <td>Islam</td>
+                        <td>0895411358451</td>
+                                                <td style="text-align: left;font-size:8px;">andihkusworo@gmail.com</td>
+                        <td>Wungu 3</td>
+                    </tr>
+                                    <tr>
+                        <td>60</td>
+                        <td>
+                            23.1.9.0072                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328091201840011                        </td>
+                        <td>ANDY AKHMAD</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1984 Januari 12</td>
+                        <td>Islam</td>
+                        <td>082138595400</td>
+                                                <td style="text-align: left;font-size:8px;">opponeo736@gmail.com</td>
+                        <td>Jl. Kawedanan Pangkah</td>
+                    </tr>
+                                    <tr>
+                        <td>61</td>
+                        <td>
+                            23.1.9.0073                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328082308930002                        </td>
+                        <td>BAGUS SAEFUL ANWAR</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1993 Agustus 23</td>
+                        <td>Islam</td>
+                        <td>082220331993</td>
+                                                <td style="text-align: left;font-size:10px;">bagussaefulanwar@gmail.com</td>
+                        <td>Jl. Surabayan Gang Dirgantara No 92</td>
+                    </tr>
+                                    <tr>
+                        <td>62</td>
+                        <td>
+                            23.1.9.0074                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328101809850001                        </td>
+                        <td>DANANG DWI HANDAYANI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1985 September 18</td>
+                        <td>Islam</td>
+                        <td>088238879157</td>
+                                                <td style="text-align: left;font-size:10px;">dananghandayani67@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>63</td>
+                        <td>
+                            23.1.9.0075                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328011011780002                        </td>
+                        <td>DEDY NOVRIYANTO</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1978 November 10</td>
+                        <td>Islam</td>
+                        <td>081298789515</td>
+                                                <td style="text-align: left;font-size:10px;">dedynovriyanto72@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>64</td>
+                        <td>
+                            23.1.9.0076                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328102309910003                        </td>
+                        <td>IMAM RADIDI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1991 September 23</td>
+                        <td>Islam</td>
+                        <td>085227065409</td>
+                                                <td style="text-align: left;font-size:8px;">jahidinsakti@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>65</td>
+                        <td>
+                            23.1.9.0077                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3376010901830001                        </td>
+                        <td>JANUARKO</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1983 Januari 09</td>
+                        <td>Islam</td>
+                        <td>085747135547</td>
+                                                <td style="text-align: left;font-size:8px;">jahidinsakti@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>66</td>
+                        <td>
+                            23.1.9.0078                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328042703900000                        </td>
+                        <td>M. ARDHI NUGROHO</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1990 Maret 27</td>
+                        <td>Islam</td>
+                        <td>087842998983</td>
+                                                <td style="text-align: left;font-size:8px;">ardhinugroho.jr@gmail.com</td>
+                        <td>Jln Edelweis no 13 Lebak Goah</td>
+                    </tr>
+                                    <tr>
+                        <td>67</td>
+                        <td>
+                            23.1.9.0079                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328030105940004                        </td>
+                        <td>MUHAMAD MIFTAKHUL AZIZ</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1994 Mei 01</td>
+                        <td>Islam</td>
+                        <td>082226082459</td>
+                                                <td style="text-align: left;font-size:8px;">miftahazzis94@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>68</td>
+                        <td>
+                            23.1.9.0080                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328152104940000                        </td>
+                        <td>MUS MUJIYANTO</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1994 April 21</td>
+                        <td>Islam</td>
+                        <td>085228366178</td>
+                                                <td style="text-align: left;font-size:8px;">jahidinsakti@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>69</td>
+                        <td>
+                            23.1.9.0081                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328046401810005                        </td>
+                        <td>NURGIYANTO</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1981 Januari 24</td>
+                        <td>Islam</td>
+                        <td>083837395424</td>
+                                                <td style="text-align: left;font-size:8px;">giyantonur66i@gmail.com</td>
+                        <td>Jalan mangga</td>
+                    </tr>
+                                    <tr>
+                        <td>70</td>
+                        <td>
+                            23.1.9.0082                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328112811850004                        </td>
+                        <td>PANCA AJI PAMUNGKAS</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1985 November 28</td>
+                        <td>Islam</td>
+                        <td>0859102689307</td>
+                                                <td style="text-align: left;font-size:8px;">pancazia3@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>71</td>
+                        <td>
+                            23.1.9.0083                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328102209820001                        </td>
+                        <td>PRAMANA SEPTIAJI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1982 September 22</td>
+                        <td>Islam</td>
+                        <td>082135847012</td>
+                                                <td style="text-align: left;font-size:10px;">pramanasaputra84@gmail.com</td>
+                        <td>Nusa Indah VI</td>
+                    </tr>
+                                    <tr>
+                        <td>72</td>
+                        <td>
+                            23.1.9.0084                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328102002850005                        </td>
+                        <td>PUJI ALI MUALIM</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1985 Februari 20</td>
+                        <td>Islam</td>
+                        <td>087716712631</td>
+                                                <td style="text-align: left;font-size:8px;">pujialimualim@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>73</td>
+                        <td>
+                            23.1.9.0085                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328101912800000                        </td>
+                        <td>SLAMET SAFARI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1980 Desember 19</td>
+                        <td>Islam</td>
+                        <td>082243396818</td>
+                                                <td style="text-align: left;font-size:8px;">jahidinsakti@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>74</td>
+                        <td>
+                            23.1.9.0086                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328110806760008                        </td>
+                        <td>TARMUJIANTO</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1976 Juni 08</td>
+                        <td>Islam</td>
+                        <td>0895338825040</td>
+                                                <td style="text-align: left;font-size:8px;">tarmujianto@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>75</td>
+                        <td>
+                            23.1.9.0087                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328110701900004                        </td>
+                        <td>TEGAR GALIH PRIANTO</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1990 Januari 07</td>
+                        <td>Islam</td>
+                        <td>082243842485</td>
+                                                <td style="text-align: left;font-size:8px;">garaganob@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>76</td>
+                        <td>
+                            23.1.9.0088                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328106508840000                        </td>
+                        <td>VINDA DAMSIKI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 1984 Agustus 25</td>
+                        <td>Islam</td>
+                        <td>085875743402</td>
+                                                <td style="text-align: left;font-size:8px;">damsikivinda@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>77</td>
+                        <td>
+                            23.1.9.0089                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328121305890002                        </td>
+                        <td>YOGI ARDETA</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1989 Mei 13</td>
+                        <td>Islam</td>
+                        <td>085713294588</td>
+                                                <td style="text-align: left;font-size:8px;">anggaardeta2@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>78</td>
+                        <td>
+                            23.1.9.0090                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328146509920002                        </td>
+                        <td>FITRIYA EKAWATI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Perempuan</td>
+                        <td>Tegal, 1992 September 26</td>
+                        <td>Islam</td>
+                        <td>085328089766</td>
+                                                <td style="text-align: left;font-size:8px;">fitriyaekawati0@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>79</td>
+                        <td>
+                            23.1.9.0091                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328113005940005                        </td>
+                        <td>AKHMAD IRKHAM NUR AFANI</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1994 Mei 30</td>
+                        <td>Islam</td>
+                        <td>086865602075</td>
+                                                <td style="text-align: left;font-size:8px;">irkhamaffani94@gmail.com</td>
+                        <td></td>
+                    </tr>
+                                    <tr>
+                        <td>80</td>
+                        <td>
+                            23.1.9.0092                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3376010312030001                        </td>
+                        <td>FAIZ IZZA NURHIDAYATULLAH</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal,03-12-2003, 2003 Desember 03</td>
+                        <td>Islam</td>
+                        <td>087851009469</td>
+                                                <td style="text-align: left;font-size:10px;">faizizzanurhidayatullah@gmail.com</td>
+                        <td>JL. Salak No. 92</td>
+                    </tr>
+                                    <tr>
+                        <td>81</td>
+                        <td>
+                            23.2.9.0090                        </td>
+                        <td>
+                            <span style="color:#fff">'</span>3328112011860000                        </td>
+                        <td>MOHAMAD FATUROHMAN</td>
+                        <td>D3 Teknik Informatika</td>
+                        <td>2023</td>
+                        <td>Laki-laki</td>
+                        <td>Tegal, 1986 November 20</td>
+                        <td>Islam</td>
+                        <td>085867709630</td>
+                                                <td style="text-align: left;font-size:8px;">mfaturohman@gmail.com</td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+</table>

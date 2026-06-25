@@ -126,13 +126,17 @@ const UploadDoc = () => {
 
     setLoading(true);
 
+    const finalAbstract = formData.keywords 
+      ? `${formData.abstract}\n\nKata Kunci: ${formData.keywords}` 
+      : formData.abstract;
+
     const submitData = new FormData();
     submitData.append('title', formData.title);
-    submitData.append('document_author', formData.author);
+    submitData.append('document_author', formData.author || user?.name || 'Anonim');
     submitData.append('year', formData.year);
     submitData.append('category', formData.category);
-    submitData.append('department', formData.program);
-    submitData.append('abstract', formData.abstract);
+    submitData.append('department', formData.program || user?.department || 'Umum');
+    submitData.append('abstract', finalAbstract);
     submitData.append('keywords', formData.keywords);
     submitData.append('external_link', formData.external_link); 
     submitData.append('document_file', file);

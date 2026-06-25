@@ -54,6 +54,8 @@ const setupClientEvents = (c) => {
         console.log('✅ Bot WhatsApp E-Repository Berhasil Terhubung!');
         latestQr = null; // QR sudah tidak diperlukan setelah terhubung
         isBotReady = true;
+        // 🔥 Langsung proses antrean pesan yang tertunda saat inisialisasi 🔥
+        processQueue();
     });
 
     c.on('auth_failure', (msg) => {
@@ -107,18 +109,10 @@ const initializeBot = async () => {
     }
 
     // ============================================================
-    // SESSION CLEANUP:
-    // Hapus seluruh folder session agar Chrome mulai bersih.
+    // SESSION PERSISTENCE:
+    // Biarkan folder session tetap ada agar otentikasi abadi di Docker Swarm.
     // ============================================================
-    if (fs.existsSync(SESSION_DIR)) {
-        try {
-            fs.rmSync(SESSION_DIR, { recursive: true, force: true });
-            console.log('🧹 Folder session lama dibersihkan, memulai sesi baru...');
-        } catch (cleanErr) {
-            console.warn('⚠️ Gagal membersihkan folder session:', cleanErr.message);
-        }
-    }
-
+    
     client = createClient();
     setupClientEvents(client);
 

@@ -217,8 +217,11 @@ exports.updateDoc = (req, res) => {
 
         const existingDoc = results[0];
 
-        // Otorisasi: Harus Admin ATAU Pemilik Asli Dokumen
-        if (req.user.role !== 'admin' && req.user.name !== existingDoc.document_author) {
+        // Otorisasi: Harus Admin ATAU Pemilik Asli Dokumen (Dengan normalisasi case & whitespace)
+        const currentUserName = String(req.user.name || '').trim().toLowerCase();
+        const docAuthorName = String(existingDoc.document_author || '').trim().toLowerCase();
+
+        if (req.user.role !== 'admin' && currentUserName !== docAuthorName) {
             return res.status(403).json({ message: "Akses ditolak. Anda hanya dapat mengedit dokumen milik Anda sendiri." });
         }
         
