@@ -391,8 +391,16 @@ exports.importUsersExcel = async (req, res) => {
         };
 
         for (const row of data) {
-            // Support fleksibilitas nama kolom (Nama / NAMA, dst)
-            const nama = String(row['Nama'] || row['nama'] || row['NAMA'] || '').trim();
+            // Support fleksibilitas nama kolom & dekode entitas HTML (seperti &#039; / &amp;)
+            const rawNama = String(row['Nama'] || row['nama'] || row['NAMA'] || '');
+            const nama = rawNama
+                .replace(/&#039;|&#39;|&apos;/g, "'")
+                .replace(/&amp;/g, '&')
+                .replace(/&quot;/g, '"')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .trim();
+
             const nim = String(row['NIM'] || row['nim'] || '').trim();
             
             if (!nama || !nim || nama === 'undefined' || nim === 'undefined') {
