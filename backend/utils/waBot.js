@@ -21,6 +21,21 @@ let latestQr = null;
 let isBotReady = false;
 let msgQueue = [];
 let isProcessing = false;
+let keepAliveInterval = null;
+
+const startKeepAlive = () => {
+    if (keepAliveInterval) clearInterval(keepAliveInterval);
+    keepAliveInterval = setInterval(async () => {
+        if (client && isBotReady) {
+            try {
+                await client.sendPresenceAvailable();
+                await client.getState();
+            } catch (error) {
+                // Abaikan error minor (bisa terjadi saat request tumpang tindih)
+            }
+        }
+    }, 60000); // 60 detik
+};
 
 const createClient = () => {
     return new Client({
@@ -55,11 +70,15 @@ const setupClientEvents = (c) => {
         console.log('✅ Bot WhatsApp E-Repository Berhasil Terhubung!');
         latestQr = null; // QR sudah tidak diperlukan setelah terhubung
         isBotReady = true;
+        
+        startKeepAlive();
+        
         // 🔥 Langsung proses antrean pesan yang tertunda saat inisialisasi 🔥
         processQueue();
     });
 
     c.on('auth_failure', (msg) => {
+        if (keepAliveInterval) clearInterval(keepAliveInterval);
         // Autentikasi gagal (sesi kadaluarsa/korup). Bot akan coba restart.
         console.error('❌ WhatsApp Auth Failure:', msg, '— Mencoba restart dalam', RESTART_DELAY_MS / 1000, 'detik...');
         isBotReady = false;
@@ -67,6 +86,7 @@ const setupClientEvents = (c) => {
     });
 
     c.on('disconnected', (reason) => {
+        if (keepAliveInterval) clearInterval(keepAliveInterval);
         // Bot terputus (misal: logout manual dari HP). Bot akan coba restart.
         console.warn('⚠️ Bot WhatsApp Terputus. Alasan:', reason, '— Mencoba restart dalam', RESTART_DELAY_MS / 1000, 'detik...');
         isBotReady = false;
@@ -188,6 +208,8 @@ const getLatestQR = () => latestQr;
  */
 const logoutSession = async () => {
     console.warn("⚠️ Menerima instruksi Soft Reset / Logout WA Bot...");
+    if (keepAliveInterval) clearInterval(keepAliveInterval);
+    
     if (client) {
         try {
             await client.logout(); // Memberi tahu server Meta untuk logout sesi
