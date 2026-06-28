@@ -9,6 +9,7 @@ const RESTART_DELAY_MS = 10000;
 const MAX_LOCK_RETRIES = 3; // Coba maksimal 3x sebelum menyerah untuk sesi ini
 const SESSION_DIR = path.join(__dirname, '../.wwebjs_auth/session');
 const SINGLETON_LOCK = path.join(SESSION_DIR, 'SingletonLock');
+const SINGLETON_COOKIE = path.join(SESSION_DIR, 'SingletonCookie');
 
 let lockRetryCount = 0;
 
@@ -119,7 +120,11 @@ const initializeBot = async () => {
     try {
         await client.initialize();
     } catch (error) {
-        const isBusyError = error.message && error.message.includes('browser is already running');
+        // Cek secara spesifik error lock NFS yang sering terjadi di Docker Swarm
+        const isBusyError = error.message && (
+            error.message.includes('browser is already running') || 
+            error.message.includes('Failed to launch the browser process')
+        );
 
         if (isBusyError) {
             lockRetryCount++;
@@ -130,8 +135,11 @@ const initializeBot = async () => {
                 setTimeout(() => initializeBot(), RESTART_DELAY_MS * 3); // Tunggu 30 detik
             } else {
                 console.error(`❌ Chrome masih terkunci (percobaan ${lockRetryCount}/${MAX_LOCK_RETRIES}). Membersihkan lock...`);
-                if (fs.existsSync(SINGLETON_LOCK)) {
-                    try { fs.unlinkSync(SINGLETON_LOCK); } catch (_) {}
+                try {
+                    if (fs.existsSync(SINGLETON_LOCK)) fs.unlinkSync(SINGLETON_LOCK);
+                    if (fs.existsSync(SINGLETON_COOKIE)) fs.unlinkSync(SINGLETON_COOKIE);
+                } catch (e) {
+                    console.error("Gagal menghapus lock:", e.message);
                 }
                 setTimeout(() => initializeBot(), 2000);
             }
