@@ -3,11 +3,21 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const multer = require('multer'); // 🔥 WAJIB ADA UNTUK MENANGKAP FILE EXCEL
 const { verifyToken, verifyAdmin } = require('../middlewares/auth');
+const rateLimit = require('express-rate-limit');
 
 // Setup multer khusus untuk membaca file Excel ke dalam memory (buffer)
 const uploadMemory = multer({ storage: multer.memoryStorage() });
 
-router.post('/login', authController.login);
+// Konfigurasi Rate Limiter untuk Login
+const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 Menit
+    max: 5, // Batas 5x gagal/request dari IP yang sama
+    message: { message: "Terlalu banyak percobaan login dari IP ini, silakan coba lagi setelah 15 menit." },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+router.post('/login', loginLimiter, authController.login);
 router.post('/register', authController.register);
 router.get('/verify', verifyToken, authController.verifySession);
 
