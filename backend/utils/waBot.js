@@ -136,8 +136,9 @@ const initializeBot = async () => {
             } else {
                 console.error(`❌ Chrome masih terkunci (percobaan ${lockRetryCount}/${MAX_LOCK_RETRIES}). Membersihkan lock...`);
                 try {
-                    if (fs.existsSync(SINGLETON_LOCK)) fs.unlinkSync(SINGLETON_LOCK);
-                    if (fs.existsSync(SINGLETON_COOKIE)) fs.unlinkSync(SINGLETON_COOKIE);
+                    // Gunakan rmSync force: true agar symlink rusak tetap terhapus tanpa peduli existsSync
+                    fs.rmSync(SINGLETON_LOCK, { force: true });
+                    fs.rmSync(SINGLETON_COOKIE, { force: true });
                 } catch (e) {
                     console.error("Gagal menghapus lock:", e.message);
                 }
