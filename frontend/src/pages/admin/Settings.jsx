@@ -49,6 +49,42 @@ const Settings = () => {
     }
   };
 
+  const handleResetWa = () => {
+    setModal({
+      isOpen: true,
+      type: 'warning',
+      title: 'Peringatan Kritikal!',
+      message: 'Tindakan ini akan memutus secara paksa sesi WhatsApp yang terhubung dan menghapus datanya dari server. Anda harus memindai ulang QR Code setelah ini. Yakin?',
+      confirmText: 'Ya, Reset WA',
+      onConfirm: async () => {
+        setModal(prev => ({ ...prev, isProcessing: true }));
+        try {
+          const res = await axios.post('/api/system/wa-reset', {}, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+          });
+          setModal({
+            isOpen: true,
+            type: 'success',
+            title: 'Berhasil Reset',
+            message: res.data.message,
+            onConfirm: () => {
+              setQrCodeData(null);
+              closePopup();
+            }
+          });
+        } catch (err) {
+          setModal({
+            isOpen: true,
+            type: 'error',
+            title: 'Gagal Reset WA',
+            message: err.response?.data?.message || 'Terjadi kesalahan pada server.',
+            onConfirm: closePopup
+          });
+        }
+      }
+    });
+  };
+
   const handleRestoreClick = () => {
     fileInputRef.current.click();
   };
@@ -204,17 +240,26 @@ const Settings = () => {
             <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-4">
               Tampilkan QR Code untuk menghubungkan WhatsApp ke sistem bot. Jika QR Code tidak muncul, kemungkinan bot sudah terhubung dengan nomor WhatsApp admin.
             </p>
-            <button 
-              onClick={fetchQrCode}
-              disabled={loadingQr || qrCodeData}
-              className={`px-6 py-3 rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2 ${
-                qrCodeData 
-                  ? 'bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed'
-                  : 'bg-green-500 hover:bg-green-600 text-white'
-              }`}
-            >
-              {loadingQr ? 'Memuat QR...' : qrCodeData ? 'QR Code Ditampilkan' : 'Tampilkan QR Code'}
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button 
+                onClick={fetchQrCode}
+                disabled={loadingQr || qrCodeData}
+                className={`flex-1 px-6 py-3 rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2 ${
+                  qrCodeData 
+                    ? 'bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed'
+                    : 'bg-green-500 hover:bg-green-600 text-white'
+                }`}
+              >
+                {loadingQr ? 'Memuat QR...' : qrCodeData ? 'QR Code Ditampilkan' : 'Tampilkan QR Code'}
+              </button>
+              
+              <button 
+                onClick={handleResetWa}
+                className="flex-1 px-6 py-3 bg-white dark:bg-[#0B1121] border-2 border-rose-500 text-rose-600 dark:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10 rounded-xl font-bold shadow-sm transition-all flex items-center justify-center gap-2"
+              >
+                Reset Sesi WA
+              </button>
+            </div>
           </div>
           
           {qrCodeData && (
@@ -263,7 +308,7 @@ const Settings = () => {
                   >
                     {modal.isProcessing ? (
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    ) : 'Ya, Pulihkan'}
+                    ) : (modal.confirmText || 'Ya, Pulihkan')}
                   </button>
                 </>
               ) : (

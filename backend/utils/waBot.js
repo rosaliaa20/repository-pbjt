@@ -183,7 +183,42 @@ const sendWAMessage = (number, message) => {
  */
 const getLatestQR = () => latestQr;
 
+/**
+ * Logout dan reset sesi WhatsApp secara bersih (menghapus folder NFS)
+ */
+const logoutSession = async () => {
+    console.warn("⚠️ Menerima instruksi Soft Reset / Logout WA Bot...");
+    if (client) {
+        try {
+            await client.logout(); // Memberi tahu server Meta untuk logout sesi
+        } catch (e) {
+            console.error("⚠️ Peringatan: Gagal logout client WA (mungkin belum terhubung):", e.message);
+        }
+        try {
+            await client.destroy();
+        } catch (e) {
+            console.error("⚠️ Peringatan: Gagal destroy client WA:", e.message);
+        }
+    }
+    
+    // Hapus paksa folder sesi secara brutal
+    try {
+        if (fs.existsSync(SESSION_DIR)) {
+            fs.rmSync(SESSION_DIR, { recursive: true, force: true });
+            console.log("✅ Folder Sesi WA berhasil dihapus total (Hard Reset).");
+        }
+    } catch (e) {
+        console.error("❌ Gagal menghapus folder sesi:", e.message);
+    }
+
+    isBotReady = false;
+    latestQr = null;
+    
+    console.log("🔄 Memulai ulang inisialisasi Bot untuk mendapatkan QR Code baru...");
+    setTimeout(() => initializeBot(), 2000);
+};
+
 // Mulai bot saat server pertama kali berjalan
 initializeBot();
 
-module.exports = { sendWAMessage, getLatestQR };
+module.exports = { sendWAMessage, getLatestQR, logoutSession };

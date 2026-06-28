@@ -93,3 +93,18 @@ exports.getWaQr = (req, res) => {
   }
   res.status(200).json({ qr });
 };
+
+// 6. Fungsi Mereset (Logout) WA Bot
+exports.resetWaBot = async (req, res) => {
+  try {
+    if (typeof waBot.logoutSession === 'function') {
+      await waBot.logoutSession();
+      res.status(200).json({ message: "Sesi WhatsApp berhasil direset. Silakan muat ulang halaman untuk memindai QR Code baru." });
+    } else {
+      res.status(500).json({ message: "Fungsi logout tidak tersedia di utilitas WA Bot." });
+    }
+  } catch (error) {
+    console.error("Error mereset WA:", error);
+    res.status(500).json({ message: "Gagal mereset sesi WA", error: error.message });
+  }
+};
