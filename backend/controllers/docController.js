@@ -298,15 +298,18 @@ exports.updateStatus = (req, res) => {
         `;
         
         db.query(queryWA, [docId], (errUser, results) => {
-            if (!errUser && results.length > 0) {
+            console.log(`[WA DEBUG] Mencari target WA untuk docId ${docId}...`);
+            if (errUser) {
+                console.error("[WA DEBUG] Error Query DB:", errUser);
+            } else if (results.length > 0) {
                 const { title, document_author, category, no_wa } = results[0];
+                console.log(`[WA DEBUG] Ditemukan Penulis: ${document_author}, No WA: ${no_wa || 'KOSONG'}`);
 
                 if (no_wa) { 
                     let pesanWA = '';
                     const appUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
                     const loginLink = `${appUrl}/login`; 
 
-                    // Jika kategori kosong, fallback ke kata 'dokumen'
                     const jenisDokumen = category || 'dokumen';
 
                     if (status === 'Terbit' || status === 'Disetujui') {
@@ -316,9 +319,14 @@ exports.updateStatus = (req, res) => {
                     }
 
                     if (pesanWA !== '') {
+                        console.log(`[WA DEBUG] Meneruskan pesan ke antrean waBot.js...`);
                         sendWAMessage(no_wa, pesanWA);
                     }
+                } else {
+                    console.log(`[WA DEBUG] Nomor WA untuk ${document_author} tidak terdaftar di database!`);
                 }
+            } else {
+                console.log(`[WA DEBUG] SQL JOIN Gagal! Tidak dapat menemukan user dengan full_name yang persis sama dengan document_author di tabel documents untuk docId ${docId}`);
             }
         });
 
