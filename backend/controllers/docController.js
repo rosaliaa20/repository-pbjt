@@ -293,7 +293,7 @@ exports.updateStatus = (req, res) => {
         const queryWA = `
             SELECT d.title, d.document_author, d.category, u.no_wa 
             FROM documents d 
-            JOIN users u ON d.document_author = u.full_name 
+            JOIN users u ON LOWER(TRIM(d.document_author)) = LOWER(TRIM(u.full_name))
             WHERE d.id = ?
         `;
         
