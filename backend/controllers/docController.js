@@ -307,7 +307,8 @@ exports.updateStatus = (req, res) => {
 
                 if (no_wa) { 
                     let pesanWA = '';
-                    const appUrl = process.env.APP_URL || `${req.protocol}://${req.get('host')}`;
+                    const protocol = req.get('host').includes('localhost') ? 'http' : 'https';
+                    const appUrl = process.env.APP_URL || `${protocol}://${req.get('host')}`;
                     const loginLink = `${appUrl}/login`; 
 
                     const jenisDokumen = category || 'dokumen';
