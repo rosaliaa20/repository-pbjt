@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { FiUser, FiLock, FiArrowRight, FiInfo } from 'react-icons/fi';
+import { FiUser, FiLock, FiArrowRight, FiInfo, FiEye, FiEyeOff } from 'react-icons/fi';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { motion } from 'framer-motion';
@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 const Login = () => {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -128,9 +129,20 @@ const Login = () => {
               <div className="relative mt-1">
                 <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
                 <input 
-                  type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required
-                  className="w-full pl-11 pr-4 py-3 rounded-xl bg-white/60 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-yellow-400 outline-none text-sm text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-colors"
+                  type={showPassword ? "text" : "password"} 
+                  value={password} 
+                  onChange={(e) => setPassword(e.target.value)} 
+                  placeholder="••••••••" 
+                  required
+                  className="w-full pl-11 pr-12 py-3 rounded-xl bg-white/60 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:focus:border-yellow-400 outline-none text-sm text-slate-800 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 transition-colors"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors focus:outline-none"
+                >
+                  {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+                </button>
               </div>
             </motion.div>
 
