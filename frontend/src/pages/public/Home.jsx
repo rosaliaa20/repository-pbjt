@@ -117,9 +117,7 @@ const Home = () => {
         <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#FAFAFA] dark:from-slate-900 to-transparent z-10 pointer-events-none transition-colors duration-300"></div>
 
         <div className="max-w-4xl mx-auto text-center relative z-20">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 dark:bg-white/10 backdrop-blur-md text-slate-800 dark:text-white border border-slate-200 dark:border-white/20 text-[10px] font-bold uppercase tracking-widest mb-8 shadow-sm transition-colors">
-            <FiGrid className="text-sm text-blue-600 dark:text-yellow-400" /> Ekosistem Perpustakaan Generasi Baru
-          </div>
+
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1] mb-6 drop-shadow-sm transition-colors">
             Repository Digital <br className="hidden md:block" />
             <span className="text-blue-600 dark:text-yellow-400">Politeknik Baja Tegal</span>
