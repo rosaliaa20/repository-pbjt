@@ -292,54 +292,63 @@ exports.deleteUser = (req, res) => {
 // ========================================================
 exports.updateUser = async (req, res) => {
     const userId = req.params.id;
-    
-    // 🔥 PERBAIKAN: Menangkap variabel no_wa dari form frontend 🔥
-    const { password, name, nim, email, no_wa, role, department } = req.body;
+    const { password, name, nim, email, no_wa, role, department, auth_password } = req.body;
 
-    // 1. Jika request berisi password (Reset Sandi dari Admin)
-    if (password) {
-        try {
-            const salt = await bcrypt.genSalt(10);
-            const hashedPassword = await bcrypt.hash(password, salt);
-            const query = 'UPDATE users SET password = ? WHERE id = ?';
+    try {
+        // Langkah 0: Pengecekan Mutual Agreement (Jika Target = Admin)
+        db.query('SELECT * FROM users WHERE id = ?', [userId], async (err, results) => {
+            if (err || results.length === 0) return res.status(404).json({ message: 'User tidak ditemukan.' });
             
-            db.query(query, [hashedPassword, userId], (err, result) => {
-                if (err) return res.status(500).json({ message: 'Kesalahan database saat mereset sandi.' });
-                return res.status(200).json({ message: 'Sandi pengguna berhasil direset!' });
-            });
-        } catch (error) {
-            return res.status(500).json({ message: 'Gagal memproses enkripsi sandi baru.' });
-        }
-    } 
-    // 2. Jika Update Profil (Nama, Email, WA, Department, dll)
-    else if (name) {
-        // Langkah A: Ambil nama lama dari database untuk dicari di tabel documents
-        db.query('SELECT full_name FROM users WHERE id = ?', [userId], (err, results) => {
-            if (err || results.length === 0) return res.status(500).json({ message: 'User tidak ditemukan.' });
-            
-            const oldName = results[0].full_name; // Nama lama
-            const finalEmail = email ? email : null;
-            const finalNoWa = no_wa ? no_wa : null; // 🔥 Cegah string kosong merusak DB 🔥
+            const targetUser = results[0];
+            const oldName = targetUser.full_name;
 
-            // Langkah B: Update di tabel users (Sekarang Memasukkan no_wa)
-            const queryUser = 'UPDATE users SET full_name = ?, nim = ?, username = ?, email = ?, no_wa = ?, role = ?, department = ? WHERE id = ?';
-            db.query(queryUser, [name, nim, nim, finalEmail, finalNoWa, role, department, userId], (err) => {
-                if (err) {
-                    console.error("Error Update User:", err);
-                    return res.status(500).json({ message: 'Gagal update profil.' });
+            // PROTEKSI MUTUAL AGREEMENT
+            if (targetUser.role === 'admin') {
+                if (!auth_password) {
+                    return res.status(403).json({ message: 'Akses Ditolak: Anda wajib memasukkan kata sandi target (Admin) untuk memodifikasi datanya.' });
                 }
+                const isMatch = await bcrypt.compare(auth_password, targetUser.password);
+                if (!isMatch) {
+                    return res.status(401).json({ message: 'Otorisasi Gagal: Kata sandi yang dimasukkan salah!' });
+                }
+            }
 
-                // Langkah C: SINKRONISASI - Update semua dokumen milik user ini
-                const queryDoc = 'UPDATE documents SET document_author = ? WHERE document_author = ?';
-                db.query(queryDoc, [name, oldName], (syncErr) => {
-                    if (syncErr) console.error("Gagal sinkron nama di dokumen:", syncErr);
-                    
-                    return res.status(200).json({ message: 'Profil dan data dokumen berhasil diperbarui!' });
+            // 1. Jika request berisi password (Reset Sandi dari Admin)
+            if (password) {
+                const salt = await bcrypt.genSalt(10);
+                const hashedPassword = await bcrypt.hash(password, salt);
+                const query = 'UPDATE users SET password = ? WHERE id = ?';
+                
+                db.query(query, [hashedPassword, userId], (err) => {
+                    if (err) return res.status(500).json({ message: 'Kesalahan database saat mereset sandi.' });
+                    return res.status(200).json({ message: 'Sandi pengguna berhasil direset!' });
                 });
-            });
+            } 
+            // 2. Jika Update Profil (Nama, Email, WA, Department, dll)
+            else if (name) {
+                const finalEmail = email ? email : null;
+                const finalNoWa = no_wa ? no_wa : null;
+
+                const queryUser = 'UPDATE users SET full_name = ?, nim = ?, username = ?, email = ?, no_wa = ?, role = ?, department = ? WHERE id = ?';
+                db.query(queryUser, [name, nim, nim, finalEmail, finalNoWa, role, department, userId], (err) => {
+                    if (err) {
+                        console.error("Error Update User:", err);
+                        return res.status(500).json({ message: 'Gagal update profil.' });
+                    }
+
+                    // SINKRONISASI - Update semua dokumen milik user ini
+                    const queryDoc = 'UPDATE documents SET document_author = ? WHERE document_author = ?';
+                    db.query(queryDoc, [name, oldName], (syncErr) => {
+                        if (syncErr) console.error("Gagal sinkron nama di dokumen:", syncErr);
+                        return res.status(200).json({ message: 'Profil dan data dokumen berhasil diperbarui!' });
+                    });
+                });
+            } else {
+                return res.status(400).json({ message: 'Data yang dikirim kosong.' });
+            }
         });
-    } else {
-        return res.status(400).json({ message: 'Data yang dikirim kosong.' });
+    } catch (error) {
+        return res.status(500).json({ message: 'Terjadi kesalahan sistem.' });
     }
 };
 

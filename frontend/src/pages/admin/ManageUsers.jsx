@@ -1,17 +1,44 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { 
-  FiSearch, FiEdit2, FiTrash2, FiUserPlus, FiLock, FiUnlock, 
-  FiUserCheck, FiUserX, FiShield, FiKey, FiUploadCloud, FiCheckSquare, 
-  FiX, FiCheckCircle, FiAlertCircle, FiMail
-} from "react-icons/fi";
+import { FiUsers, FiCheckCircle, FiSearch, FiFilter, FiUploadCloud, FiX, FiLock, FiUnlock, FiKey, FiEdit2, FiTrash2, FiUserCheck, FiUserX, FiShield, FiUserPlus, FiAlertCircle, FiEye, FiEyeOff } from "react-icons/fi";
 import axios from "axios";
 
 const ManageUsers = () => {
   const location = useLocation();
 
   // 🔥 AMBIL DATA USER YANG SEDANG LOGIN 🔥
-  const currentUser = JSON.parse(localStorage.getItem('user'));
+  const currentUser = JSON.parse(localStorage.getItem('user')) || {};
+
+  // Komponen Helper untuk Input Sandi Admin (dengan fitur Unhide)
+  const AdminAuthInput = () => {
+    const [show, setShow] = useState(false);
+    return (
+      <div className="mt-4 p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-xl text-left w-full">
+        <label className="block text-[10px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest mb-1.5 ml-1">
+          🔒 Sandi Akun Target (Wajib)
+        </label>
+        <p className="text-[10px] text-amber-600 dark:text-amber-500 mb-3 ml-1 font-medium leading-relaxed">
+          Target adalah Admin. Anda wajib memasukkan kata sandi milik target untuk meresetnya.
+        </p>
+        <div className="relative">
+          <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 z-10" />
+          <input 
+            type={show ? "text" : "password"} 
+            id="admin_auth_password_reset"
+            placeholder="Ketik sandi target..."
+            className="w-full pl-9 pr-10 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none text-sm font-medium text-slate-800 dark:text-slate-200 transition-all" 
+          />
+          <button 
+            type="button"
+            onClick={() => setShow(!show)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+          >
+            {show ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -227,14 +254,34 @@ const ManageUsers = () => {
   // ========================================================
   // FITUR: INDIVIDUAL (Reset Sandi, Kunci, Hapus)
   // ========================================================
-  const handleResetPasswordClick = (id, name) => {
+  const handleResetPasswordClick = (id, name, role) => {
     setModal({
-      isOpen: true, type: 'warning', title: 'Reset Sandi?', message: `Kembalikan sandi "${name}" menjadi "pbjt123"?`, isAlert: false,
+      isOpen: true, type: 'warning', title: 'Reset Sandi?', 
+      message: (
+        <div className="w-full flex flex-col items-center">
+          <p>Kembalikan sandi "{name}" menjadi "pbjt123"?</p>
+          {role === 'admin' && <AdminAuthInput />}
+        </div>
+      ), 
+      isAlert: false,
       onConfirm: async () => {
         try {
-          await axios.put(`/api/auth/users/${id}`, { password: 'pbjt123' });
+          let auth_password = undefined;
+          if (role === 'admin') {
+            const inputEl = document.getElementById('admin_auth_password_reset');
+            if (inputEl) auth_password = inputEl.value;
+            
+            if (!auth_password) {
+              setModal({ isOpen: true, type: 'danger', title: 'Gagal', message: 'Kata sandi target wajib diisi untuk mereset akun Admin!', isAlert: true, onConfirm: closePopup });
+              return;
+            }
+          }
+
+          await axios.put(`/api/auth/users/${id}`, { password: 'pbjt123', auth_password });
           setModal({ isOpen: true, type: 'success', title: 'Direset!', message: `Sandi dikembalikan ke pbjt123.`, isAlert: true, onConfirm: closePopup });
-        } catch (error) { console.error(error); }
+        } catch (error) { 
+          setModal({ isOpen: true, type: 'danger', title: 'Gagal', message: error.response?.data?.message || 'Terjadi kesalahan.', isAlert: true, onConfirm: closePopup });
+        }
       }
     });
   };
@@ -486,7 +533,7 @@ const ManageUsers = () => {
                                   <button onClick={() => handleToggleLockClick(user.id, user.is_locked)} title={isLocked ? "Buka Kunci" : "Kunci Akun"} className={`p-1.5 rounded-md transition-colors border ${isLocked ? 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-500/10 dark:border-emerald-500/30' : 'text-slate-400 border-transparent hover:bg-amber-50 hover:text-amber-500 dark:hover:bg-slate-700'}`}>
                                     {isLocked ? <FiUnlock size={16} /> : <FiLock size={16} />}
                                   </button>
-                                  <button onClick={() => handleResetPasswordClick(user.id, user.name)} title="Reset Sandi" className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors dark:hover:bg-slate-700"><FiKey size={16} /></button>
+                                  <button onClick={() => handleResetPasswordClick(user.id, user.name, user.role)} title="Reset Sandi" className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors dark:hover:bg-slate-700"><FiKey size={16} /></button>
                                   <Link to={`/admin/users/edit/${user.id}`} title="Edit" className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors dark:hover:bg-slate-700"><FiEdit2 size={16} /></Link>
                                 </>
                               )}
