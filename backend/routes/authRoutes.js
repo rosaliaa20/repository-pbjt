@@ -25,6 +25,7 @@ router.get('/verify', verifyToken, authController.verifySession);
 // === STATIC ROUTES (Tanpa Parameter :id) ===
 // WAJIB ditaruh di atas agar "import", "approve", "mass-lock" tidak dianggap sebagai :id
 // ========================================================
+router.post('/users', verifyToken, verifyAdmin, authController.addUser);
 router.get('/users', verifyToken, verifyAdmin, authController.getAllUsers);
 
 router.put('/users/mass-lock', verifyToken, verifyAdmin, authController.massLockByAngkatan);

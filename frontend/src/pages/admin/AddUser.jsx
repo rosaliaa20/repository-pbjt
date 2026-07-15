@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { FiUserPlus, FiSave, FiArrowLeft, FiCheckCircle, FiAlertCircle, FiUser } from 'react-icons/fi';
+import { FiUserPlus, FiSave, FiArrowLeft, FiCheckCircle, FiAlertCircle, FiUser, FiEye, FiEyeOff } from 'react-icons/fi';
 import axios from 'axios';
 
 const AddUser = () => {
@@ -8,10 +8,12 @@ const AddUser = () => {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState({ type: '', message: '' });
 
+  const [showPassword, setShowPassword] = useState(false);
+
   // State untuk data form
   const [formData, setFormData] = useState({
     name: '',
-    email: '', 
+    identifier: '', 
     password: '',
     role: 'dosen' 
   });
@@ -26,12 +28,12 @@ const AddUser = () => {
     setStatus({ type: '', message: '' });
 
     try {
-      const response = await axios.post('/api/auth/register', formData);
+      const response = await axios.post('/api/auth/users', formData);
       
       setStatus({ type: 'success', message: 'Akun berhasil dibuat dan siap digunakan!' });
       
       // Kosongkan form setelah sukses
-      setFormData({ name: '', email: '', password: '', role: 'dosen' });
+      setFormData({ name: '', identifier: '', password: '', role: 'dosen' });
       
     } catch (error) {
       setStatus({ 
@@ -91,8 +93,8 @@ const AddUser = () => {
             <label className="text-sm font-bold text-slate-700">Email / NIDN / NIM</label>
             <input 
               type="text" 
-              name="email"
-              value={formData.email}
+              name="identifier"
+              value={formData.identifier}
               onChange={handleChange}
               required
               placeholder="Gunakan NIDN untuk dosen"
@@ -103,15 +105,24 @@ const AddUser = () => {
           {/* Input Password */}
           <div className="space-y-2">
             <label className="text-sm font-bold text-slate-700">Password</label>
-            <input 
-              type="password" 
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-              placeholder="Minimal 6 karakter"
-              className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 px-4 py-3 rounded-xl transition-all outline-none"
-            />
+            <div className="relative">
+              <input 
+                type={showPassword ? "text" : "password"} 
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                placeholder="Minimal 6 karakter"
+                className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 pl-4 pr-12 py-3 rounded-xl transition-all outline-none"
+              />
+              <button 
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+              >
+                {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+              </button>
+            </div>
           </div>
 
           {/* Pemilihan Hak Akses (Role) */}

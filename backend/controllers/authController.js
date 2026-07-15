@@ -143,6 +143,54 @@ exports.register = async (req, res) => {
 };
 
 // ========================================================
+// 2.5. FUNGSI ADD USER (KHUSUS ADMIN)
+// ========================================================
+exports.addUser = async (req, res) => {
+    const { name, identifier, password, role } = req.body;
+    const ipAddress = req.ip || req.connection.remoteAddress || 'Unknown IP';
+
+    if (!name || !identifier || !password || !role) {
+        return res.status(400).json({ message: 'Semua kolom wajib diisi!' });
+    }
+
+    try {
+        const checkQuery = 'SELECT * FROM users WHERE username = ? OR nim = ? OR email = ?';
+        db.query(checkQuery, [identifier, identifier, identifier], async (err, results) => {
+            if (err) return res.status(500).json({ message: 'Kesalahan Server.' });
+            if (results.length > 0) {
+                return res.status(400).json({ message: 'Identifier (Email/NIDN/NIM) sudah terdaftar di sistem!' });
+            }
+
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(password, salt);
+
+            // Karena Admin yang buat, status langsung "approved"
+            // Identifier kita simpan di kolom email dan nim/username untuk kemudahan login
+            // Jika formatnya email, simpan di email, jika bukan, biarkan email null? 
+            // Kita simpan di 'nim' dan 'email' sekaligus saja sebagai kemudahan jika identifier bertindak sebagai keduanya.
+            const isEmail = identifier.includes('@');
+            const emailVal = isEmail ? identifier : null;
+            const nimVal = identifier;
+
+            const insertQuery = 'INSERT INTO users (full_name, username, nim, email, password, role, approval_status) VALUES (?, ?, ?, ?, ?, ?, ?)';
+            const values = [name, nimVal, nimVal, emailVal, hashedPassword, role, 'approved'];
+
+            db.query(insertQuery, values, (insertErr) => {
+                if (insertErr) {
+                    console.error("Error insert:", insertErr);
+                    return res.status(500).json({ message: 'Gagal menyimpan akun ke database.' });
+                }
+
+                logSystemActivity('admin_action', req.user?.name || 'System', `Admin membuat akun baru: ${nimVal} (${role})`, ipAddress);
+                res.status(201).json({ message: 'Akun berhasil dibuat dan aktif!' });
+            });
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Terjadi kesalahan sistem saat membuat akun.' });
+    }
+};
+
+// ========================================================
 // 3. MENGAMBIL SEMUA DATA PENGGUNA
 // ========================================================
 exports.getAllUsers = (req, res) => {
