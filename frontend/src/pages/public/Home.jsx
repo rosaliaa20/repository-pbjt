@@ -120,7 +120,7 @@ const Home = () => {
 
           <h1 className="text-4xl md:text-5xl lg:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1] mb-6 drop-shadow-sm transition-colors">
             Repository Digital <br className="hidden md:block" />
-            <span className="text-blue-600 dark:text-yellow-400">Politeknik Baja Tegal</span>
+            <span className="text-blue-600 dark:text-yellow-400 uppercase">Politeknik Baja Tegal</span>
           </h1>
           <p className="text-base md:text-xl text-slate-800 dark:text-slate-300 mb-12 max-w-3xl mx-auto font-bold leading-relaxed drop-shadow-sm transition-colors">
             Temukan koleksi karya ilmiah, jurnal, dan tugas akhir dalam satu suaka digital yang elegan dan mudah diakses.
