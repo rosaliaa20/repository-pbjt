@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 // ============================================================
@@ -47,18 +46,12 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Rate Limiting khusus untuk jalur Autentikasi (Cegah Brute Force)
-const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 Menit
-    max: 20, // Maksimal 20x percobaan login/register per IP
-    message: { error: { code: 'TOO_MANY_REQUESTS', message: 'Terlalu banyak percobaan, silakan coba lagi setelah 15 menit.' } }
-});
 
 // ============================================================
 // ROUTES API
 // ============================================================
 app.use('/api/documents', docRoutes);
-app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/logs', logRoutes);
 app.use('/api/system', systemRoutes);
 app.use('/api/notifications', notifRoutes);
