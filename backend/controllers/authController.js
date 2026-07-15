@@ -341,6 +341,9 @@ exports.updateUser = async (req, res) => {
                 db.query(queryUser, [name, finalNim, finalNim, finalEmail, finalNoWa, finalRole, finalDept, userId], (err) => {
                     if (err) {
                         console.error("Error Update User:", err);
+                        if (err.code === 'ER_DUP_ENTRY') {
+                            return res.status(400).json({ message: 'Email atau Identifier (NIM/Username) sudah digunakan oleh akun lain.' });
+                        }
                         return res.status(500).json({ message: 'Gagal update profil.' });
                     }
 
