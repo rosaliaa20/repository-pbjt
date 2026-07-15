@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FiUsers, FiCheckCircle, FiSearch, FiFilter, FiUploadCloud, FiX, FiLock, FiUnlock, FiKey, FiEdit2, FiTrash2, FiUserCheck, FiUserX, FiShield, FiUserPlus, FiAlertCircle, FiEye, FiEyeOff } from "react-icons/fi";
+import { FiUsers, FiCheckCircle, FiSearch, FiFilter, FiUploadCloud, FiX, FiLock, FiUnlock, FiKey, FiEdit2, FiTrash2, FiUserCheck, FiUserX, FiShield, FiUserPlus, FiAlertCircle, FiEye, FiEyeOff, FiMail, FiCheckSquare } from "react-icons/fi";
 import axios from "axios";
 
 const ManageUsers = () => {
