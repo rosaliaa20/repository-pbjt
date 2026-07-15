@@ -304,12 +304,17 @@ exports.updateUser = async (req, res) => {
 
             // PROTEKSI MUTUAL AGREEMENT
             if (targetUser.role === 'admin') {
-                if (!auth_password) {
-                    return res.status(403).json({ message: 'Akses Ditolak: Anda wajib memasukkan kata sandi target (Admin) untuk memodifikasi datanya.' });
-                }
-                const isMatch = await bcrypt.compare(auth_password, targetUser.password);
-                if (!isMatch) {
-                    return res.status(401).json({ message: 'Otorisasi Gagal: Kata sandi yang dimasukkan salah!' });
+                // Jika Admin mengedit dirinya sendiri, lewati pengecekan sandi (JWT sudah cukup membuktikan otorisasi)
+                const isEditingSelf = req.user && req.user.id == userId;
+                
+                if (!isEditingSelf) {
+                    if (!auth_password) {
+                        return res.status(403).json({ message: 'Akses Ditolak: Anda wajib memasukkan kata sandi target (Admin) untuk memodifikasi datanya.' });
+                    }
+                    const isMatch = await bcrypt.compare(auth_password, targetUser.password);
+                    if (!isMatch) {
+                        return res.status(401).json({ message: 'Otorisasi Gagal: Kata sandi yang dimasukkan salah!' });
+                    }
                 }
             }
 
@@ -326,11 +331,14 @@ exports.updateUser = async (req, res) => {
             } 
             // 2. Jika Update Profil (Nama, Email, WA, Department, dll)
             else if (name) {
-                const finalEmail = email ? email : null;
-                const finalNoWa = no_wa ? no_wa : null;
+                const finalEmail = email || null;
+                const finalNoWa = no_wa || null;
+                const finalNim = nim || null;
+                const finalRole = role || null;
+                const finalDept = department || null;
 
                 const queryUser = 'UPDATE users SET full_name = ?, nim = ?, username = ?, email = ?, no_wa = ?, role = ?, department = ? WHERE id = ?';
-                db.query(queryUser, [name, nim, nim, finalEmail, finalNoWa, role, department, userId], (err) => {
+                db.query(queryUser, [name, finalNim, finalNim, finalEmail, finalNoWa, finalRole, finalDept, userId], (err) => {
                     if (err) {
                         console.error("Error Update User:", err);
                         return res.status(500).json({ message: 'Gagal update profil.' });

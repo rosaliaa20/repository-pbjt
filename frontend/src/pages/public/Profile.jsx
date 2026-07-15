@@ -20,8 +20,6 @@ const Profile = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [noWa, setNoWa] = useState('');
-  const [authPassword, setAuthPassword] = useState('');
-  const [showAuthPassword, setShowAuthPassword] = useState(false);
   const [isProfileLoading, setIsProfileLoading] = useState(false);
 
   const [showOldPassword, setShowOldPassword] = useState(false);
@@ -107,8 +105,7 @@ const Profile = () => {
         role: fullUserData.role,
         department: fullUserData.department,
         email: email,
-        no_wa: noWa,
-        auth_password: authPassword // Wajib jika Admin
+        no_wa: noWa
       });
 
       Swal.fire({
@@ -121,7 +118,6 @@ const Profile = () => {
       setFullUserData({ ...fullUserData, name: name, email: email, no_wa: noWa });
       setUser({ ...user, name: name }); // Update local storage later if needed
       localStorage.setItem('user', JSON.stringify({ ...user, name: name }));
-      setAuthPassword(''); // Reset sandi otorisasi
 
     } catch (error) {
       Swal.fire({
@@ -341,37 +337,9 @@ const Profile = () => {
                 </div>
               </div>
 
-              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-2 ml-1">
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-2 ml-1 mb-5">
                 Pastikan nama sesuai identitas. Email aktif untuk pemulihan sandi.
               </p>
-
-              {user.role === 'admin' && (
-                <div className="mt-5 p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-xl">
-                  <label className="block text-[10px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest mb-1.5 ml-1">
-                    🔒 Otorisasi Sandi (Khusus Admin)
-                  </label>
-                  <p className="text-[10px] text-amber-600 dark:text-amber-500 mb-3 ml-1 font-medium">
-                    Untuk menyimpan perubahan profil, masukkan kata sandi Anda.
-                  </p>
-                  <div className="relative">
-                    <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
-                    <input 
-                      type={showAuthPassword ? "text" : "password"} 
-                      value={authPassword} 
-                      onChange={(e) => setAuthPassword(e.target.value)} required
-                      placeholder="Ketik sandi Anda..."
-                      className="w-full pl-10 pr-10 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:border-amber-500 outline-none dark:text-white transition-all text-sm font-medium"
-                    />
-                    <button 
-                      type="button"
-                      onClick={() => setShowAuthPassword(!showAuthPassword)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-500 transition-colors focus:outline-none"
-                    >
-                      {showAuthPassword ? <FiEyeOff size={15} /> : <FiEye size={15} />}
-                    </button>
-                  </div>
-                </div>
-              )}
 
               <div className="pt-3 flex justify-end">
                 <button 
