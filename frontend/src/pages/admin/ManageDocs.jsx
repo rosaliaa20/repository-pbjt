@@ -240,12 +240,6 @@ const ManageDocs = () => {
         </div>
         
         <div className="flex items-center gap-3">
-          <button 
-            onClick={() => setIsExportModalOpen(true)}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-emerald-500/20 shrink-0"
-          >
-            <FiDownloadCloud className="text-lg" /> Unduh Laporan
-          </button>
 
           <Link 
             to="/admin/documents/add" 
