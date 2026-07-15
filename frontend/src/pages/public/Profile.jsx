@@ -16,10 +16,13 @@ const Profile = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // State untuk form kontak (Email & WA)
+  // State untuk form kontak (Nama, Email & WA)
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [noWa, setNoWa] = useState('');
-  const [isEmailLoading, setIsEmailLoading] = useState(false);
+  const [authPassword, setAuthPassword] = useState('');
+  const [showAuthPassword, setShowAuthPassword] = useState(false);
+  const [isProfileLoading, setIsProfileLoading] = useState(false);
 
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -33,6 +36,7 @@ const Profile = () => {
 
       axios.get(`/api/auth/users/${parsedUser.id}`)
         .then(res => {
+          setName(res.data.name || res.data.full_name || parsedUser.name || '');
           setEmail(res.data.email || '');
           setNoWa(res.data.no_wa || '');
           setFullUserData(res.data);
@@ -91,19 +95,20 @@ const Profile = () => {
     }
   };
 
-  const handleUpdateContact = async (e) => {
+  const handleUpdateProfile = async (e) => {
     e.preventDefault();
     if (!fullUserData) return;
 
-    setIsEmailLoading(true);
+    setIsProfileLoading(true);
     try {
       await axios.put(`/api/auth/users/${user.id}`, {
-        name: fullUserData.name,
+        name: name,
         nim: fullUserData.nim || fullUserData.username,
         role: fullUserData.role,
         department: fullUserData.department,
         email: email,
-        no_wa: noWa // Mengirim data WA ke backend
+        no_wa: noWa,
+        auth_password: authPassword // Wajib jika Admin
       });
 
       Swal.fire({
@@ -113,7 +118,10 @@ const Profile = () => {
         color: document.documentElement.classList.contains('dark') ? '#fff' : '#1E293B'
       });
       
-      setFullUserData({ ...fullUserData, email: email, no_wa: noWa });
+      setFullUserData({ ...fullUserData, name: name, email: email, no_wa: noWa });
+      setUser({ ...user, name: name }); // Update local storage later if needed
+      localStorage.setItem('user', JSON.stringify({ ...user, name: name }));
+      setAuthPassword(''); // Reset sandi otorisasi
 
     } catch (error) {
       Swal.fire({
@@ -123,7 +131,7 @@ const Profile = () => {
         color: document.documentElement.classList.contains('dark') ? '#fff' : '#1E293B'
       });
     } finally {
-      setIsEmailLoading(false);
+      setIsProfileLoading(false);
     }
   };
 
@@ -144,10 +152,10 @@ const Profile = () => {
             </div>
 
             <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center text-white text-3xl font-black shadow-lg shadow-indigo-500/30 mb-3 border-4 border-white dark:border-[#131C31]">
-              {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+              {name ? name.charAt(0).toUpperCase() : (user.name ? user.name.charAt(0).toUpperCase() : 'U')}
             </div>
             
-            <h2 className="text-base font-bold text-slate-900 dark:text-white text-center leading-tight">{user.name}</h2>
+            <h2 className="text-base font-bold text-slate-900 dark:text-white text-center leading-tight">{name || user.name}</h2>
             
             <p className="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5 mb-3">
               {fullUserData ? (fullUserData.nim || fullUserData.username) : '-'}
@@ -277,16 +285,30 @@ const Profile = () => {
 
           </div>
 
-          {/* KARTU 2: FORM INFORMASI KONTAK (EMAIL & WA) */}
+          {/* KARTU 2: FORM INFORMASI PROFIL & KONTAK */}
           <div className="bg-white dark:bg-[#131C31] p-5 md:p-7 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
             
             <div className="w-full border-b border-slate-100 dark:border-slate-800 pb-3 mb-5 flex items-center justify-start gap-2">
-              <FiMail className="text-blue-500" size={18} />
-              <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest">Informasi Kontak</h3>
+              <FiUser className="text-blue-500" size={18} />
+              <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest">Informasi Dasar & Kontak</h3>
             </div>
 
-            <form onSubmit={handleUpdateContact} className="space-y-4">
+            <form onSubmit={handleUpdateProfile} className="space-y-4">
               
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Nama Lengkap</label>
+                <div className="relative mt-1.5 mb-4">
+                  <FiUser className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+                  <input 
+                    type="text" 
+                    value={name} 
+                    onChange={(e) => setName(e.target.value)} required
+                    placeholder="Nama lengkap Anda"
+                    className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-lg focus:border-blue-500 outline-none dark:text-white transition-all text-sm font-medium"
+                  />
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Kolom Email */}
                 <div>
@@ -320,16 +342,44 @@ const Profile = () => {
               </div>
 
               <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-2 ml-1">
-                Pastikan email aktif untuk pemulihan sandi. Nomor WhatsApp digunakan untuk menerima notifikasi status dokumen (Opsional).
+                Pastikan nama sesuai identitas. Email aktif untuk pemulihan sandi.
               </p>
+
+              {user.role === 'admin' && (
+                <div className="mt-5 p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-xl">
+                  <label className="block text-[10px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest mb-1.5 ml-1">
+                    🔒 Otorisasi Sandi (Khusus Admin)
+                  </label>
+                  <p className="text-[10px] text-amber-600 dark:text-amber-500 mb-3 ml-1 font-medium">
+                    Untuk menyimpan perubahan profil, masukkan kata sandi Anda.
+                  </p>
+                  <div className="relative">
+                    <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+                    <input 
+                      type={showAuthPassword ? "text" : "password"} 
+                      value={authPassword} 
+                      onChange={(e) => setAuthPassword(e.target.value)} required
+                      placeholder="Ketik sandi Anda..."
+                      className="w-full pl-10 pr-10 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:border-amber-500 outline-none dark:text-white transition-all text-sm font-medium"
+                    />
+                    <button 
+                      type="button"
+                      onClick={() => setShowAuthPassword(!showAuthPassword)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-500 transition-colors focus:outline-none"
+                    >
+                      {showAuthPassword ? <FiEyeOff size={15} /> : <FiEye size={15} />}
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <div className="pt-3 flex justify-end">
                 <button 
                   type="submit" 
-                  disabled={isEmailLoading || !fullUserData}
+                  disabled={isProfileLoading || !fullUserData}
                   className="bg-blue-600 hover:bg-blue-700 disabled:opacity-70 text-white px-6 py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-blue-500/20"
                 >
-                  {isEmailLoading ? 'Menyimpan...' : <><FiSave size={14}/> Perbarui Kontak</>}
+                  {isProfileLoading ? 'Menyimpan...' : <><FiSave size={14}/> Perbarui Profil</>}
                 </button>
               </div>
             </form>
