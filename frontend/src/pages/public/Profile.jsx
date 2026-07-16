@@ -20,6 +20,7 @@ const Profile = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [noWa, setNoWa] = useState('');
+  const [nim, setNim] = useState('');
   const [isProfileLoading, setIsProfileLoading] = useState(false);
 
   const [showOldPassword, setShowOldPassword] = useState(false);
@@ -37,6 +38,7 @@ const Profile = () => {
           setName(res.data.name || res.data.full_name || parsedUser.name || '');
           setEmail(res.data.email || '');
           setNoWa(res.data.no_wa || '');
+          setNim(res.data.nim || res.data.username || '');
           setFullUserData(res.data);
         })
         .catch(err => console.error("Gagal mengambil data profil:", err));
@@ -101,7 +103,7 @@ const Profile = () => {
     try {
       await axios.put(`/api/auth/users/${user.id}`, {
         name: name,
-        nim: fullUserData.nim || fullUserData.username,
+        nim: user.role === 'admin' ? nim : (fullUserData.nim || fullUserData.username),
         role: fullUserData.role,
         department: fullUserData.department,
         email: email,
@@ -304,6 +306,23 @@ const Profile = () => {
                   />
                 </div>
               </div>
+
+              {user.role === 'admin' && (
+                <div>
+                  <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Username / NIM</label>
+                  <div className="relative mt-1.5 mb-4">
+                    <FiShield className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+                    <input 
+                      type="text" 
+                      value={nim} 
+                      onChange={(e) => setNim(e.target.value)} 
+                      placeholder="Masukkan Username / NIM"
+                      className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-lg focus:border-blue-500 outline-none dark:text-white transition-all text-sm font-medium"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Kolom Email */}
