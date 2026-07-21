@@ -49,6 +49,7 @@ const Documents = () => {
       const lowerQuery = searchInput.toLowerCase();
       result = result.filter(doc => 
         (doc.title && doc.title.toLowerCase().includes(lowerQuery)) ||
+        (doc.keywords && doc.keywords.toLowerCase().includes(lowerQuery)) ||
         (doc.category && doc.category.toLowerCase().includes(lowerQuery)) ||
         (doc.department && doc.department.toLowerCase().includes(lowerQuery)) ||
         (doc.document_author && doc.document_author.toLowerCase().includes(lowerQuery))
