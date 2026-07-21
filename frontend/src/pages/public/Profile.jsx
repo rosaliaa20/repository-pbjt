@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { 
   FiUser, FiLock, FiShield, FiCheckCircle, 
-  FiSave, FiAlertCircle, FiEye, FiEyeOff, FiMail, FiPhone
+  FiSave, FiAlertCircle, FiEye, FiEyeOff, FiMail, FiPhone, FiBookOpen
 } from 'react-icons/fi';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -21,6 +21,7 @@ const Profile = () => {
   const [email, setEmail] = useState('');
   const [noWa, setNoWa] = useState('');
   const [nim, setNim] = useState('');
+  const [department, setDepartment] = useState('');
   const [isProfileLoading, setIsProfileLoading] = useState(false);
 
   const [showOldPassword, setShowOldPassword] = useState(false);
@@ -39,6 +40,7 @@ const Profile = () => {
           setEmail(res.data.email || '');
           setNoWa(res.data.no_wa || '');
           setNim(res.data.nim || res.data.username || '');
+          setDepartment(res.data.department || '');
           setFullUserData(res.data);
         })
         .catch(err => console.error("Gagal mengambil data profil:", err));
@@ -105,7 +107,7 @@ const Profile = () => {
         name: name,
         nim: user.role === 'admin' ? nim : (fullUserData.nim || fullUserData.username),
         role: fullUserData.role,
-        department: fullUserData.department,
+        department: user.role === 'admin' ? department : fullUserData.department,
         email: email,
         no_wa: noWa
       });
@@ -313,6 +315,37 @@ const Profile = () => {
                   />
                   {user.role !== 'admin' && (
                     <FiLock className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">
+                  Program Studi / Bagian {user.role !== 'admin' && <span className="text-red-500 dark:text-red-400 ml-1 font-semibold">(Terkunci)</span>}
+                </label>
+                <div className="relative mt-1.5 mb-4">
+                  <FiBookOpen className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 z-10" size={15} />
+                  <select 
+                    value={department}
+                    onChange={(e) => setDepartment(e.target.value)}
+                    disabled={user.role !== 'admin'}
+                    className={`w-full pl-10 pr-10 py-2 border rounded-lg outline-none transition-all text-sm font-medium appearance-none relative z-0 ${
+                      user.role !== 'admin' 
+                      ? 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed'
+                      : 'bg-slate-50 dark:bg-[#0B1121] border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:text-white cursor-pointer'
+                    }`}
+                  >
+                    <option className="bg-white dark:bg-slate-800" value="">-- Pilih Bagian --</option>
+                    <option className="bg-white dark:bg-slate-800" value="D3 Teknik Informatika">D3 Teknik Informatika</option>
+                    <option className="bg-white dark:bg-slate-800" value="D3 Teknik Mesin">D3 Teknik Mesin</option>
+                    <option className="bg-white dark:bg-slate-800" value="D3 Teknik Otomotif">D3 Teknik Otomotif</option>
+                    <option className="bg-white dark:bg-slate-800" value="D3 Teknik Elektronika">D3 Teknik Elektronika</option>
+                    <option className="bg-white dark:bg-slate-800" value="Mata Kuliah Umum (MKDU)">Mata Kuliah Umum (MKDU)</option>
+                    <option className="bg-white dark:bg-slate-800" value="Lintas Program Studi">Lintas Program Studi</option>
+                    <option className="bg-white dark:bg-slate-800" value="Pusat / LPPM">Pusat / LPPM</option>
+                  </select>
+                  {user.role !== 'admin' && (
+                    <FiLock className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" size={14} />
                   )}
                 </div>
               </div>
