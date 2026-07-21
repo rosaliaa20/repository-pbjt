@@ -294,6 +294,11 @@ exports.updateUser = async (req, res) => {
     const userId = req.params.id;
     const { password, name, nim, email, no_wa, role, department, auth_password } = req.body;
 
+    // PROTEKSI: Mahasiswa/Dosen hanya boleh mengedit profilnya sendiri
+    if (req.user && req.user.role !== 'admin' && req.user.id !== parseInt(userId)) {
+        return res.status(403).json({ message: 'Akses Ditolak: Anda hanya bisa mengedit profil Anda sendiri.' });
+    }
+
     try {
         // Langkah 0: Pengecekan Mutual Agreement (Jika Target = Admin)
         db.query('SELECT * FROM users WHERE id = ?', [userId], async (err, results) => {

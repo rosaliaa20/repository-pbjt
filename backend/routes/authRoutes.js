@@ -39,7 +39,7 @@ router.post('/users/import', verifyToken, verifyAdmin, uploadMemory.single('exce
 // ========================================================
 router.get('/users/:id', verifyToken, authController.getUserById);
 router.put('/users/:id/toggle-lock', verifyToken, verifyAdmin, authController.toggleLockUser);
-router.put('/users/:id', verifyToken, verifyAdmin, authController.updateUser);
+router.put('/users/:id', verifyToken, authController.updateUser);
 router.delete('/users/:id', verifyToken, verifyAdmin, authController.deleteUser);
 
 // Ganti Sandi oleh User (Butuh Sandi Lama)
