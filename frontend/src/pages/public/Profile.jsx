@@ -294,16 +294,26 @@ const Profile = () => {
             <form onSubmit={handleUpdateProfile} className="space-y-4">
               
               <div>
-                <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Nama Lengkap</label>
+                <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">
+                  Nama Lengkap {user.role !== 'admin' && <span className="text-red-500 dark:text-red-400 ml-1 font-semibold">(Terkunci)</span>}
+                </label>
                 <div className="relative mt-1.5 mb-4">
                   <FiUser className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
                   <input 
                     type="text" 
                     value={name} 
-                    onChange={(e) => setName(e.target.value)} required
+                    onChange={(e) => setName(e.target.value)} required={user.role === 'admin'}
+                    disabled={user.role !== 'admin'}
                     placeholder="Nama lengkap Anda"
-                    className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-lg focus:border-blue-500 outline-none dark:text-white transition-all text-sm font-medium"
+                    className={`w-full pl-10 pr-10 py-2 border rounded-lg outline-none transition-all text-sm font-medium ${
+                      user.role !== 'admin' 
+                      ? 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed'
+                      : 'bg-slate-50 dark:bg-[#0B1121] border-slate-200 dark:border-slate-700 focus:border-blue-500 dark:text-white'
+                    }`}
                   />
+                  {user.role !== 'admin' && (
+                    <FiLock className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={14} />
+                  )}
                 </div>
               </div>
 
@@ -324,22 +334,25 @@ const Profile = () => {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Kolom Email */}
-                <div>
-                  <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Email Pemulihan</label>
-                  <div className="relative mt-1.5">
-                    <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
-                    <input 
-                      type="email" 
-                      value={email} 
-                      onChange={(e) => setEmail(e.target.value)} required
-                      placeholder="nama@email.com"
-                      className="w-full pl-10 pr-4 py-2 bg-slate-50 dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-lg focus:border-blue-500 outline-none dark:text-white transition-all text-sm font-medium"
-                    />
-                  </div>
+              {/* Kolom Email (Terpisah & Opsional) */}
+              <div className="bg-slate-50 dark:bg-[#1A233A] p-4 rounded-xl border border-slate-100 dark:border-slate-700/50 mb-4">
+                <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
+                  Email Pemulihan <span className="bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded text-[8px]">Opsional</span>
+                </label>
+                <div className="relative mt-2">
+                  <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
+                  <input 
+                    type="email" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
+                    placeholder="nama@email.com (opsional)"
+                    className="w-full pl-10 pr-4 py-2 bg-white dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-lg focus:border-blue-500 outline-none dark:text-white transition-all text-sm font-medium"
+                  />
                 </div>
+                <p className="text-[9px] text-slate-400 mt-1.5 ml-1">Gunakan email aktif agar dapat memulihkan kata sandi jika Anda lupa.</p>
+              </div>
 
+              <div className="grid grid-cols-1 gap-4">
                 {/* Kolom WA */}
                 <div>
                   <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1">Nomor WhatsApp</label>
@@ -357,7 +370,7 @@ const Profile = () => {
               </div>
 
               <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-2 ml-1 mb-5">
-                Pastikan nama sesuai identitas. Email aktif untuk pemulihan sandi.
+                Pastikan identitas valid dan info kontak dapat dihubungi.
               </p>
 
               <div className="pt-3 flex justify-end">
