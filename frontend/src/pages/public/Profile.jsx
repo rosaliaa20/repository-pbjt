@@ -370,7 +370,7 @@ const Profile = () => {
               {/* Kolom Email (Terpisah & Opsional) */}
               <div className="bg-slate-50 dark:bg-[#1A233A] p-4 rounded-xl border border-slate-100 dark:border-slate-700/50 mb-4">
                 <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest ml-1 flex items-center gap-1.5">
-                  Email Pemulihan <span className="bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded text-[8px]">Opsional</span>
+                  Email Pemulihan
                 </label>
                 <div className="relative mt-2">
                   <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" size={15} />
@@ -378,7 +378,7 @@ const Profile = () => {
                     type="email" 
                     value={email} 
                     onChange={(e) => setEmail(e.target.value)} 
-                    placeholder="nama@email.com (opsional)"
+                    placeholder="nama@email.com"
                     className="w-full pl-10 pr-4 py-2 bg-white dark:bg-[#0B1121] border border-slate-200 dark:border-slate-700 rounded-lg focus:border-blue-500 outline-none dark:text-white transition-all text-sm font-medium"
                   />
                 </div>
