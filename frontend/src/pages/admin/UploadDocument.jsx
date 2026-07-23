@@ -8,6 +8,7 @@ const UploadDocument = () => {
   const [user, setUser] = useState(null);
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
@@ -110,9 +111,15 @@ const UploadDocument = () => {
     submitData.append('document_file', file);
 
     try {
-      await axios.post('/api/documents/upload', submitData);
+      await axios.post('/api/documents/upload', submitData, {
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          setUploadProgress(percentCompleted);
+        }
+      });
       
       setLoading(false);
+      setUploadProgress(0);
       setSuccess(true);
       setTimeout(() => navigate(returnPath), 2000);
     } catch (err) {
@@ -169,19 +176,36 @@ const UploadDocument = () => {
                   <input type="file" className="hidden" accept="application/pdf" onChange={handleFileChange} />
                 </label>
               ) : (
-                <div className="flex items-center justify-between p-3 md:p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-xl transition-colors">
-                  <div className="flex items-center gap-3 min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 md:p-4 bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-xl transition-colors gap-3 md:gap-4">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div className="w-10 h-10 bg-amber-500 text-white flex items-center justify-center rounded-lg shrink-0">
                       <FiFile className="text-xl" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-bold text-slate-700 dark:text-slate-200 truncate">{file.name}</p>
-                      <p className="text-[10px] md:text-xs text-amber-600 dark:text-amber-400 font-bold">File siap diunggah</p>
+                      <p className="text-[10px] md:text-xs text-amber-600 dark:text-amber-400 font-bold">
+                        File siap diunggah • {(file.size / (1024 * 1024)).toFixed(2)} MB
+                      </p>
                     </div>
                   </div>
-                  <button type="button" onClick={() => setFile(null)} className="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg transition-colors shrink-0">
-                    <FiX className="text-xl" />
-                  </button>
+                  
+                  {loading && (
+                    <div className="w-full sm:w-1/3 shrink-0">
+                       <div className="flex justify-between items-center text-[10px] md:text-xs font-bold text-slate-500 dark:text-slate-400 mb-1">
+                          <span>Mengunggah...</span>
+                          <span>{uploadProgress}%</span>
+                       </div>
+                       <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5 overflow-hidden">
+                          <div className="bg-amber-500 h-1.5 rounded-full transition-all duration-300" style={{ width: `${uploadProgress}%` }}></div>
+                       </div>
+                    </div>
+                  )}
+
+                  {!loading && (
+                    <button type="button" onClick={() => setFile(null)} className="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-lg transition-colors shrink-0">
+                      <FiX className="text-xl" />
+                    </button>
+                  )}
                 </div>
               )}
             </div>
