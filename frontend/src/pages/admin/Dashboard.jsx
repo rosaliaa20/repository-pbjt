@@ -14,7 +14,7 @@ const Dashboard = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   const [stats, setStats] = useState({
-    totalDocs: 0, totalViews: 0, pendingDocs: 0,
+    totalDocs: 0, totalViews: 0, pendingDocs: 0, totalSize: 0,
     chartData: [], recentActivity: [],
   });
 
@@ -27,6 +27,7 @@ const Dashboard = () => {
 
       const docs = response.data;
       const totalViews = docs.reduce((sum, doc) => sum + (doc.views || 0), 0);
+      const totalSize = docs.reduce((sum, doc) => sum + (doc.file_size || 0), 0);
       const pendingDocs = docs.filter(doc => !doc.status || doc.status.toLowerCase() === "pending").length;
       
       const prodiCount = { Informatika: 0, Mesin: 0, Otomotif: 0, Elektronika: 0 };
@@ -45,7 +46,7 @@ const Dashboard = () => {
       ];
 
       setStats({
-        totalDocs: docs.length, totalViews, pendingDocs, chartData,
+        totalDocs: docs.length, totalViews, pendingDocs, chartData, totalSize,
         recentActivity: [...docs].sort((a, b) => {
           const timeA = new Date(a.updated_at || a.created_at).getTime();
           const timeB = new Date(b.updated_at || b.created_at).getTime();
@@ -113,7 +114,22 @@ const Dashboard = () => {
 
       {/* Jarak antar kartu dirapatkan (gap-4) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <StatCard title="Total Dokumen" value={stats.totalDocs} icon={FiFileText} bgClass="bg-indigo-500/10" colorClass="text-indigo-600 dark:text-indigo-400" />
+        <StatCard 
+          title="Total Dokumen" 
+          value={
+            <div className="flex items-baseline gap-2">
+              <span>{stats.totalDocs}</span>
+              {stats.totalSize > 0 && (
+                <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
+                  ({(stats.totalSize / (1024 * 1024)).toFixed(2)} MB)
+                </span>
+              )}
+            </div>
+          } 
+          icon={FiFileText} 
+          bgClass="bg-indigo-500/10" 
+          colorClass="text-indigo-600 dark:text-indigo-400" 
+        />
         <StatCard title="Menunggu Approval" value={stats.pendingDocs} icon={FiUsers} bgClass="bg-amber-500/10" colorClass="text-amber-600 dark:text-amber-400" />
         <StatCard title="Total Tayangan" value={stats.totalViews} icon={FiEye} bgClass="bg-emerald-500/10" colorClass="text-emerald-600 dark:text-emerald-400" />
       </div>
