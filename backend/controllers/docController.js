@@ -23,7 +23,25 @@ exports.getAllDocs = (req, res) => {
             console.error("❌ Error getAllDocs:", err.message);
             return res.status(500).json({ error: err.message });
         }
-        res.json(results);
+        
+        // Inject file_size by reading physical file
+        const docsWithSize = results.map(doc => {
+            let fileSize = 0;
+            if (doc.file_path) {
+                try {
+                    const fullPath = path.join(__dirname, "../", doc.file_path);
+                    if (fs.existsSync(fullPath)) {
+                        const stats = fs.statSync(fullPath);
+                        fileSize = stats.size; // in bytes
+                    }
+                } catch (e) {
+                    // Ignore errors if file is locked or missing
+                }
+            }
+            return { ...doc, file_size: fileSize };
+        });
+
+        res.json(docsWithSize);
     });
 };
 

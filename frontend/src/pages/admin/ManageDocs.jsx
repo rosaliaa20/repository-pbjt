@@ -281,6 +281,7 @@ const ManageDocs = () => {
             <thead>
               <tr className="bg-slate-50/50 dark:bg-[#0B1121]/50 border-b border-slate-100 dark:border-slate-800">
                 <th className="py-3 px-6 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Info Dokumen</th>
+                <th className="py-3 px-6 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ukuran</th>
                 <th className="py-3 px-6 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Kategori</th>
                 <th className="py-3 px-6 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status</th>
                 <th className="py-3 px-6 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center">Validasi</th>
@@ -298,13 +299,21 @@ const ManageDocs = () => {
                         <Link 
                           to={`/detail/${doc.id}`} 
                           className="font-bold text-slate-800 dark:text-white text-sm leading-tight line-clamp-2 hover:text-amber-500 dark:hover:text-amber-400 transition-colors" 
+                          title={doc.title}
                         >
-                          {doc.title}
+                          {doc.title.toUpperCase()}
                         </Link>
-                        <p className="text-[11px] text-slate-500 mt-1">Oleh: {doc.document_author || 'Anonim'}</p>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium uppercase mt-1">Oleh: {doc.document_author || 'Anonim'}</p>
                       </div>
                     </td>
-                    <td className="py-4 px-6"><p className="text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-md w-max">{doc.category || '-'}</p></td>
+                    <td className="py-4 px-6 text-xs text-slate-500 dark:text-slate-400 font-bold">
+                      {doc.file_size ? (doc.file_size / (1024 * 1024)).toFixed(2) + ' MB' : '-'}
+                    </td>
+                    <td className="py-4 px-6">
+                      <span className="text-slate-600 bg-slate-100 dark:text-slate-300 dark:bg-slate-700/50 px-2.5 py-1 rounded-md text-[11px] font-bold">
+                        {doc.category || 'Umum'}
+                      </span>
+                    </td>
                     <td className="py-4 px-6">{getStatusBadge(doc.status)}</td>
                     <td className="py-4 px-6 text-center">
                       {(!doc.status || doc.status.toLowerCase() === 'pending') ? (
