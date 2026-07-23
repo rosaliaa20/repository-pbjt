@@ -146,7 +146,7 @@ exports.register = async (req, res) => {
 // 2.5. FUNGSI ADD USER (KHUSUS ADMIN)
 // ========================================================
 exports.addUser = async (req, res) => {
-    const { name, identifier, password, role } = req.body;
+    const { name, identifier, email, password, role } = req.body;
     const ipAddress = req.ip || req.connection.remoteAddress || 'Unknown IP';
 
     if (!name || !identifier || !password || !role) {
@@ -154,11 +154,18 @@ exports.addUser = async (req, res) => {
     }
 
     try {
-        const checkQuery = 'SELECT * FROM users WHERE username = ? OR nim = ? OR email = ?';
-        db.query(checkQuery, [identifier, identifier, identifier], async (err, results) => {
+        let checkQuery = 'SELECT * FROM users WHERE username = ? OR nim = ? OR email = ?';
+        let checkParams = [identifier, identifier, identifier];
+
+        if (email) {
+            checkQuery += ' OR email = ?';
+            checkParams.push(email);
+        }
+
+        db.query(checkQuery, checkParams, async (err, results) => {
             if (err) return res.status(500).json({ message: 'Kesalahan Server.' });
             if (results.length > 0) {
-                return res.status(400).json({ message: 'Identifier (Email/NIDN/NIM) sudah terdaftar di sistem!' });
+                return res.status(400).json({ message: 'Identifier (NIDN/NIM) atau Email sudah terdaftar di sistem!' });
             }
 
             const salt = await bcrypt.genSalt(10);
@@ -168,8 +175,8 @@ exports.addUser = async (req, res) => {
             // Identifier kita simpan di kolom email dan nim/username untuk kemudahan login
             // Jika formatnya email, simpan di email, jika bukan, biarkan email null? 
             // Kita simpan di 'nim' dan 'email' sekaligus saja sebagai kemudahan jika identifier bertindak sebagai keduanya.
-            const isEmail = identifier.includes('@');
-            const emailVal = isEmail ? identifier : null;
+            // Kita memisahkan email dari NIM/NIDN
+            const emailVal = email || null;
             const nimVal = identifier;
 
             const insertQuery = 'INSERT INTO users (full_name, username, nim, email, password, role, approval_status) VALUES (?, ?, ?, ?, ?, ?, ?)';

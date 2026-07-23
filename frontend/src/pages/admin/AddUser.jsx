@@ -14,6 +14,7 @@ const AddUser = () => {
   const [formData, setFormData] = useState({
     name: '',
     identifier: '', 
+    email: '',
     password: '',
     role: 'dosen' 
   });
@@ -33,7 +34,7 @@ const AddUser = () => {
       setStatus({ type: 'success', message: 'Akun berhasil dibuat dan siap digunakan!' });
       
       // Kosongkan form setelah sukses
-      setFormData({ name: '', identifier: '', password: '', role: 'dosen' });
+      setFormData({ name: '', identifier: '', email: '', password: '', role: 'dosen' });
       
     } catch (error) {
       setStatus({ 
@@ -88,16 +89,29 @@ const AddUser = () => {
             />
           </div>
 
-          {/* Input Email / NIDN */}
+          {/* Input NIDN / NIM */}
           <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-700">Email / NIDN / NIM</label>
+            <label className="text-sm font-bold text-slate-700">NIDN / NIM</label>
             <input 
               type="text" 
               name="identifier"
               value={formData.identifier}
               onChange={handleChange}
               required
-              placeholder="Gunakan NIDN untuk dosen"
+              placeholder="Masukkan NIDN atau NIM"
+              className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 px-4 py-3 rounded-xl transition-all outline-none"
+            />
+          </div>
+
+          {/* Input Email */}
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-slate-700">Email Pemulihan</label>
+            <input 
+              type="email" 
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="nama@email.com"
               className="w-full bg-slate-50 border border-slate-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/20 px-4 py-3 rounded-xl transition-all outline-none"
             />
           </div>
