@@ -22,10 +22,46 @@ const Settings = () => {
 
   const closePopup = () => setModal({ ...modal, isOpen: false });
 
-  const handleBackup = () => {
+  const handleBackup = async () => {
     setLoading(true);
-    window.location.href = '/api/backup';
-    setTimeout(() => setLoading(false), 2000); 
+    try {
+      const response = await axios.get('/api/backup', { responseType: 'blob' });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      const contentDisposition = response.headers['content-disposition'];
+      let fileName = `Backup_erepository_${new Date().toISOString().slice(0, 10)}.sql`;
+      if (contentDisposition && contentDisposition.includes('filename=')) {
+        fileName = contentDisposition.split('filename=')[1].replace(/["']/g, '').trim();
+      }
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      let errorMessage = 'Gagal melakukan backup database.';
+      if (err.response?.data instanceof Blob) {
+        try {
+          const text = await err.response.data.text();
+          const json = JSON.parse(text);
+          errorMessage = json.message || json.error?.message || errorMessage;
+        } catch (e) {
+          // Ignore parse error
+        }
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      }
+      setModal({
+        isOpen: true,
+        type: 'warning',
+        title: 'Backup Gagal',
+        message: errorMessage,
+        onConfirm: closePopup
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const [qrCodeData, setQrCodeData] = useState(null);
