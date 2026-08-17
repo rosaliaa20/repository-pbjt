@@ -11,6 +11,25 @@ export default defineConfig({
       '/uploads': 'http://localhost:5151'
     }
   },
+  build: {
+    target: 'es2022',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return id.toString().split('node_modules/')[1].split('/')[0].toString();
+          }
+        }
+      }
+    }
+  },
   plugins: [
     react(),
     legacy({
@@ -19,7 +38,7 @@ export default defineConfig({
     }),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg", "logo.png", "icons.svg", "offline.html"],
+      includeAssets: ["favicon.svg", "logo.png", "icons.svg", "offline.html", "pdf.worker.min.js"],
       manifest: {
         name: "Repository PBJT",
         short_name: "PBJT Repo",

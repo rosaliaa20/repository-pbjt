@@ -1,5 +1,5 @@
 # Stage 1: Build Frontend
-FROM node:20-bookworm-slim AS frontend-builder
+FROM node:22-bookworm-slim AS frontend-builder
 WORKDIR /app/frontend
 
 COPY frontend/package*.json ./
@@ -11,7 +11,7 @@ RUN npm run build
 
 
 # Stage 2: Production Backend & Monolith Server
-FROM node:20-bookworm-slim
+FROM node:22-bookworm-slim
 
 # Install Chromium and required dependencies for Puppeteer
 RUN apt-get update && apt-get install -y \

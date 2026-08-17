@@ -122,9 +122,9 @@ const Login = () => {
               <div className="flex items-center justify-between ml-3 pr-2">
                 <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Kata Sandi</label>
                 {/* 🔥 TOMBOL LUPA SANDI 🔥 */}
-                <Link to="/forgot-password" className="text-xs font-bold text-amber-500 hover:underline">
+                <button type="button" onClick={handleForgotPassword} className="text-xs font-bold text-amber-500 hover:underline">
                   Lupa Sandi?
-                </Link>
+                </button>
               </div>
               <div className="relative mt-1">
                 <FiLock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500" />

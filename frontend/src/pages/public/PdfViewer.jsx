@@ -6,8 +6,10 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+import { saveOfflineDoc, getOfflineDoc, isDocOffline, removeOfflineDoc } from '../../utils/offlineStorage';
+import { FiCloudOff, FiCloudLightning } from 'react-icons/fi';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `/pdf.worker.min.js`;
 
 // ============================================================
 // LAZY PAGE: Render per halaman dengan watermark nempel per halaman
@@ -98,8 +100,11 @@ const PdfViewer = () => {
   const [jumpPage, setJumpPage] = useState('');
   const [loading, setLoading] = useState(true);
   const [pdfUrl, setPdfUrl] = useState(null);
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const initialBookmarks = userId ? (JSON.parse(localStorage.getItem(`bookmarks_${userId}`)) || []).includes(id) : false;
+  const [isBookmarked, setIsBookmarked] = useState(initialBookmarks);
   const [isProtected, setIsProtected] = useState(false);
+  const [offlineAvailable, setOfflineAvailable] = useState(false);
+  const [isOfflineMode, setIsOfflineMode] = useState(!navigator.onLine);
 
   // Scale (zoom) + responsive width
   const [scale, setScale] = useState(window.innerWidth < 768 ? 1 : 1.3);
@@ -109,28 +114,72 @@ const PdfViewer = () => {
     const handleResize = () => {
       setPdfWidth(window.innerWidth < 768 ? window.innerWidth - 32 : null);
     };
+    const handleConnectionChange = () => setIsOfflineMode(!navigator.onLine);
+    
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener('online', handleConnectionChange);
+    window.addEventListener('offline', handleConnectionChange);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('online', handleConnectionChange);
+      window.removeEventListener('offline', handleConnectionChange);
+    };
   }, []);
 
   // Fetch document detail + set PDF URL
   useEffect(() => {
-    const fetchDocDetail = async () => {
-      try {
-        const response = await axios.get(`/api/documents/${id}`);
-        setDocDetail(response.data);
-      } catch (error) {
-        console.error('Gagal memuat detail dokumen:', error);
+    const initDoc = async () => {
+      const isStored = await isDocOffline(id);
+      setOfflineAvailable(isStored);
+
+      if (isOfflineMode || isStored) {
+        try {
+          const offlineData = await getOfflineDoc(id);
+          if (offlineData) {
+            setDocDetail(offlineData.docDetail);
+            setPdfUrl({ data: offlineData.pdfBuffer }); // Pass ArrayBuffer to react-pdf
+            return;
+          }
+        } catch (e) {
+          console.error("Gagal load dari IndexedDB", e);
+        }
+      }
+      
+      // Jika online
+      if (!isOfflineMode) {
+        try {
+          const response = await axios.get(`/api/documents/${id}`);
+          setDocDetail(response.data);
+          setPdfUrl(`/api/documents/preview/${id}`);
+        } catch (error) {
+          console.error('Gagal memuat detail dokumen:', error);
+        }
       }
     };
-    fetchDocDetail();
-    setPdfUrl(`/api/documents/preview/${id}`);
 
-    if (userId) {
-      const savedBookmarks = JSON.parse(localStorage.getItem(`bookmarks_${userId}`)) || [];
-      setIsBookmarked(savedBookmarks.includes(id));
+    initDoc();
+  }, [id, userId, isOfflineMode]);
+
+  // Offline handler
+  const handleToggleOffline = async () => {
+    if (offlineAvailable) {
+      await removeOfflineDoc(id);
+      setOfflineAvailable(false);
+      toast.success('Dihapus dari penyimpanan offline.');
+    } else {
+      const loadingId = toast.loading('Mengunduh & mengenkripsi dokumen...');
+      try {
+        const response = await axios.get(`/api/documents/preview/${id}`, { responseType: 'arraybuffer' });
+        await saveOfflineDoc(id, docDetail, response.data);
+        setOfflineAvailable(true);
+        toast.success('Tersedia untuk dibaca offline (Aman)!', { id: loadingId });
+      } catch (err) {
+        console.error(err);
+        toast.error('Gagal menyimpan offline.', { id: loadingId });
+      }
     }
-  }, [id, userId]);
+  };
 
   // Bookmark handler
   const handleBookmark = () => {
@@ -234,7 +283,7 @@ const PdfViewer = () => {
               {docDetail?.title || 'Membaca Dokumen...'}
             </h1>
             <p className="text-[10px] text-emerald-400 flex items-center gap-1 mt-0.5">
-              <FiShield /> Proteksi Aktif
+              <FiShield /> Proteksi Aktif {isOfflineMode && <span className="ml-2 text-blue-300 font-bold">(Mode Luring)</span>}
             </p>
           </div>
         </div>
@@ -272,15 +321,26 @@ const PdfViewer = () => {
         {/* KANAN: Bookmark + Unduh (Admin) */}
         <div className="flex items-center gap-2 md:gap-3 shrink-0">
           {user && (
-            <button
-              onClick={handleBookmark}
-              className={`text-[10px] md:text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors ${
-                isBookmarked ? 'bg-amber-500/20 text-amber-400' : 'bg-white/10 text-white/80 hover:bg-white/20'
-              }`}
-            >
-              <FiBookmark className={isBookmarked ? 'fill-current' : ''} />
-              <span className="hidden md:inline">{isBookmarked ? 'Tersimpan' : 'Simpan'}</span>
-            </button>
+            <>
+              <button
+                onClick={handleToggleOffline}
+                className={`text-[10px] md:text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors ${
+                  offlineAvailable ? 'bg-blue-500/20 text-blue-400' : 'bg-white/10 text-white/80 hover:bg-white/20'
+                }`}
+              >
+                {offlineAvailable ? <FiCloudLightning /> : <FiCloudOff />}
+                <span className="hidden md:inline">{offlineAvailable ? 'Offline Ready' : 'Simpan Offline'}</span>
+              </button>
+              <button
+                onClick={handleBookmark}
+                className={`text-[10px] md:text-xs font-bold px-3 py-1.5 rounded flex items-center gap-1.5 transition-colors ${
+                  isBookmarked ? 'bg-amber-500/20 text-amber-400' : 'bg-white/10 text-white/80 hover:bg-white/20'
+                }`}
+              >
+                <FiBookmark className={isBookmarked ? 'fill-current' : ''} />
+                <span className="hidden md:inline">{isBookmarked ? 'Tersimpan' : 'Bookmark'}</span>
+              </button>
+            </>
           )}
           {isAdmin && (
             <button

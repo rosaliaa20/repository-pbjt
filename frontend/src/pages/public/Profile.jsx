@@ -7,7 +7,9 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
+  const storedUser = localStorage.getItem('user');
+  const initialUser = storedUser ? JSON.parse(storedUser) : null;
+  const [user, setUser] = useState(initialUser);
   const [fullUserData, setFullUserData] = useState(null); 
   
   // State untuk form ganti password
@@ -29,14 +31,10 @@ const Profile = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-
-      axios.get(`/api/auth/users/${parsedUser.id}`)
+    if (initialUser) {
+      axios.get(`/api/auth/users/${initialUser.id}`)
         .then(res => {
-          setName(res.data.name || res.data.full_name || parsedUser.name || '');
+          setName(res.data.name || res.data.full_name || initialUser.name || '');
           setEmail(res.data.email || '');
           setNoWa(res.data.no_wa || '');
           setNim(res.data.nim || res.data.username || '');

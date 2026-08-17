@@ -9,7 +9,6 @@ const StudentEditDoc = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState(null);
   const [error, setError] = useState('');
   
   const [file, setFile] = useState(null);
@@ -88,8 +87,9 @@ useEffect(() => {
   useEffect(() => {
     if (file && formData.category) {
       const sizeError = validateFile(file, formData.category);
-      setError(sizeError || '');
+      setTimeout(() => setError(sizeError || ''), 0);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.category, file]);
 
   const handleInputChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
