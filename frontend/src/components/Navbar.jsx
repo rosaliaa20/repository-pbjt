@@ -49,6 +49,9 @@ const Navbar = () => {
       setDeferredPrompt(null);
     };
 
+    // Selalu tampilkan tombol install sebagai fallback panduan manual
+    setShowInstallButton(true);
+
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);
 
@@ -66,6 +69,27 @@ const Navbar = () => {
         setShowInstallButton(false);
       }
       setDeferredPrompt(null);
+    } else {
+      import('sweetalert2').then((Swal) => {
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (isIOS) {
+          Swal.default.fire({
+            icon: 'info',
+            title: 'Instalasi iOS (iPhone/iPad)',
+            html: 'Browser Safari memblokir instalasi otomatis.<br><br>Untuk menginstal, ketuk tombol <b>Bagikan (Share)</b> di navigasi bawah Safari, lalu pilih <b>"Tambahkan ke Layar Utama" (Add to Home Screen)</b>.',
+            confirmButtonText: 'Mengerti',
+            confirmButtonColor: '#2563eb'
+          });
+        } else {
+          Swal.default.fire({
+            icon: 'info',
+            title: 'Instalasi Manual',
+            html: 'Aplikasi mungkin sudah terinstal atau browser tidak mendukung instalasi otomatis.<br><br>Coba cek opsi <b>"Tambahkan ke Layar Utama"</b> di menu titik tiga (⋮) browser Anda.',
+            confirmButtonText: 'Mengerti',
+            confirmButtonColor: '#2563eb'
+          });
+        }
+      });
     }
   };
 
