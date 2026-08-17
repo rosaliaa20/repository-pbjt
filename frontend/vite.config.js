@@ -53,11 +53,13 @@ export default defineConfig({
             src: "logo.png",
             sizes: "192x192",
             type: "image/png",
+            purpose: "any",
           },
           {
             src: "logo.png",
             sizes: "512x512",
             type: "image/png",
+            purpose: "any",
           },
         ],
       },
@@ -91,7 +93,13 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: /^https?:.*\/api\//,
+            // Cache API metadata, tapi ABAIKAN endpoint yang melayani file biner (preview/download)
+            // karena file biner akan dienkripsi manual oleh IndexedDB
+            urlPattern: ({ url }) => {
+              return url.pathname.startsWith('/api/') && 
+                     !url.pathname.includes('/preview/') && 
+                     !url.pathname.includes('/download/');
+            },
             handler: "NetworkFirst",
             options: {
               cacheName: "api-cache",

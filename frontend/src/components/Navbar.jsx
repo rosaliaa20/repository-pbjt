@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   FiMenu, FiX, FiHome, FiSearch, FiLogIn, 
-  FiUser, FiLogOut, FiMoon, FiSun, FiUploadCloud, FiExternalLink 
+  FiUser, FiLogOut, FiMoon, FiSun, FiUploadCloud, FiExternalLink, FiDownload 
 } from 'react-icons/fi';
 
 const Navbar = () => {
@@ -10,6 +10,10 @@ const Navbar = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
+  
+  // State untuk PWA Install Prompt
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallButton, setShowInstallButton] = useState(false);
   
   // 🔥 STATE BARU UNTUK DROPDOWN PROFIL 🔥
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -31,6 +35,39 @@ const Navbar = () => {
       document.documentElement.classList.add('dark');
     }
   }, []);
+
+  // Handler PWA Installation
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallButton(true);
+    };
+
+    const handleAppInstalled = () => {
+      setShowInstallButton(false);
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setShowInstallButton(false);
+      }
+      setDeferredPrompt(null);
+    }
+  };
 
   // Tutup dropdown jika klik di luar area
   useEffect(() => {
@@ -131,6 +168,16 @@ const Navbar = () => {
             >
               {isDarkMode ? <FiSun size={18} /> : <FiMoon size={18} />}
             </button>
+
+            {/* Tombol Install App */}
+            {showInstallButton && (
+              <button
+                onClick={handleInstallClick}
+                className="flex items-center gap-2 px-3 py-1.5 ml-1 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[12px] font-bold transition-all shadow-sm"
+              >
+                <FiDownload size={15} /> Install Aplikasi E-Repo PBJT
+              </button>
+            )}
 
             {/* Auth Section - DROPDOWN PROFIL */}
             {isLoggedIn ? (
@@ -233,6 +280,16 @@ const Navbar = () => {
             >
               {isDarkMode ? <><FiSun size={18}/> Mode Terang</> : <><FiMoon size={18}/> Mode Gelap</>}
             </button>
+
+            {/* Install App Mobile */}
+            {showInstallButton && (
+              <button 
+                onClick={handleInstallClick} 
+                className="w-full flex items-center justify-center gap-3 p-3 mt-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-md transition-all"
+              >
+                <FiDownload size={18}/> Install Aplikasi E-Repo PBJT
+              </button>
+            )}
 
             {isLoggedIn ? (
               <>
