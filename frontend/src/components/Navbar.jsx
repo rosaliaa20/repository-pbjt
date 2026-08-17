@@ -49,8 +49,14 @@ const Navbar = () => {
       setDeferredPrompt(null);
     };
 
-    // Selalu tampilkan tombol install sebagai fallback panduan manual
-    setShowInstallButton(true);
+    // Cek apakah aplikasi sedang berjalan dalam mode PWA (Standalone)
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    
+    // Selalu tampilkan tombol install sebagai fallback panduan manual,
+    // KECUALI jika sudah berada di dalam aplikasi PWA.
+    if (!isStandalone) {
+      setShowInstallButton(true);
+    }
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     window.addEventListener('appinstalled', handleAppInstalled);

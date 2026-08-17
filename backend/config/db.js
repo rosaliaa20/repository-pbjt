@@ -24,6 +24,16 @@ pool.getConnection((err, connection) => {
         // Jangan crash server, hanya log error-nya
     } else {
         console.log('✅ Berhasil terhubung ke database MySQL [e_repository_kampus]');
+        
+        // Auto-migration: Pastikan kolom uploader_id ada untuk keamanan IDOR
+        connection.query("ALTER TABLE documents ADD COLUMN uploader_id INT NULL AFTER status", (err) => {
+            if (err && err.code !== 'ER_DUP_FIELDNAME') {
+                console.log('Info: Kolom uploader_id sudah ada atau gagal ditambahkan otomatis.');
+            } else if (!err) {
+                console.log('✅ Auto-migration: Kolom uploader_id berhasil ditambahkan.');
+            }
+        });
+
         connection.release(); // Segera kembalikan koneksi ke pool
     }
 });

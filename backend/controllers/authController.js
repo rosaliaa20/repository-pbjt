@@ -123,7 +123,7 @@ exports.register = async (req, res) => {
             // 🔥 PERBAIKAN: Menambahkan no_wa ke dalam query INSERT 🔥
             const insertQuery = 'INSERT INTO users (full_name, username, nim, email, no_wa, tanggal_lahir, password, role, department, approval_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             const finalNoWa = no_wa ? no_wa : null; // Jika WA dikosongkan, jadikan null
-            const values = [name, nim, nim, email, finalNoWa, tanggal_lahir, hashedPassword, 'user', department || null, 'pending'];
+            const values = [name, nim, nim, email, finalNoWa, tanggal_lahir, hashedPassword, 'mahasiswa', department || null, 'pending'];
 
             db.query(insertQuery, values, (insertErr) => {
                 if (insertErr) {

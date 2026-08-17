@@ -175,8 +175,10 @@ exports.uploadDoc = (req, res) => {
         
         console.log("📁 File baru sukses tersimpan di:", req.file.path);
 
-        const query = `INSERT INTO documents (title, document_author, abstract, category, department, year, file_path, external_url, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-        const values = [finalTitle, finalAuthor, abstract || "", category || "Umum", department || "Umum", year || new Date().getFullYear(), filePath, external_link || null, status || 'Pending'];
+        const uploader_id = req.user.id; // Diambil dari JWT Token
+
+        const query = `INSERT INTO documents (title, document_author, abstract, category, department, year, file_path, external_url, status, uploader_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        const values = [finalTitle, finalAuthor, abstract || "", category || "Umum", department || "Umum", year || new Date().getFullYear(), filePath, external_link || null, status || 'Pending', uploader_id];
 
         db.query(query, values, (err, result) => {
             if (err) return res.status(500).json({ message: err.message });
@@ -235,11 +237,8 @@ exports.updateDoc = (req, res) => {
 
         const existingDoc = results[0];
 
-        // Otorisasi: Harus Admin ATAU Pemilik Asli Dokumen (Dengan normalisasi case & whitespace)
-        const currentUserName = String(req.user.name || '').trim().toLowerCase();
-        const docAuthorName = String(existingDoc.document_author || '').trim().toLowerCase();
-
-        if (req.user.role !== 'admin' && currentUserName !== docAuthorName) {
+        // Otorisasi Ketat (Mencegah IDOR): Harus Admin ATAU Pemilik Asli Dokumen (Berdasarkan ID)
+        if (req.user.role !== 'admin' && req.user.id !== existingDoc.uploader_id) {
             return res.status(403).json({ message: "Akses ditolak. Anda hanya dapat mengedit dokumen milik Anda sendiri." });
         }
         
