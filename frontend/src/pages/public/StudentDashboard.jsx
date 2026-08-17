@@ -163,8 +163,8 @@ return (
                       </button>
                     </div>
                   ) : (
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
+                    <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700 pb-2">
+                      <table className="w-full text-left border-collapse min-w-[600px]">
                         <thead>
                           <tr className="border-b border-slate-200 dark:border-slate-700">
                             <th className="pb-4 px-4 text-xs font-black text-slate-400 uppercase tracking-widest">Judul Dokumen</th>

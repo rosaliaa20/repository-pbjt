@@ -278,11 +278,11 @@ const PdfViewer = () => {
           <Link to={`/detail/${id}`} className="p-2 hover:bg-white/10 rounded-full transition shrink-0">
             <FiArrowLeft className="text-xl" />
           </Link>
-          <div className="hidden md:block min-w-0">
-            <h1 className="font-bold text-sm truncate max-w-[200px] lg:max-w-md">
+          <div className="min-w-0">
+            <h1 className="font-bold text-sm truncate max-w-[100px] sm:max-w-[150px] md:max-w-[200px] lg:max-w-md">
               {docDetail?.title || 'Membaca Dokumen...'}
             </h1>
-            <p className="text-[10px] text-emerald-400 flex items-center gap-1 mt-0.5">
+            <p className="hidden md:flex text-[10px] text-emerald-400 items-center gap-1 mt-0.5">
               <FiShield /> Proteksi Aktif {isOfflineMode && <span className="ml-2 text-blue-300 font-bold">(Mode Luring)</span>}
             </p>
           </div>

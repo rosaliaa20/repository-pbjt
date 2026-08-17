@@ -56,7 +56,7 @@ const LandingPage = () => {
             <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-20">
                 <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
                     {stats.map((stat, index) => (
-                        <div key={index} className="p-2 border-r last:border-r-0 border-gray-100">
+                        <div key={index} className="p-2 md:border-r last:border-r-0 border-gray-100">
                             <h3 className="text-3xl font-extrabold text-blue-800">{stat.value}</h3>
                             <p className="text-sm text-gray-500 font-medium mt-1">{stat.label}</p>
                         </div>
